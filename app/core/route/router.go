@@ -3,6 +3,7 @@ package route
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go-mage-admin/app/core/helper"
 	"reflect"
 	"strings"
 )
@@ -19,48 +20,46 @@ type Route struct {
 var Routes []Route
 
 func InitRouter(g *gin.Engine) {
-	//绑定基本路由，访问路径：/User/List
 	Bind(g)
 	return
 }
 
 // Register 注册控制器
-func Register(controller interface{}) bool {
+func Register(controller interface{}, moduleName string) bool {
 	ctrlName := reflect.TypeOf(controller).String()
-	fmt.Println("ctrlName=", ctrlName)
-	module := ctrlName
+	//fmt.Println("ctrlName=", ctrlName)
+	ctrlNameCopy := ctrlName
 	if strings.Contains(ctrlName, ".") {
-		module = ctrlName[strings.Index(ctrlName, ".")+1:]
+		ctrlNameCopy = ctrlName[strings.Index(ctrlName, ".")+1:]
 	}
-	fmt.Println("module=", module)
+
 	v := reflect.ValueOf(controller)
+	strHelper := &helper.String{}
 	//遍历方法
 	for i := 0; i < v.NumMethod(); i++ {
 		method := v.Method(i)
 		action := v.Type().Method(i).Name
-		path := "/" + module + "/" + action
+		path := "/" + moduleName + "/" + strHelper.DeCapitalize(ctrlNameCopy) + "/" + strHelper.DeCapitalize(action)
 		//遍历参数
 		params := make([]reflect.Type, 0, v.NumMethod())
-		httpMethod := "POST"
-		if strings.Contains(action, "_get") {
-			httpMethod = "GET"
+		httpMethod := "GET"
+		if strings.Contains(action, "_post") {
+			httpMethod = "post"
 		}
+
 		for j := 0; j < method.Type().NumIn(); j++ {
 			params = append(params, method.Type().In(j))
-			fmt.Println("params-name=", method.Type().In(j))
 		}
-		fmt.Println("params=", params)
-		fmt.Println("action=", action)
 		route := Route{path: path, Method: method, Args: params, httpMethod: httpMethod}
 		Routes = append(Routes, route)
 	}
-	fmt.Println("Routes=", Routes)
+	//fmt.Println("Routes=", Routes)
 	return true
 }
 
 // Bind 绑定路由 m是方法GET POST等
 func Bind(e *gin.Engine) {
-	//pathInit()
+	//路由分组
 	for _, route := range Routes {
 		if route.httpMethod == "GET" {
 			e.GET(route.path, match(route.path, route))

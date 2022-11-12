@@ -8,10 +8,10 @@ import (
 type Admin struct {
 }
 
-const name = "admin"
+const Name = "admin"
 
 func (admin *Admin) LoadLayout() multitemplate.Renderer {
 	c := &controller.Abstract{}
-	r := c.LoadLayout(name, true)
+	r := c.LoadLayout(Name, true)
 	return r
 }
