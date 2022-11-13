@@ -32,21 +32,35 @@ func Register(controller interface{}, moduleName string) bool {
 	if strings.Contains(ctrlName, ".") {
 		ctrlNameCopy = ctrlName[strings.Index(ctrlName, ".")+1:]
 	}
-
 	v := reflect.ValueOf(controller)
 	strHelper := &helper.String{}
 	//遍历方法
 	for i := 0; i < v.NumMethod(); i++ {
-		method := v.Method(i)
 		action := v.Type().Method(i).Name
-		path := "/" + moduleName + "/" + strHelper.DeCapitalize(ctrlNameCopy) + "/" + strHelper.DeCapitalize(action)
+		httpMethod := ""
+		if strings.HasSuffix(action, "ANY") {
+			httpMethod = "ANY"
+		} else if strings.HasSuffix(action, "REQ") {
+			httpMethod = "REQ"
+		} else if strings.HasSuffix(action, "GET") {
+			httpMethod = "GET"
+		} else if strings.HasSuffix(action, "POST") {
+			httpMethod = "POST"
+		} else if strings.HasSuffix(action, "PUT") {
+			httpMethod = "PUT"
+		} else if strings.HasSuffix(action, "PATCH") {
+			httpMethod = "PATCH"
+		} else if strings.HasSuffix(action, "DELETE") {
+			httpMethod = "DELETE"
+		}
+		if httpMethod == "" {
+			continue
+		}
+		method := v.Method(i)
+		actName := strings.Replace(action, httpMethod, "", -1)
+		path := "/" + moduleName + "/" + strHelper.DeCapitalize(ctrlNameCopy) + "/" + strHelper.DeCapitalize(actName)
 		//遍历参数
 		params := make([]reflect.Type, 0, v.NumMethod())
-		httpMethod := "GET"
-		if strings.Contains(action, "_post") {
-			httpMethod = "post"
-		}
-
 		for j := 0; j < method.Type().NumIn(); j++ {
 			params = append(params, method.Type().In(j))
 		}
@@ -61,11 +75,21 @@ func Register(controller interface{}, moduleName string) bool {
 func Bind(e *gin.Engine) {
 	//路由分组
 	for _, route := range Routes {
-		if route.httpMethod == "GET" {
-			e.GET(route.path, match(route.path, route))
-		}
-		if route.httpMethod == "POST" {
+		if route.httpMethod == "ANY" {
+			e.Any(route.path, match(route.path, route))
+		} else if route.httpMethod == "REQ" {
 			e.POST(route.path, match(route.path, route))
+			e.GET(route.path, match(route.path, route))
+		} else if route.httpMethod == "GET" {
+			e.GET(route.path, match(route.path, route))
+		} else if route.httpMethod == "POST" {
+			e.POST(route.path, match(route.path, route))
+		} else if route.httpMethod == "PUT" {
+			e.PUT(route.path, match(route.path, route))
+		} else if route.httpMethod == "PATCH" {
+			e.PATCH(route.path, match(route.path, route))
+		} else if route.httpMethod == "DELETE" {
+			e.DELETE(route.path, match(route.path, route))
 		}
 	}
 }

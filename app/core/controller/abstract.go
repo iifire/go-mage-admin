@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-// Abstract 控制器基类
+// Abstract 控制器相关常用功能
 type Abstract struct {
 	gin.Engine
 }

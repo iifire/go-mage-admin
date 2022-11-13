@@ -15,10 +15,9 @@ func init() {
 // Login 后台登录页面
 type Login struct {
 	// 继承控制器基类
-	//controller.Abstract
 }
 
-func (login *Login) Index(c *gin.Context) {
+func (login *Login) IndexGET(c *gin.Context) {
 	// 输出页面 调用对象来处理
 	admin := &Admin{}
 	admin.HTMLRender = admin.LoadLayout()
@@ -29,7 +28,7 @@ func (login *Login) Index(c *gin.Context) {
 	})
 
 }
-func (login *Login) Save(c *gin.Context) {
+func (login *Login) SavePOST(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 1,
 		"msg":  "ok",
