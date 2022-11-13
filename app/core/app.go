@@ -54,9 +54,15 @@ func (app *App) LoadTemplates(tplDir string) multitemplate.Renderer {
 	return r
 }
 
+var AppGin *gin.Engine
+
 // Run 运行主入口
 func (app *App) Run(options map[string]interface{}) {
 	g := gin.Default()
+	AppGin = *&g
+
+	//r := multitemplate.NewRenderer()
+	//g.HTMLRender = r
 	app.Init(options)
 	//TODO... 全页缓存
 	//模块化

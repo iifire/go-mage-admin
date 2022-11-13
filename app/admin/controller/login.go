@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	_admin "go-mage-admin/app/admin"
+	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/route"
 	"net/http"
 )
@@ -20,9 +21,11 @@ type Login struct {
 func (login *Login) IndexGET(c *gin.Context) {
 	// 输出页面 调用对象来处理
 	admin := &Admin{}
-	admin.HTMLRender = admin.LoadLayout()
+	admin.SetLayout("1column")
 
-	c.JSON(http.StatusOK, gin.H{
+	core.AppGin.HTMLRender = admin.LoadLayout()
+
+	c.HTML(http.StatusOK, "login.html", gin.H{
 		"code": 1,
 		"msg":  "ok",
 	})

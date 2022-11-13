@@ -10,13 +10,22 @@ import (
 // Admin 后台控制器基类
 type Admin struct {
 	controller.Abstract
+	layout string
 }
 
 func (admin *Admin) GetSession() *core.Session {
 	session := &core.Session{}
 	return session
 }
+
+func (admin *Admin) SetLayout(layout string) {
+	admin.layout = layout
+	return
+}
 func (admin *Admin) LoadLayout() multitemplate.Renderer {
 	a := &moduleAdmin.Admin{}
-	return a.LoadLayout()
+	if admin.layout == "" {
+		admin.layout = "2columns"
+	}
+	return a.LoadLayout(admin.layout)
 }

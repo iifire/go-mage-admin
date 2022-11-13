@@ -1,7 +1,6 @@
 package route
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-mage-admin/app/core/helper"
 	"reflect"
@@ -98,7 +97,7 @@ func Bind(e *gin.Engine) {
 func match(path string, route Route) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fields := strings.Split(path, "/")
-		fmt.Println("fields,len(fields)=", fields, len(fields))
+		//fmt.Println("fields,len(fields)=", fields, len(fields))
 		if len(fields) < 3 {
 			return
 		}

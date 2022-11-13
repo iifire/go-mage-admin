@@ -10,8 +10,8 @@ type Admin struct {
 
 const Name = "admin"
 
-func (admin *Admin) LoadLayout() multitemplate.Renderer {
+func (admin *Admin) LoadLayout(filename string) multitemplate.Renderer {
 	c := &controller.Abstract{}
-	r := c.LoadLayout(Name, true)
+	r := c.LoadLayout(Name, true, filename)
 	return r
 }
