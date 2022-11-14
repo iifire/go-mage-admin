@@ -1,6 +1,8 @@
 package main
 
-import "go-mage-admin/app"
+import (
+	"go-mage-admin/app"
+)
 
 func main() {
 	mage := &app.Mage{}
