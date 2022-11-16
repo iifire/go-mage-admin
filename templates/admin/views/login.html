@@ -1,5 +1,65 @@
 {{define "content"}}
-<div class="login-box">
-    登录框
+<img class="login-top-bg" src="/static/img/login/bg2.png"/>
+<div id="login">
+    <div class="login-main">
+        <div class="login-content">
+            <div class="hd">
+                <label>欢迎登录</label>
+                <strong>Mage Admin</strong>
+            </div>
+            <div class="mt50">
+                <el-input placeholder="请输入帐号" v-model="username">
+                    <template slot="prepend"><div class="w50">用户名</div></template>
+                </el-input>
+            </div>
+            <div class="mt20">
+                <el-input placeholder="请输入密码" v-model="password">
+                    <template slot="prepend"><div class="w50">密码</div></template>
+                </el-input>
+            </div>
+            <div class="mt20">
+                <el-checkbox v-model="remember">记住我</el-checkbox>
+            </div>
+            <div class="mt20">
+                <el-button type="primary" @click="doLogin" class="wp100">登录</el-button>
+            </div>
+            <div class="mt40">
+                <p class="c9">温馨提示：请使用谷歌、EDGE、360极速、搜狗、腾讯、UC、遨游、火狐、OPERA浏览器登录</p>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    const app = new Vue({
+        el: '#login',
+        data() {
+            return {
+                username:"",
+                password:"",
+                remember:"",
+            }
+        },
+        methods: {
+            doLogin() {
+                let that = this;
+                let data = new FormData();
+                data.append('username',this.username);
+                data.append('password',this.password);
+                data.append('remember',this.remember);
+                axios.post('/admin/login/save',data).then(function (res) {
+
+                    if(res.data.code==1) {
+                        window.location.href='/admin/dashboard/index'
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+
+        },
+        created() {
+
+        }
+    })
+</script>
 {{end}}

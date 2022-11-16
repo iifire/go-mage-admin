@@ -1,8 +1,11 @@
 package route
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-mage-admin/app/core/helper"
+	"log"
+	"net/http"
 	"reflect"
 	"strings"
 )
@@ -104,7 +107,27 @@ func match(path string, route Route) gin.HandlerFunc {
 		if len(Routes) > 0 {
 			arguments := make([]reflect.Value, 1)
 			arguments[0] = reflect.ValueOf(c) // *gin.Context
-			//reflect.ValueOf(method).Method(0).Call(arguments)
+			//注册Session
+			session := sessions.Default(c)
+			v := session.Get("sid")
+			if v == nil {
+				// 判断是否已注册SessionID
+				session.Set("sid", session.ID())
+				session.Save()
+			}
+			//判断后台请求 未登录则跳转到登录页面
+			uData := session.Get("user")
+			log.Println("user=", uData)
+			if strings.HasPrefix(path, "/admin") && path != "/admin/login/index" {
+				//判断是否已登录
+				if uData == nil {
+					c.Redirect(http.StatusFound, "/admin/login/index")
+				}
+			} else if path == "/admin/login/index" {
+				if uData != nil {
+					c.Redirect(http.StatusFound, "/admin/dashboard/index")
+				}
+			}
 			route.Method.Call(arguments)
 		}
 	}

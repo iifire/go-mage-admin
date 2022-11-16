@@ -8,14 +8,11 @@ import (
 type Mage struct {
 	//版本号
 	version string
-	//是否开发者模式
-	isDeveloperMode bool
 	//是否已安装
-	isInstalled bool
+	isInstalled  bool
+	isProduction bool
 	//App
 	app core.App
-	//配置
-	config core.Config
 	//缓存管理
 	cache core.Cache
 	//全局变量数组
@@ -45,20 +42,16 @@ func (mage *Mage) PrintException() {
 	return
 }
 
-// SetIsDeveloperMode 开发者模式设置
-func (mage *Mage) SetIsDeveloperMode(flag bool) bool {
-	mage.isDeveloperMode = flag
-	return mage.isDeveloperMode
+// SetIsDeveloperMode 开发者模式设置[报错和日志等]
+func (mage *Mage) SetIsDeveloperMode(flag bool) {
+	core.AppConfig.Site.DeveloperMode = flag
+	return
 }
 
-// Helper TODO...  获取帮助类利用reflect来实现消耗性能
-func (mage *Mage) Helper(name string) interface{} {
-	registryKey := "_helper/" + name
-	if mage.Registry[registryKey] == nil {
-		//抛出异常
-		mage.LogException("Helper not exist:" + name)
-	}
-	return mage.Registry[registryKey]
+// SetIsProductionMode 生产模式设置
+func (mage *Mage) SetIsProductionMode(flag bool) {
+	mage.isProduction = flag
+	return
 }
 
 // Run 程序入口

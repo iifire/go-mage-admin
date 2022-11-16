@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/gin-contrib/multitemplate"
 	moduleAdmin "go-mage-admin/app/admin"
-	"go-mage-admin/app/core"
+	"go-mage-admin/app/admin/model"
 	"go-mage-admin/app/core/controller"
 )
 
@@ -13,8 +13,8 @@ type Admin struct {
 	layout string
 }
 
-func (admin *Admin) GetSession() *core.Session {
-	session := &core.Session{}
+func (admin *Admin) GetSession() *model.Session {
+	session := &model.Session{}
 	return session
 }
 

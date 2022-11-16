@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"go-mage-admin/app/core"
+	helper2 "go-mage-admin/app/core/helper"
 )
 
 type Helper struct {
-	core.Helper
+	helper2.String
 }

@@ -1,0 +1,50 @@
+Site:
+  Name: Go Mage Admin
+  Host: go.mage.admin.com
+  Https: true
+  DeveloperMode: true
+  ProductionMode: false
+
+Mysql:
+  Read:
+    Host: 127.0.0.1
+    Port: 3306
+    Username: root
+    Password:
+    Dbname: go_mage_admin
+  Write:
+    Host: 127.0.0.1
+    Port: 3306
+    Username: root
+    Password:
+    Dbname: go_mage_admin
+
+Session:
+  Storage: redis
+  Key: go_mage
+  Lifetime: 600
+
+SessionRedis:
+  Host: 127.0.0.1
+  Port: 6379
+  Password:
+  Timeout: 2.5
+  Maxsize: 10
+  Db: 10
+
+Search:
+  Storage: solr
+
+SearchSolr:
+  Host: 127.0.0.1
+  Port: 8686
+
+SearchElasticsearch:
+  Host: 127.0.0.1
+  Port: 8686
+
+Media:
+  Storage: local
+
+MediaLocal:
+  Path: /media
