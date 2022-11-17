@@ -1,2 +1,66 @@
 {{define "header"}}
+<div class="header" id="header">
+    <!-- 一级菜单 -->
+    <div class="nav f-left">
+        <div class="nav-indent f-left">
+            <a class="on"><i class="ift i-indent"></i></a>
+            <a class=""><i class="ift i-indent2"></i></a>
+        </div>
+        <ul class="nav-b f-left">
+            <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(item)">
+                <a><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.name}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="nav-bar f-right mr10">
+        <ul class="nav-m">
+            <!-- 功能/菜单搜索 -->
+            <li>
+                <a><i class="ift i-search"></i></a>
+            </li>
+            <!-- 全屏模式 -->
+            <li>
+                <a><i class="ift i-full"></i></a>
+            </li>
+            <!-- 消息 -->
+            <li>
+                <a><i class="ift i-msg"></i></a>
+            </li>
+            <!-- 我的 -->
+            <li>
+                <a><i class="ift i-user2"></i></a>
+            </li>
+        </ul>
+    </div>
+    <div class="clr"></div>
+</div>
+<script>
+new Vue({
+    el: '#header',
+    data() {
+        return {
+            menus:[],
+        }
+    },
+    methods: {
+        getHeader(pid) {
+            axios.get('/admin/page/header?pid='+pid).then((res) =>{
+                var _d = res.data.data;
+                if(res.data.code==1) {
+                    if ()
+                    this.menus = _d
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+        },
+        switchMenu() {
+            this.getHeader();
+        }
+    },
+    created() {
+        this.getHeader(0);
+    }
+})
+</script>
 {{end}}
