@@ -1,8 +1,8 @@
 @font-face {
     font-family: "ift"; /* Project id 3774570 */
-    src: url('//at.alicdn.com/t/c/font_3774570_xkfq6lgh1r.woff2?t=1668588594505') format('woff2'),
-    url('//at.alicdn.com/t/c/font_3774570_xkfq6lgh1r.woff?t=1668588594505') format('woff'),
-    url('//at.alicdn.com/t/c/font_3774570_xkfq6lgh1r.ttf?t=1668588594505') format('truetype');
+    src: url('//at.alicdn.com/t/c/font_3774570_5cccrb805pv.woff2?t=1668781729092') format('woff2'),
+    url('//at.alicdn.com/t/c/font_3774570_5cccrb805pv.woff?t=1668781729092') format('woff'),
+    url('//at.alicdn.com/t/c/font_3774570_5cccrb805pv.ttf?t=1668781729092') format('truetype');
 }
 
 .ift {
@@ -11,6 +11,30 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.i-chat:before {
+    content: "\e664";
+}
+
+.i-sdesc:before {
+    content: "\e620";
+}
+
+.i-doc:before {
+    content: "\e63b";
+}
+
+.i-bulletin:before {
+    content: "\e6f9";
+}
+
+.i-report:before {
+    content: "\e60e";
+}
+
+.i-tpl:before {
+    content: "\e699";
 }
 
 .i-indent:before {
@@ -203,10 +227,6 @@
 
 .i-customers:before {
     content: "\e66a";
-}
-
-.i-report:before {
-    content: "\e60a";
 }
 
 .i-empty:before {
@@ -1477,6 +1497,7 @@ table .progress {
     z-index: 999;
     padding:0;
     border-bottom: 1px solid #DDD;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.12),0 0 3px 0 rgba(0,0,0,.04);
 }
 
 .header .logo a.home {
@@ -4637,9 +4658,9 @@ body,.app-wrap {
 .cmenu {
     line-height: 34px;
     margin-top: 0;
-    height: 42px;
-    overflow: hidden;
+    height: 40px;
     padding: 0 10px;
+    border-bottom: 1px solid #dfe4ed;
 }
 .cmenu-box {
     display: inline-block;
@@ -4652,17 +4673,19 @@ body,.app-wrap {
     border-radius: 5px 5px 0 0;
 }
 .cmenu-item {
-    padding: 0 12px;
+    padding: 0 16px;
     border-right: 1px solid #dfe4ed;
-    height: 40px;
-    line-height: 40px;
+    height: 38px;
+    line-height: 38px;
     color: #333;
     cursor: pointer;
     position: relative;
     display: inline-block;
     float: left;
     font-size: 14px;
+    transition: color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
 }
+.cmenu-item.home {padding:0 20px;}
 .cmenu-box .cmenu-item:last-child {
     border-right: 0;
 }
@@ -4670,6 +4693,12 @@ body,.app-wrap {
     font-size: 8px !important;
     margin-left: 2px;
     padding: 2px;
+    display:none;
+    -webkit-transform-origin: 100% 50%;
+    transform-origin: 100% 50%;
+}
+.cmenu-item:hover > i {
+    display: inline;
 }
 .cmenu-item > i:hover  {
     color:#FFF !important;
@@ -4680,7 +4709,16 @@ body,.app-wrap {
 .cmenu-item.on {
     color:#394FF7 !important;
 }
-.cmenu-item.on > i {color:#394FF7;}
+.cmenu-item.on::after {
+    content:"";
+    background:#FFF;
+    position: absolute;
+    left:0;
+    right:0;
+    height:2px;
+    bottom:-2px;
+}
+.cmenu-item.on > i {color:#394FF7;display:inline-block;}
 
 .cmenu-ctl {
     position: absolute;

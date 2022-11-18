@@ -9,7 +9,7 @@
             </div>
             <ul class="nav-b f-left">
                 <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(item)">
-                    <a><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.name}</a>
+                    <a :class="{'on':curMenuId==item.menu_id}"><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.name}</a>
                 </li>
             </ul>
         </div>
@@ -37,7 +37,10 @@
     </div>
     <div class="cmenu" id="cmenu">
         <div class="cmenu-box" id="cmenu-box">
-            <div class="cmenu-item m-ajax on" data-url="wx/reply">
+            <div class="cmenu-item m-ajax on home" data-url="admin/dashboard/index">
+                <span>首页</span>
+            </div>
+            <div class="cmenu-item m-ajax " data-url="wx/reply">
                 <span>自动回复</span>
                 <i class="ift i-close fs12"></i>
             </div>
@@ -60,6 +63,7 @@ let vueHeader = new Vue({
     data() {
         return {
             menus:[],
+            curMenuId:0
         }
     },
     methods: {
@@ -68,13 +72,17 @@ let vueHeader = new Vue({
                 var _d = res.data.data;
                 if(res.data.code==1) {
                     this.menus = _d
+                    vueLeft.switchMenu(this.menus[0].menu_id)
+                    this.curMenuId = this.menus[0].menu_id;
                 }
             }).catch(function (err) {
                 console.log(err);
             });
         },
         switchMenu(item) {
+            this.curMenuId = item.menu_id;
             vueLeft.switchMenu(item.menu_id)
+
         }
     },
     created() {
