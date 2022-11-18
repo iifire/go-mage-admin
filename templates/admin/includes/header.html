@@ -1,38 +1,58 @@
 {{define "header"}}
 <div class="header" id="header">
     <!-- 一级菜单 -->
-    <div class="nav f-left">
-        <div class="nav-indent f-left">
-            <a class="on"><i class="ift i-indent"></i></a>
-            <a class=""><i class="ift i-indent2"></i></a>
+    <div class="nav-box">
+        <div class="nav f-left">
+            <div class="nav-indent f-left">
+                <a class="on"><i class="ift i-indent"></i></a>
+                <a class=""><i class="ift i-indent2"></i></a>
+            </div>
+            <ul class="nav-b f-left">
+                <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(item)">
+                    <a><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.name}</a>
+                </li>
+            </ul>
         </div>
-        <ul class="nav-b f-left">
-            <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(item)">
-                <a><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.name}</a>
-            </li>
-        </ul>
+        <div class="nav-bar f-right mr10">
+            <ul class="nav-m">
+                <!-- 功能/菜单搜索 -->
+                <li>
+                    <a><i class="ift i-search"></i></a>
+                </li>
+                <!-- 全屏模式 -->
+                <li>
+                    <a><i class="ift i-full"></i></a>
+                </li>
+                <!-- 消息 -->
+                <li>
+                    <a><i class="ift i-msg"></i></a>
+                </li>
+                <!-- 我的 -->
+                <li>
+                    <a><i class="ift i-user2"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="clr"></div>
     </div>
-    <div class="nav-bar f-right mr10">
-        <ul class="nav-m">
-            <!-- 功能/菜单搜索 -->
-            <li>
-                <a><i class="ift i-search"></i></a>
-            </li>
-            <!-- 全屏模式 -->
-            <li>
-                <a><i class="ift i-full"></i></a>
-            </li>
-            <!-- 消息 -->
-            <li>
-                <a><i class="ift i-msg"></i></a>
-            </li>
-            <!-- 我的 -->
-            <li>
-                <a><i class="ift i-user2"></i></a>
-            </li>
-        </ul>
+    <div class="cmenu" id="cmenu">
+        <div class="cmenu-box" id="cmenu-box">
+            <div class="cmenu-item m-ajax on" data-url="wx/reply">
+                <span>自动回复</span>
+                <i class="ift i-close fs12"></i>
+            </div>
+            <div class="cmenu-item m-ajax " data-url="wx/menu">
+                <span>自定义菜单</span>
+                <i class="ift i-close fs12"></i>
+            </div>
+            <div class="cmenu-item m-ajax " data-url="wx/material">
+                <span>素材管理</span>
+                <i class="ift i-close fs12"></i>
+            </div>
+        </div>
+        <div class="cmenu-ctl cmenu-ctl-l"><i class="ift i-arrow-l3 fs18"></i></div>
+        <div class="cmenu-ctl cmenu-ctl-r"><i class="ift i-arrow-r3 fs18"></i></div>
     </div>
-    <div class="clr"></div>
 </div>
 <script>
 let vueHeader = new Vue({

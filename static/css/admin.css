@@ -4517,8 +4517,7 @@ body,.app-wrap {
     top:-1px;
 }
 .nav-m li, .nav-h li.level0,
-.nav-m > li > a,
-.header {
+.nav-m > li > a {
     height:50px;
     line-height:50px;
     color:#666;
@@ -4528,6 +4527,7 @@ body,.app-wrap {
     width: 100%;
     padding-left: 105px;
     z-index: 9;
+    height:92px;
 }
 .nav-bar {width:415px}
 .nav-bar .nav-m {float:right;}
@@ -4578,7 +4578,7 @@ body,.app-wrap {
     font-size:14px;
 }
 .navigation .menu > li > ul {
-    left: 100px;
+    left: 105px;
     top: 50px;
     bottom: 0;
     width: 460px;
@@ -4629,15 +4629,17 @@ body,.app-wrap {
     width: 455px;
     border-top: 2px solid #394FF7;
 }
+.nav-box {
+    box-shadow: 0 1px 4px rgba(0,21,41,.08);
+    background: #FFF;
+    height:50px;
+}
 .cmenu {
     line-height: 34px;
-    margin-top: 20px;
-    position:absolute;
-    left:95px;
-    right:450px;
-    bottom:0;
-    height:36px;
-    overflow:hidden;
+    margin-top: 0;
+    height: 42px;
+    overflow: hidden;
+    padding: 0 10px;
 }
 .cmenu-box {
     display: inline-block;
@@ -4646,37 +4648,39 @@ body,.app-wrap {
     transition:-webkit-transform .3s cubic-bezier(.645,.045,.355,1);
     transition:transform .3s cubic-bezier(.645,.045,.355,1);
     transition:transform .3s cubic-bezier(.645,.045,.355,1),-webkit-transform .3s cubic-bezier(.645,.045,.355,1);
+    border:1px solid #dfe4ed;
+    border-radius: 5px 5px 0 0;
 }
 .cmenu-item {
-    padding: 0 7px;
-    border: 1px solid #e5e5e5;
-    border-bottom:0;
-    background: #fff;
-    height: 36px;
-    line-height: 34px;
-    color: #666;
-    margin-right:0;
-    cursor:pointer;
-    position:relative;
-    display:inline-block;
+    padding: 0 12px;
+    border-right: 1px solid #dfe4ed;
+    height: 40px;
+    line-height: 40px;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    float: left;
+    font-size: 14px;
 }
-.cmenu-item i {font-size:10px !important;}
-.cmenu-item:hover > span {
-    color:#394FF7;
+.cmenu-box .cmenu-item:last-child {
+    border-right: 0;
+}
+.cmenu-item i {
+    font-size: 8px !important;
+    margin-left: 2px;
+    padding: 2px;
 }
 .cmenu-item > i:hover  {
-    color:#000;
+    color:#FFF !important;
+    border-radius: 50%;
+    background: #DDD;
+
 }
 .cmenu-item.on {
-    background:#394FF7;
-    color:#FFF !important;
-    border-color: #394FF7;
+    color:#394FF7 !important;
 }
-.cmenu-item.on > i {color:#EEE;}
-.cmenu-item.on:hover > span,
-.cmenu-item.on > i:hover {
-    color:#FFF !important;
-}
+.cmenu-item.on > i {color:#394FF7;}
 
 .cmenu-ctl {
     position: absolute;
