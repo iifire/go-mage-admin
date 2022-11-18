@@ -1,0 +1,43 @@
+{{define "grid"}}
+<div class="grid">
+    <div class="hor-scroll">
+        <table cellspacing="0" class="data grid-table" width="100%">
+            <thead>
+                <tr class="headings">
+                   <th>ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="empty-text">
+                    <td class="a-center" colspan="">未找到相关记录~</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="actions-box">
+    <table cellspacing="0" class="actions">
+        <tr>
+            <td class="massact a-left">
+            </td>
+            <td class="export a-left">
+                <select class="" name="_export" id="_export" style="width:100px;">
+                    <option value="">XML</option>
+                </select>
+            </td>
+            <td class="pager a-right">
+                <span class="mr10">共 %d 个</span>
+                <span id="-total-count" class="no-display"></span>
+                <a href="#" title="" onclick="a.setPage('');return false;"><img src="/static/img/admin/pager_arrow_left.gif" alt="上一页" class="arrow"/></a>
+                <input type="text" name="page" value="1" class="input-text" onkeypress="a.inputPage(event, '10')"/>
+                <a href="#" title="下一页" onclick="a.setPage('2');return false;"><img src="/static/img/admin/pager_arrow_right.gif" alt="下一页" class="arrow"/></a>
+                <span class="mr10">/ %s 页</span>
+                <select name="size" onchange="a.loadByElement(this)">
+                    <option value="10" selected="selected">10 条/页</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</div>
+{{end}}

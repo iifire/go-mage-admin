@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"go-mage-admin/app/core"
+	"time"
 )
 
 type Mage struct {
@@ -58,6 +59,10 @@ func (mage *Mage) SetIsProductionMode(flag bool) {
 func (mage *Mage) Run(options map[string]interface{}) {
 	profiler := &core.Profiler{}
 	profiler.Start("mage::run")
+	//设置时区
+	cstZone := time.FixedZone("CST", 8*3600) // 东八
+	time.Local = cstZone
+
 	app := &core.App{}
 	app.Run(options)
 	profiler.Stop("mage::run")

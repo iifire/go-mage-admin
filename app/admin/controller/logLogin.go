@@ -10,19 +10,20 @@ import (
 
 // init bootstrap初始化时调用 自动注册路由
 func init() {
-	route.Register(&Dashboard{}, _admin.Name)
+	route.Register(&logLogin{}, _admin.Name)
 }
 
-// Dashboard 后台首页
-type Dashboard struct {
+// logLogin 后台首页
+type logLogin struct {
 	// 继承控制器基类
 }
 
-func (d *Dashboard) IndexGET(c *gin.Context) {
+func (u *logLogin) IndexGET(c *gin.Context) {
 	// 输出页面 调用对象来处理
 	admin := &Admin{}
+	//admin.SetLayout("2columns")
 	core.AppGin.HTMLRender = admin.LoadLayout()
-	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+	c.HTML(http.StatusOK, "logLogin.html", gin.H{
 		"code": 1,
 		"msg":  "ok",
 	})

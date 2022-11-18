@@ -109,12 +109,20 @@ func match(path string, route Route) gin.HandlerFunc {
 			arguments[0] = reflect.ValueOf(c) // *gin.Context
 			//注册Session
 			session := sessions.Default(c)
-			v := session.Get("sid")
+			var count int
+			v := session.Get("count")
 			if v == nil {
-				// 判断是否已注册SessionID
-				session.Set("sid", session.ID())
-				session.Save()
+				count = 0
+			} else {
+				count = v.(int)
+				count++
 			}
+			log.Println("count=", count)
+			session.Set("count", count)
+			session.Save()
+			/******** 临时手动注册用户 start *******/
+			session.Set("user", "{\"id\":1,\"username\":\"mage\"}")
+			/******** 临时手动注册用户 end *******/
 			//判断后台请求 未登录则跳转到登录页面
 			uData := session.Get("user")
 			log.Println("user=", uData)
@@ -122,6 +130,9 @@ func match(path string, route Route) gin.HandlerFunc {
 				//判断是否已登录
 				if uData == nil {
 					c.Redirect(http.StatusFound, "/admin/login/index")
+				} else {
+					//更新cookie失效时间
+
 				}
 			} else if path == "/admin/login/index" {
 				if uData != nil {

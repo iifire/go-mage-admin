@@ -35,7 +35,7 @@
     <div class="clr"></div>
 </div>
 <script>
-new Vue({
+let vueHeader = new Vue({
     el: '#header',
     data() {
         return {
@@ -43,23 +43,22 @@ new Vue({
         }
     },
     methods: {
-        getHeader(pid) {
-            axios.get('/admin/page/header?pid='+pid).then((res) =>{
+        getHeader() {
+            axios.get('/admin/page/header').then((res) =>{
                 var _d = res.data.data;
                 if(res.data.code==1) {
-                    if ()
                     this.menus = _d
                 }
             }).catch(function (err) {
                 console.log(err);
             });
         },
-        switchMenu() {
-            this.getHeader();
+        switchMenu(item) {
+            vueLeft.switchMenu(item.menu_id)
         }
     },
     created() {
-        this.getHeader(0);
+        this.getHeader();
     }
 })
 </script>

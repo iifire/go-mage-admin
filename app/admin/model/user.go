@@ -2,10 +2,14 @@ package model
 
 import (
 	"go-mage-admin/app/core"
+	"go-mage-admin/app/core/model"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type User struct {
+	//匿名继承
+	model.Collection
 	UserId     int    `gorm:"primary_key" json:"user_id"`
 	Username   string `json:"username"`
 	Password   string `json:"password"`
@@ -45,4 +49,8 @@ func (user *User) Authenticate(username string, password string) (bool, string, 
 		msg = "用户名不存在！"
 	}
 	return flag, msg, u
+}
+func (user *User) GetCollection() (tx *gorm.DB) {
+	res := core.AppDb["read"].Find(&user)
+	return res
 }

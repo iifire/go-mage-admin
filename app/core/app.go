@@ -70,7 +70,14 @@ func (app *App) InitSession() {
 		AppGin.Use(sessions.Sessions(APPSid, store))
 	} else if AppConfig.Session.Storage == "redis" {
 		redisCfg := AppConfig.SessionRedis
-		storeRedis, e := redis.NewStore(redisCfg.Maxsize, "tcp", redisCfg.Host+":"+strconv.Itoa(redisCfg.Port), redisCfg.Password, []byte(AppConfig.Session.Key))
+
+		storeRedis, e := redis.NewStoreWithDB(redisCfg.Maxsize, "tcp", redisCfg.Host+":"+strconv.Itoa(redisCfg.Port), redisCfg.Password, strconv.Itoa(redisCfg.Db), []byte(AppConfig.Session.Key))
+		storeRedis.Options(sessions.Options{
+			Secure:   true,
+			SameSite: 4,
+			Path:     "/",
+			MaxAge:   AppConfig.Session.Lifetime,
+		})
 		if e != nil {
 			log.Panicln(e)
 			panic("Redis链接错误")

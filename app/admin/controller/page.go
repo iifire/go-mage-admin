@@ -32,3 +32,24 @@ func (p *Page) HeaderGET(c *gin.Context) {
 	})
 
 }
+
+// MenusGET 获取左侧菜单
+func (p *Page) MenusGET(c *gin.Context) {
+	pid, _ := c.GetQuery("pid")
+	if pid != "" {
+		menu := &model.Menu{}
+		topMenu := menu.GetSubMenus(pid)
+		//TODO... 权限校验
+		c.JSON(http.StatusOK, gin.H{
+			"code": 1,
+			"msg":  "ok",
+			"data": topMenu,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 0,
+			"msg":  "参数有误！",
+		})
+	}
+
+}

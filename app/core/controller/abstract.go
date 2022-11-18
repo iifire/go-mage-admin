@@ -12,11 +12,11 @@ type Abstract struct {
 	gin.Engine
 }
 
-func (a *Abstract) LoadLayout(moduleName string, isAlone bool, layoutName string) multitemplate.Renderer {
-	return a.loadTemplates(moduleName, isAlone, layoutName)
+func (a *Abstract) LoadLayout(moduleName string, isAlone bool, layoutName string, extraTpl []string) multitemplate.Renderer {
+	return a.loadTemplates(moduleName, isAlone, layoutName, extraTpl)
 }
 
-func (a *Abstract) loadTemplates(moduleName string, isAlone bool, layoutName string) multitemplate.Renderer {
+func (a *Abstract) loadTemplates(moduleName string, isAlone bool, layoutName string, extraTpl []string) multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
 	tplPrefix := "./templates/"
 	pathLayout := "templates/layouts/" + layoutName + ".html"
@@ -39,9 +39,7 @@ func (a *Abstract) loadTemplates(moduleName string, isAlone bool, layoutName str
 	if err != nil {
 		panic(err.Error())
 	}
-	log.Println(views)
-	// Generate our templates map from our layouts/ and includes/ directories
-	//pathLayout = strings.ReplaceAll()
+	//log.Println(views)
 	for _, v := range views {
 		includeCopy := make([]string, 0)
 		includeCopy = append(includeCopy, pathLayout)
@@ -49,7 +47,7 @@ func (a *Abstract) loadTemplates(moduleName string, isAlone bool, layoutName str
 		files := append(includeCopy, v)
 		files = append(files, includes...)
 
-		log.Println("files:", files)
+		//log.Println("files:", files)
 		r.AddFromFiles(filepath.Base(v), files...)
 	}
 	log.Println("r:", r)

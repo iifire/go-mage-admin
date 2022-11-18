@@ -1741,7 +1741,7 @@ table .progress {
     padding: 0 0 10px;
     position: relative;
     transition: all 0.3s ease 0s;
-    width: 150px;
+    width: 105px;
 }
 .navigation-header {
     color: #999;
@@ -1802,7 +1802,7 @@ table .progress {
 .navigation .menu > li > a {
     color: #CCC;
     display: block;
-    font-size: 15px;
+    font-size: 14px;
     height: 50px;
     line-height: 50px;
     overflow: hidden;
@@ -1810,13 +1810,7 @@ table .progress {
     transition: all 0.3s ease 0s;
     white-space: nowrap;
 }
-.navigation .menu > li > a i {
-    font-size: 17px;
-    margin-right: 10px !important;
-    color: #BBB;
-    line-height: 50px;
-    vertical-align: middle;
-}
+
 .navigation .menu > li > ul {
     background: #fff none repeat scroll 0 0;
     box-shadow: 1px 0 6px rgba(0, 0, 0, 0.2);
@@ -4532,7 +4526,7 @@ body,.app-wrap {
 }
 .header {
     width: 100%;
-    padding-left: 90px;
+    padding-left: 105px;
     z-index: 9;
 }
 .nav-bar {width:415px}
@@ -4541,27 +4535,23 @@ body,.app-wrap {
 .main-wrap > .box-account {box-shadow:none;}
 .navigation .logo {
     height: 65px;
-    margin-bottom:5px;
 }
 .navigation .logo a.home {
-    width: 90px;
-    background: #C7000A;
+    width: 100px;
     font-weight: bold;
     font-size: 20px;
-    font-family: "宋体";
     line-height: 65px;
     color: #FFF;
     text-align: center;
 }
 .header .logo > span {font-size:17px;}
 .navigation {
-    width:90px;
     background:#131736;
     position:fixed;
     z-index:999;
 }
 .main-wrap {
-    margin-left:95px;
+    margin-left:115px;
 }
 .navigation .menu > li {
     position: initial;
@@ -4577,20 +4567,18 @@ body,.app-wrap {
 .navigation .menu > li > a {
     text-align: left;
     line-height: 2em;
-    font-size: 15px;
     color: #FFF;
-    padding: 12px 10px 10px;
+    padding: 15px 12px;
     height: auto;
 }
 .navigation .menu > li > a i {
     line-height: 1.2em;
-    font-size:20px;
-    margin-right:5px !important;
+    margin-right:4px !important;
     color:#DDD;
-    font-size:16px;
+    font-size:14px;
 }
 .navigation .menu > li > ul {
-    left: 90px;
+    left: 100px;
     top: 50px;
     bottom: 0;
     width: 460px;

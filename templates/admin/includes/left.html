@@ -1,5 +1,43 @@
 {{define "left"}}
-<div class="navigation">
+<div class="navigation" id="left">
+    <div class="logo f-left">
+        <a class="home f-left" href="/admin/dashboard/index">MAGE</a>
+    </div>
+    <div class="clr"></div>
+    <ul class="menu">
+        <li class="parent level0" v-for="(item,idx) in menus" :key="idx">
+            <a :href="item.action" class="v-ajax"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.name}</span></a>
+            <ul>
 
+            </ul>
+        </li>
+    </ul>
 </div>
+<script>
+let vueLeft = new Vue({
+    el: '#left',
+    data() {
+        return {
+            menus:[],
+        }
+    },
+    methods: {
+        switchMenu(pid) {
+            axios.get('/admin/page/menus?pid='+pid).then((res) =>{
+                var _d = res.data.data;
+                if(res.data.code==1) {
+                    this.menus = _d
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+        },
+    },
+    computed: {
+        switch:function(pid) {
+
+        }
+    },
+})
+</script>
 {{end}}
