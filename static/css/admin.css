@@ -1582,6 +1582,8 @@ table .progress {
 .nav-indent a {
     color:#333;
     display: none;
+    line-height: 50px;
+    height:50px;
 }
 .nav-indent a.on {
     display:block;
@@ -1762,9 +1764,10 @@ table .progress {
     padding: 0 0 10px;
     position: relative;
     transition: all 0.3s ease 0s;
-    width: 105px;
+    width: 120px;
 }
 .navigation-header {
+    color: #999;
     color: #999;
     text-align: center;
     line-height: 40px;
@@ -1810,7 +1813,8 @@ table .progress {
     font-size:13px;
     border-radius: 0 30px 30px 0;
 }
-.navigation .menu {
+.navigation .menu-box {
+    border-top:1px solid #333;
 }
 .navigation .menu > li {
     position:relative;
@@ -1941,7 +1945,7 @@ table .progress {
 /********************** body ******************/
 .main-wrap {
     height:100%;
-    margin-left: 160px;
+    margin-left: 130px;
     position: relative;
     transition: all 0.3s ease 0s;
 }
@@ -4546,7 +4550,7 @@ body,.app-wrap {
 }
 .header {
     width: 100%;
-    padding-left: 105px;
+    padding-left: 120px;
     z-index: 9;
     height:92px;
 }
@@ -4555,34 +4559,42 @@ body,.app-wrap {
 .nav-m li > div {top:50px}
 .main-wrap > .box-account {box-shadow:none;}
 .navigation .logo {
-    height: 65px;
+    height: 92px;
+    width: 120px;
+    color: #FFF;
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: 1px solid #222;
 }
-.navigation .logo a.home {
+.navigation .logo h1,
+.navigation .logo h5 {margin:0;line-height: 1em}
+.navigation .logo a {
     width: 100px;
     font-weight: bold;
     font-size: 20px;
-    line-height: 65px;
+    line-height: 30px;
+
     color: #FFF;
     text-align: center;
 }
 .header .logo > span {font-size:17px;}
 .navigation {
-    background:#131736;
+    background:#28282D;
     position:fixed;
     z-index:999;
 }
 .main-wrap {
-    margin-left:115px;
+    margin-left:130px;
 }
 .navigation .menu > li {
     position: initial;
     margin-bottom:3px;
 }
-.navigation .menu:hover > li.active:hover > a, .navigation .menu > li.active > a, .navigation .menu > li:hover > a {
+.navigation .menu:hover > li.on:hover > a, .navigation .menu > li.on > a, .navigation .menu > li:hover > a {
     background:#394FF7;
 }
-.navigation .menu:hover > li.active:hover > a, .navigation .menu > li.active > a, .navigation .menu > li:hover > a,
-.navigation .menu:hover > li.active:hover > a > i, .navigation .menu > li.active > a > i, .navigation .menu > li:hover > a > i {
+.navigation .menu:hover > li.on:hover > a, .navigation .menu > li.on > a, .navigation .menu > li:hover > a,
+.navigation .menu:hover > li.on:hover > a > i, .navigation .menu > li.on > a > i, .navigation .menu > li:hover > a > i {
     color: #FFF;
 }
 .navigation .menu > li > a {
@@ -4599,8 +4611,8 @@ body,.app-wrap {
     font-size:14px;
 }
 .navigation .menu > li > ul {
-    left: 105px;
-    top: 50px;
+    left: 120px;
+    top: 92px;
     bottom: 0;
     width: 460px;
     padding: 10px 40px 20px;
@@ -4683,7 +4695,8 @@ body,.app-wrap {
     display: inline-block;
     float: left;
     font-size: 14px;
-    transition: color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
+    -webkit-transition:color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
+    transition:color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
 }
 .cmenu-item.home {padding:0 20px;}
 .cmenu-box .cmenu-item:last-child {
@@ -4742,4 +4755,15 @@ body,.app-wrap {
 }
 .cmenu.scroll .cmenu-ctl {
     display:block;
+}
+
+/***** reset element-ui *****/
+.el-table .el-table__fixed-header-wrapper th, .el-table .el-table__header-wrapper th {
+    word-break: break-word;
+    background-color: #f8f8f9;
+    color: #515a6e;
+    height: 40px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 0;
 }

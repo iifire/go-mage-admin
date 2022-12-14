@@ -81,7 +81,7 @@ $(function(){
         }
     })
     setTimeout(function(){
-        console.log("%c友情提醒,如发现异常访问将做IP屏蔽或封号处理 (o(╯□╰)o)"," font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', Helvetica, Arial, sans-serif;margin:.5em;padding:.25em 1em;border-radius:5em;font-size:1.75em;background:#C7000A;color:#F5F5F5;text-align:center;text-shadow:0 0 5px rgba(0,0,0,0.5);")
+        console.log("%c欢迎使用GoMageAdmin! (o(╯□╰)o)"," font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', Helvetica, Arial, sans-serif;margin:.5em;padding:.25em 1em;border-radius:5em;font-size:1.75em;background:#909399;color:#F5F5F5;text-align:center;text-shadow:0 0 5px rgba(0,0,0,0.5);")
     },2000)
 });
 var defaultDatePickerSetting = {

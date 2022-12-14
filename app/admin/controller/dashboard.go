@@ -3,8 +3,8 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	_admin "go-mage-admin/app/admin"
-	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/route"
+	mageApp "go-mage-admin/app/mage"
 	"net/http"
 )
 
@@ -21,7 +21,7 @@ type Dashboard struct {
 func (d *Dashboard) IndexGET(c *gin.Context) {
 	// 输出页面 调用对象来处理
 	admin := &Admin{}
-	core.AppGin.HTMLRender = admin.LoadLayout()
+	mageApp.AppGin.HTMLRender = admin.LoadLayout()
 	c.HTML(http.StatusOK, "dashboard.html", gin.H{
 		"code": 1,
 		"msg":  "ok",

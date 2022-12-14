@@ -9,6 +9,7 @@ import (
 	"go-mage-admin/app/admin/model"
 	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/route"
+	mageApp "go-mage-admin/app/mage"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
@@ -29,7 +30,7 @@ func (login *Login) IndexGET(c *gin.Context) {
 	admin := &Admin{}
 	admin.SetLayout("1column")
 
-	core.AppGin.HTMLRender = admin.LoadLayout()
+	mageApp.AppGin.HTMLRender = admin.LoadLayout()
 	s := sessions.Default(c)
 	//s.Set("sid", s.ID())
 	log.Println("session user = ", s.Get("user"))

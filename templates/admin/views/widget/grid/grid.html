@@ -1,21 +1,32 @@
 {{define "grid"}}
-<div class="grid">
+<div class="grid" id="grid">
     <div class="hor-scroll">
-        <table cellspacing="0" class="data grid-table" width="100%">
-            <thead>
-                <tr class="headings">
-                   <th>ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="empty-text">
-                    <td class="a-center" colspan="">未找到相关记录~</td>
-                </tr>
-            </tbody>
-        </table>
+        <el-table
+                :data="collection"
+                style="width: 100%"
+                :default-sort = "{prop: 'date', order: 'descending'}"
+        >
+            <el-table-column v-for="(column,idx) in columns" :index="idx"
+                    :prop="column.index"
+                    :label="column.header"
+                    :align="column.align"
+                    sortable
+                    :width="column.width">
+
+                    <template  slot-scope="scope">
+                        <div v-if="column.type=='options'">
+                            <el-tag size="medium" v-for="(v,k) in column.options" v-if="k==scope.row[column.index]">${v}</el-tag>
+                        </div>
+                        <div v-else>
+                            ${scope.row[column.index]}
+                        </div>
+                    </template>
+
+            </el-table-column>
+
+        </el-table>
     </div>
 </div>
-
 <div class="actions-box">
     <table cellspacing="0" class="actions">
         <tr>
@@ -27,7 +38,7 @@
                 </select>
             </td>
             <td class="pager a-right">
-                <span class="mr10">共 %d 个</span>
+                <span class="mr10">共个</span>
                 <span id="-total-count" class="no-display"></span>
                 <a href="#" title="" onclick="a.setPage('');return false;"><img src="/static/img/admin/pager_arrow_left.gif" alt="上一页" class="arrow"/></a>
                 <input type="text" name="page" value="1" class="input-text" onkeypress="a.inputPage(event, '10')"/>
@@ -40,4 +51,37 @@
         </tr>
     </table>
 </div>
+<!-- 使用Vue来渲染 封装el-table数据-->
+<script>
+const appGrid = new Vue({
+    el: '#grid',
+    data() {
+        return {
+            columns:[],
+            collection:[],
+        }
+    },
+    methods: {
+        formatter(row, column) {
+            return row.address;
+        },
+        // 异步加载
+        loadGrid() {
+            let data = new FormData();
+            axios.post('/admin/user/grid',data).then((res)=> {
+                if(res.data.code==1) {
+                    let _d = res.data.data;
+                    this.columns = _d.columns;
+                    this.collection = _d.collection;
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+        }
+    },
+    created() {
+        this.loadGrid();
+    }
+})
+</script>
 {{end}}

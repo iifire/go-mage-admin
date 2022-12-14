@@ -7,9 +7,10 @@
                 <a class="on"><i class="ift i-indent"></i></a>
                 <a class=""><i class="ift i-indent2"></i></a>
             </div>
+            {{.s1}}
             <ul class="nav-b f-left">
-                <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(item)">
-                    <a :class="{'on':curMenuId==item.menu_id}"><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.name}</a>
+                <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(idx,item.children)">
+                    <a :class="{'on':curMenuId==idx}"><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.title}</a>
                 </li>
             </ul>
         </div>
@@ -67,26 +68,27 @@ let vueHeader = new Vue({
         }
     },
     methods: {
-        getHeader() {
-            axios.get('/admin/page/header').then((res) =>{
+        getMenus() {
+            axios.get('/admin/page/menu').then((res) =>{
                 var _d = res.data.data;
                 if(res.data.code==1) {
-                    this.menus = _d
-                    vueLeft.switchMenu(this.menus[0].menu_id)
-                    this.curMenuId = this.menus[0].menu_id;
+                    this.menus = _d.menu
+                    if (this.menus.hasOwnProperty(this.curMenuId) && this.menus[this.curMenuId].hasOwnProperty('children')) {
+                        this.switchMenu(this.curMenuId,this.menus[this.curMenuId]['children'])
+                    }
                 }
             }).catch(function (err) {
                 console.log(err);
             });
         },
-        switchMenu(item) {
-            this.curMenuId = item.menu_id;
-            vueLeft.switchMenu(item.menu_id)
-
+        switchMenu(idx,childMenu) {
+            this.curMenuId = idx;
+            vueLeft.switchMenu(childMenu)
         }
     },
     created() {
-        this.getHeader();
+        this.curMenuId = $('#menu').val();
+        this.getMenus();
     }
 })
 </script>

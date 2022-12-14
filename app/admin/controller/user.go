@@ -3,9 +3,9 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	_admin "go-mage-admin/app/admin"
-	"go-mage-admin/app/admin/model"
-	"go-mage-admin/app/core"
+	"go-mage-admin/app/admin/block"
 	"go-mage-admin/app/core/route"
+	mageApp "go-mage-admin/app/mage"
 	"net/http"
 )
 
@@ -17,22 +17,30 @@ func init() {
 // User 后台首页
 type User struct {
 	// 继承控制器基类
+
 }
 
 // IndexGET 用户列表
 func (u *User) IndexGET(c *gin.Context) {
-	userModel := model.User{}
-	users := userModel.GetCollection()
 	admin := &Admin{}
-	admin.UseGridTpl()
 	tplName := "IndexGET"
-	core.AppGin.HTMLRender = admin.LoadWidgetLayout(tplName)
+	admin.UseGridTpl()
+	mageApp.AppGin.HTMLRender = admin.LoadWidgetLayout(tplName)
 	c.HTML(http.StatusOK, tplName, gin.H{
+		"code":    1,
+		"menu":    "system",
+		"menucur": "admin/user/index",
+		"msg":     "ok",
+	})
+}
+
+func (u *User) GridREQ(c *gin.Context) {
+	userGrid := block.UserGrid{}
+	userGrid.GetCollection()
+	c.JSON(http.StatusOK, gin.H{
 		"code": 1,
 		"msg":  "ok",
-		"grid": gin.H{
-			"collection": users,
-		},
+		"data": userGrid,
 	})
 }
 
@@ -41,7 +49,7 @@ func (u *User) EditGET(c *gin.Context) {
 	admin := &Admin{}
 	// 启用Grid模版来渲染
 	admin.UseFormTpl()
-	core.AppGin.HTMLRender = admin.LoadLayout()
+	mageApp.AppGin.HTMLRender = admin.LoadLayout()
 	c.HTML(http.StatusOK, "EditGET", gin.H{
 		"code": 1,
 		"msg":  "ok",

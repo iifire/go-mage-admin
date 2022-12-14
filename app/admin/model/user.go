@@ -4,7 +4,6 @@ import (
 	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/model"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -50,7 +49,11 @@ func (user *User) Authenticate(username string, password string) (bool, string, 
 	}
 	return flag, msg, u
 }
-func (user *User) GetCollection() (tx *gorm.DB) {
-	res := core.AppDb["read"].Find(&user)
-	return res
+func (user *User) GetCollection() []User {
+	var users []User
+	res := core.AppDb["read"].Find(&users)
+	if res.Error != nil {
+		panic("获取User失败")
+	}
+	return users
 }

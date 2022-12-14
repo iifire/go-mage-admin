@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<menu>
+    <!-- 追加到已有菜单 -->
+    <append>
+        <online>
+            <sort>110</sort>
+            <to>mall/customer</to>
+            <title>在线用户</title>
+            <action></action>
+        </online>
+        <cart>
+            <sort>120</sort>
+            <to>mall/customer</to>
+            <title>购物车商品</title>
+            <action></action>
+        </cart>
+    </append>
+</menu>

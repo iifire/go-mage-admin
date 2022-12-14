@@ -1,17 +1,19 @@
 {{define "left"}}
 <div class="navigation" id="left">
-    <div class="logo f-left">
-        <a class="home f-left" href="/admin/dashboard/index">MAGE</a>
+    <div class="logo">
+        <h1><a class="home" href="/admin/dashboard/index">GoMage</a></h1>
+        <h5 class="mt5">管理系统</h5>
     </div>
-    <div class="clr"></div>
-    <ul class="menu">
-        <li class="parent level0" v-for="(item,idx) in menus" :key="idx">
-            <a :href="item.action" class="v-ajax"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.name}</span></a>
-            <ul>
+    <div class="menu-box">
+        <ul class="menu">
+            <li class="parent level0" :class="{'on':curMenuId==item.action}" v-for="(item,idx) in menus" :key="idx">
+                <a :href="'/'+item.action" class="v-ajax"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.title}</span></a>
+                <ul v-if="item.children">
 
-            </ul>
-        </li>
-    </ul>
+                </ul>
+            </li>
+        </ul>
+    </div>
 </div>
 <script>
 let vueLeft = new Vue({
@@ -19,25 +21,17 @@ let vueLeft = new Vue({
     data() {
         return {
             menus:[],
+            curMenuId:'',
         }
     },
     methods: {
-        switchMenu(pid) {
-            axios.get('/admin/page/menus?pid='+pid).then((res) =>{
-                var _d = res.data.data;
-                if(res.data.code==1) {
-                    this.menus = _d
-                }
-            }).catch(function (err) {
-                console.log(err);
-            });
+        switchMenu(submenu) {
+            this.menus = submenu;
         },
     },
-    computed: {
-        switch:function(pid) {
-
-        }
-    },
+    created() {
+        this.curMenuId = $('#menucur').val();
+    }
 })
 </script>
 {{end}}

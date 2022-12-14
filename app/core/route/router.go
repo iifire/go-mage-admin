@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-mage-admin/app/core/helper"
+	mageApp "go-mage-admin/app/mage"
 	"log"
 	"net/http"
 	"reflect"
@@ -139,6 +140,7 @@ func match(path string, route Route) gin.HandlerFunc {
 					c.Redirect(http.StatusFound, "/admin/dashboard/index")
 				}
 			}
+			mageApp.AppGinContext = c
 			route.Method.Call(arguments)
 		}
 	}

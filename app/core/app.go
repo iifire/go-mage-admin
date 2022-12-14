@@ -1,21 +1,23 @@
 package core
 
 import (
+	"github.com/beevik/etree"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	mageApp "go-mage-admin/app/mage"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
 
-// AppGin 全局变量 controller action需要渲染模版时要给AppGin.HTMLRender赋值
-var AppGin *gin.Engine
+// AppDb 全局变量 controller action需要渲染模版时要给mageApp.AppGin.HTMLRender赋值
 var AppDb = make(map[string]*gorm.DB)
 var AppConfig *Config
 var APPSid string
@@ -26,6 +28,7 @@ type App struct {
 
 // Init 初始化工作
 func (app *App) Init(options map[string]interface{}) *App {
+	app.LoadModules()
 	//加载基础配置
 	app.config = Config{}
 	app.config.LoadBase(options)
@@ -34,6 +37,34 @@ func (app *App) Init(options map[string]interface{}) *App {
 	app.InitDb()
 	app.InitSession()
 	return app
+}
+
+// LoadModules 加载启用的模块
+func (app *App) LoadModules() {
+	root := "./etc/modules/"
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if strings.HasSuffix(path, ".xml") {
+			log.Println("path=", path)
+			doc := etree.NewDocument()
+			if err := doc.ReadFromFile(path); err != nil {
+				panic(err)
+			}
+			e := doc.SelectElement("module")
+			eName := e.SelectElement("name").Text()
+			eActive := e.SelectElement("active").Text()
+			//log.Println("name=", eName)
+			if eActive == "1" {
+				m := make(map[string]interface{})
+				m["name"] = eName
+				mageApp.AppModules[eName] = m
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
 }
 
 // InitDb 初始化Db
@@ -59,7 +90,7 @@ func (app *App) InitDb() {
 // InitSession 初始化Session
 func (app *App) InitSession() {
 	// 区分前台后台Session
-	urlPath := AppGin.BasePath()
+	urlPath := mageApp.AppGin.BasePath()
 	APPSid = "mage"
 	if strings.HasPrefix(urlPath, "/admin") {
 		APPSid = "admin"
@@ -67,7 +98,7 @@ func (app *App) InitSession() {
 	var store cookie.Store
 	if AppConfig.Session.Storage == "" || AppConfig.Session.Storage == "Cookie" {
 		store = cookie.NewStore([]byte(AppConfig.Session.Key))
-		AppGin.Use(sessions.Sessions(APPSid, store))
+		mageApp.AppGin.Use(sessions.Sessions(APPSid, store))
 	} else if AppConfig.Session.Storage == "redis" {
 		redisCfg := AppConfig.SessionRedis
 
@@ -82,7 +113,7 @@ func (app *App) InitSession() {
 			log.Panicln(e)
 			panic("Redis链接错误")
 		}
-		AppGin.Use(sessions.Sessions(APPSid, storeRedis))
+		mageApp.AppGin.Use(sessions.Sessions(APPSid, storeRedis))
 	} else {
 		panic("未正确设置Session Storage[Cookie/Redis]")
 	}
@@ -125,7 +156,9 @@ func (app *App) LoadTemplates(tplDir string) multitemplate.Renderer {
 // Run 运行主入口
 func (app *App) Run(options map[string]interface{}) {
 	g := gin.Default()
-	AppGin = *&g
+	//g.Delims("{[{", "}]}") // 自定义变量分隔
+	//router.SetFuncMap(template.FuncMap{ "formatAsDate": formatAsDate,}) //自定义模版函数 如日期格式化
+	mageApp.AppGin = *&g
 	app.Init(options)
 	//TODO... 全页缓存
 

@@ -1,3 +1,6 @@
+# github.com/beevik/etree v1.1.0
+## explicit
+github.com/beevik/etree
 # github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
 ## explicit
 github.com/boj/redistore
@@ -83,6 +86,9 @@ github.com/pelletier/go-toml/v2
 github.com/pelletier/go-toml/v2/internal/ast
 github.com/pelletier/go-toml/v2/internal/danger
 github.com/pelletier/go-toml/v2/internal/tracker
+# github.com/sbabiv/xml2map v1.2.1
+## explicit; go 1.17
+github.com/sbabiv/xml2map
 # github.com/stretchr/testify v1.8.0
 ## explicit; go 1.13
 # github.com/ugorji/go/codec v1.2.7
