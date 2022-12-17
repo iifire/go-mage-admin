@@ -122,21 +122,21 @@ func match(path string, route Route) gin.HandlerFunc {
 			session.Set("count", count)
 			session.Save()
 			/******** 临时手动注册用户 start *******/
-			session.Set("user", "{\"id\":1,\"username\":\"mage\"}")
+			session.Set("uid", 1)
 			/******** 临时手动注册用户 end *******/
 			//判断后台请求 未登录则跳转到登录页面
-			uData := session.Get("user")
-			log.Println("user=", uData)
+			uid := session.Get("uid")
+			log.Println("uid=", uid)
 			if strings.HasPrefix(path, "/admin") && path != "/admin/login/index" {
 				//判断是否已登录
-				if uData == nil {
+				if uid == nil {
 					c.Redirect(http.StatusFound, "/admin/login/index")
 				} else {
 					//更新cookie失效时间
 
 				}
 			} else if path == "/admin/login/index" {
-				if uData != nil {
+				if uid != nil {
 					c.Redirect(http.StatusFound, "/admin/dashboard/index")
 				}
 			}

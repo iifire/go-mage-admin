@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/gob"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -50,13 +49,7 @@ func (login *Login) SavePOST(c *gin.Context) {
 	flag, msg := sess.Login(username, password)
 	if flag {
 		s := sessions.Default(c)
-		gob.Register(model.SessionUserInfo{})
-		sessionUserInfo := &model.SessionUserInfo{
-			Id:       sess.User.UserId,
-			Username: sess.User.Username,
-		}
-
-		s.Set("user", sessionUserInfo)
+		s.Set("uid", sess.User.UserId)
 
 		if remember == "" {
 			//TODO... 会话级Session

@@ -814,11 +814,7 @@ button:focus {outline:0;}
     border:1px solid #394FF7;
 }
 
-table.actions button:hover {
-    background: #394FF7 none repeat scroll 0 0;
-    border:1px solid #394FF7;
-    color: #fff;
-}
+
 .validate-fail {
     border: 1px solid #eacc3d !important;
 }
@@ -1094,7 +1090,7 @@ table.actions button:hover {
     background:#FFF;
     padding:15px;
 }
-.box-account > .form-wrap  > .form-box {
+.box-admin > .form-wrap  > .form-box {
     padding:15px 15px 80px;
 }
 .dg-content .form-box {
@@ -1963,21 +1959,22 @@ table .progress {
     height: 15px;
     width: 15px;
 }
-.main-wrap > .box-account {
-    height: calc(100% - 30px);
+.main-wrap > .box-admin {
+    height: calc(100% - 102px);
     background: #FFF;
     overflow-y: auto;
     border: 1px solid #e5e5e5;
     box-shadow: 0 0 3px #DDD;
+    position: relative;
 }
-.main-white .main-wrap > .box-account {
+.main-white .main-wrap > .box-admin {
     background: #FFF;
     box-shadow: 0px 0px 2px rgba(68, 93, 192, 0.15);
 }
-.main-wrap > .box-account-grey {
+.main-wrap > .box-admin-grey {
     background-color:transparent;
 }
-.page-dashboard .main-wrap > .box-account {
+.page-dashboard .main-wrap > .box-admin {
     border:none;
 
 }
@@ -2465,13 +2462,12 @@ fieldset-wide .form-list .input-text {
 .tree-box .cat-tree > li {
     border:0;
 }
-.box-account-inner {
+.box-admin-inner {
     background:#fff none repeat scroll 0 0;
-    float: left;
-    min-height: 450px;
-    padding: 0 15px 10px;
+    padding: 0;
     width: 100%;
 }
+
 .data-table {}
 .data-table tr {
     line-height:1.5em;
@@ -2497,106 +2493,25 @@ fieldset-wide .form-list .input-text {
     vertical-align: middle;
     color:#333;
 }
-.box-account .grid {
+.box-admin .grid {
     width: 100%;
     background:#FFF;
 }
-.box-account .grid .h-scroll {
+.box-admin .grid .h-scroll {
     overflow-x: scroll !important;
 }
 
 table.actions {
     color: #333;
-    margin-top: 12px;
+    margin-top: 10px;
     width: 100%;
     margin-bottom: 0;
-}
-table.actions .chosen-box,
-table.actions .chosen-container,
-table.actions .chosen-container-single .chosen-single {
-    display: inline-block;
-    height: 28px;
-    line-height: 28px;
-    text-align: left;
-}
-table.actions .chosen-container-single .chosen-single div b {
-    background-position:2px 0;
-}
-table.actions .chosen-container-single .chosen-single span {
-    margin-right:35px;
-}
-table.actions .chosen-container-single .chosen-drop {
-    top: auto !important;
-    bottom: 27px;
-    box-shadow: none;
-    border-radius: 0;
-    border-top: 1px solid #DDD;
-    padding-top: 5px;
-    border-bottom:0;
-}
-table.actions .massact {
-    color:#666;
-    font-size: 13px;
-    line-height:28px;
-}
-table.actions .massact a {
-    margin: 0 5px 0 0;
-    color: #333;
-}
-
-table.actions .massact .outer-span {
-    display: inline-block;
-}
-table.actions .massact .form-box {
-    padding:0;
-}
-table.actions .massact-box {
-    height:28px;
-}
-table.actions .input-text {
-    background: #e9ecf3 none repeat scroll 0 0;
-    border: medium none;
-    box-shadow: none;
-    height: 20px;
-    line-height: 20px;
-    padding: 0 2px;
-    text-align: center;
-    width: 38px;
-    border-radius:0;
-    color: #333;
-}
-table.actions select {
-    border: 1px solid #DDD;
-    background: #FFF;
-    color: #333;
-    height: 28px;
-    line-height: 26px;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-    padding-left:8px;
 }
 
 .filter select {
     height: 28px;
     line-height: 28px;
     width:100%;
-}
-table.actions button {
-    background: #e9ecf3 none repeat scroll 0 0;
-    color: #333;
-    margin-left: 5px;
-    padding: 0px 10px;
-    line-height: 27px;
-    height: 28px;
-}
-table.actions .pager {
-    color: #333;
-    font-size: 13px;
-    height: 28px;
-    line-height: 28px;
-}
-table.actions .pager > span {
-    height: 28px;
-    line-height: 28px;
 }
 .grid .filter .input-text {
     border: 1px solid #eee;
@@ -3661,7 +3576,7 @@ button.Zebra_DatePicker_Icon_Inside_Left    { margin: 0 0 0 3px }
 
 
 /**** dashboard ********/
-.plat-dashboard-index .box-account {
+.plat-dashboard-index .box-admin {
     background: none;
     overflow-y: auto;
 }
@@ -3849,6 +3764,7 @@ button.Zebra_DatePicker_Icon_Inside_Left    { margin: 0 0 0 3px }
     right: 0;
     bottom: 0;
     position: absolute;
+    z-index: 999;
 }
 
 
@@ -4421,7 +4337,7 @@ table.form-list td .input-text{
 }
 
 /************** config *****************/
-.main-wrap > .box-account {
+.main-wrap > .box-admin {
     border:none;
 }
 .hide{
@@ -4557,7 +4473,7 @@ body,.app-wrap {
 .nav-bar {width:415px}
 .nav-bar .nav-m {float:right;}
 .nav-m li > div {top:50px}
-.main-wrap > .box-account {box-shadow:none;}
+.main-wrap > .box-admin {box-shadow:none;}
 .navigation .logo {
     height: 92px;
     width: 120px;
@@ -4758,6 +4674,22 @@ body,.app-wrap {
 }
 
 /***** reset element-ui *****/
+.grid-header {
+    padding:0 15px;
+}
+.grid-header .el-form-item {
+    margin-bottom: 12px;
+}
+.grid-header .el-form-item__label,
+.grid-header .el-form-item__content {
+    line-height: 28px;
+}
+.grid-header .el-button + .el-button {
+    margin-left: 4px;
+}
+#grid > .grid {
+    padding:0 15px;
+}
 .el-table .el-table__fixed-header-wrapper th, .el-table .el-table__header-wrapper th {
     word-break: break-word;
     background-color: #f8f8f9;
@@ -4765,5 +4697,5 @@ body,.app-wrap {
     height: 40px;
     font-size: 13px;
     font-weight: bold;
-    padding: 5px 0;
+    padding: 2px 0;
 }

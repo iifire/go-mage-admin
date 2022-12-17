@@ -1,17 +1,31 @@
 {{define "grid"}}
-<div class="grid" id="grid">
-    <div class="hor-scroll">
-        <el-table
-                :data="collection"
-                style="width: 100%"
-                :default-sort = "{prop: 'date', order: 'descending'}"
-        >
-            <el-table-column v-for="(column,idx) in columns" :index="idx"
-                    :prop="column.index"
-                    :label="column.header"
-                    :align="column.align"
-                    sortable
-                    :width="column.width">
+<div id="grid">
+    <div class="grid-header">
+        <el-form ref="form" :model="form" :inline="true">
+            <span v-for="(filter,idx) in headerFilters">
+                <el-form-item :label="filter.header" v-if="filter.type=='text'">
+                    <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
+                </el-form-item>
+            </span>
+            <span>
+                <el-button size="small" type="primary" icon="ift i-search f-left fs12">&nbsp;搜索</el-button>
+                <el-button size="small" icon="ift i-reset f-left fs12">&nbsp;重置</el-button>
+            </span>
+        </el-form>
+    </div>
+    <div class="grid">
+        <div class="hor-scroll">
+            <el-table
+                    :data="collection"
+                    style="width: 100%"
+                    :default-sort = "{prop: 'date', order: 'descending'}"
+            >
+                <el-table-column v-for="(column,idx) in columns" :index="idx"
+                                 :prop="column.index"
+                                 :label="column.header"
+                                 :align="column.align"
+                                 :sortable="column.sort?'custom' : false"
+                                 :width="column.width">
 
                     <template  slot-scope="scope">
                         <div v-if="column.type=='options'">
@@ -22,36 +36,37 @@
                         </div>
                     </template>
 
-            </el-table-column>
+                </el-table-column>
 
-        </el-table>
+            </el-table>
+        </div>
+    </div>
+    <div class="actions-box">
+        <table cellspacing="0" class="actions">
+            <tr>
+                <td class="massact a-left">
+                </td>
+                <td class="export a-left">
+                    <el-select placeholder="请选择" size="small" style="width:100px">
+                        <el-option label="XML" value="xml">XML</el-option>
+                    </el-select>
+                    <el-button type="info" size="small" plain>导出</el-button>
+                </td>
+                <td class="pager a-right">
+                    <el-pagination
+                            @size-change="pagerSizeChange"
+                            @current-change="pagerCurrentChange"
+                            :current-page="pager.cur"
+                            :page-sizes="[10, 20, 30, 50, 100, 200]"
+                            :page-size="10"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pager.total">
+                    </el-pagination>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
-<div class="actions-box">
-    <table cellspacing="0" class="actions">
-        <tr>
-            <td class="massact a-left">
-            </td>
-            <td class="export a-left">
-                <select class="" name="_export" id="_export" style="width:100px;">
-                    <option value="">XML</option>
-                </select>
-            </td>
-            <td class="pager a-right">
-                <span class="mr10">共个</span>
-                <span id="-total-count" class="no-display"></span>
-                <a href="#" title="" onclick="a.setPage('');return false;"><img src="/static/img/admin/pager_arrow_left.gif" alt="上一页" class="arrow"/></a>
-                <input type="text" name="page" value="1" class="input-text" onkeypress="a.inputPage(event, '10')"/>
-                <a href="#" title="下一页" onclick="a.setPage('2');return false;"><img src="/static/img/admin/pager_arrow_right.gif" alt="下一页" class="arrow"/></a>
-                <span class="mr10">/ %s 页</span>
-                <select name="size" onchange="a.loadByElement(this)">
-                    <option value="10" selected="selected">10 条/页</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-</div>
-<!-- 使用Vue来渲染 封装el-table数据-->
 <script>
 const appGrid = new Vue({
     el: '#grid',
@@ -59,11 +74,22 @@ const appGrid = new Vue({
         return {
             columns:[],
             collection:[],
+            headerFilters:[],
+            pager:{size:10,page:1,total:0},
+            form: {
+
+            },
+            pager: {
+                cur:1,
+            }
         }
     },
     methods: {
-        formatter(row, column) {
-            return row.address;
+        pagerSizeChange(p) {
+
+        },
+        pagerCurrentChange(p) {
+            console.log(`当前页: ${p}`);
         },
         // 异步加载
         loadGrid() {
@@ -73,6 +99,8 @@ const appGrid = new Vue({
                     let _d = res.data.data;
                     this.columns = _d.columns;
                     this.collection = _d.collection;
+                    this.headerFilters = _d.headerFilters
+                    this.pager = _d.pager
                 }
             }).catch(function (err) {
                 console.log(err);

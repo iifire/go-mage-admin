@@ -103,7 +103,7 @@ mage.admin = (function() {
         }
         $('.inner-wrap').css('height',h+'px').css('overflow','hidden');
         if ($('.hor-scroll').length) {
-            $('.hor-scroll').css('height',(h-$('.hor-scroll').offset().top-32)+'px').css('overflow-y','scroll');
+            $('.hor-scroll').css('height',(h-$('.hor-scroll').offset().top-75)+'px').css('overflow-y','scroll');
         }
 
     }

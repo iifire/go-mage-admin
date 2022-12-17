@@ -4,6 +4,7 @@ import (
 	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/model"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 type User struct {
@@ -49,11 +50,27 @@ func (user *User) Authenticate(username string, password string) (bool, string, 
 	}
 	return flag, msg, u
 }
-func (user *User) GetCollection() []User {
+func (user *User) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]User, int64) {
 	var users []User
-	res := core.AppDb["read"].Find(&users)
+	var total int64
+	db := core.AppDb["read"].Model(User{})
+
+	//多条件过滤
+	collection := model.Collection{}
+	db = collection.PrepareCollection(db, filters)
+	db2 := db
+	db.Count(&total)
+	db2.Debug()
+	res := collection.LoadCollection(db2, orders, page, size).Find(&users)
 	if res.Error != nil {
+		log.Println(res.Error)
 		panic("获取User失败")
 	}
-	return users
+	return users, total
+}
+
+// GetGridColumnsConfig 获取用户自定义的Grid
+func (user *User) GetGridColumnsConfig(uid int, gridCode string) []string {
+	configGrid := new(ConfigGrid).getConfig(uid, gridCode)
+	return configGrid
 }

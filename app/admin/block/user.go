@@ -6,94 +6,123 @@ import (
 	"go-mage-admin/app/admin/model"
 )
 
-var gridCode = helper.GridCodeUser
-
 type UserGrid struct {
-	Collection []model.User `json:"collection"`
-	Columns    ColumnsType  `json:"columns"`
+	Collection    []model.User           `json:"collection"`
+	Columns       ColumnsType            `json:"columns"`
+	MoreColumns   ColumnsType            `json:"moreColumns"`
+	HeaderFilters HeaderFiltersType      `json:"headerFilters"`
+	MoreFilters   MoreFiltersType        `json:"moreFilters"`
+	Code          string                 `json:"code"`
+	Pager         GridPager              `json:"pager"`
+	Orders        [2]string              `json:"orders"`
+	Filters       map[string]interface{} `json:"filters"`
 }
 
 func (g *UserGrid) PrepareCollection() {
-	g.Columns = make(ColumnsType, 0)
-	var users []model.User
 	user := &model.User{}
-	users = user.GetCollection()
-	g.Collection = users
+	g.Pager = GetGridPager()
+	g.Collection, g.Pager.Total = user.GetCollection(g.Filters, g.Orders, g.Pager.Page, g.Pager.Size)
 }
 
-func (g *UserGrid) GetCollection() []model.User {
+func (g *UserGrid) GetCollection() {
+	g.Columns = make(ColumnsType, 0)
+	g.MoreColumns = g.Columns
+	g.Code = helper.GridCodeUser
 	g.PrepareCollection()
 	g.PrepareColumns()
-	return g.Collection
+	g.GetHeaderFilters()
+	g.Columns, g.MoreFilters = PrepareGrid(g.Columns, g.Code)
 }
 
 func (g *UserGrid) PrepareColumns() {
-	g.Columns = append(g.Columns, map[string]interface{}{
-		"header":         "ID",
-		"align":          "center",
-		"width":          "120",
-		"index":          "user_id",
-		"default_column": true,
-		"options":        "",
+	g.Columns = append(g.Columns, ColumnType{
+		Header: "ID",
+		Align:  "center",
+		Width:  "120",
+		Index:  "user_id",
+		Show:   true,
+		Sort:   true,
 	})
-	g.Columns = append(g.Columns, map[string]interface{}{
-		"header":         "用户名",
-		"align":          "center",
-		"width":          "",
-		"index":          "username",
-		"default_column": true,
+	g.Columns = append(g.Columns, ColumnType{
+		Header: "用户名",
+		Align:  "center",
+		Width:  "",
+		Index:  "username",
+		Show:   true,
 	})
-	g.Columns = append(g.Columns, map[string]interface{}{
-		"header":         "邮箱",
-		"align":          "center",
-		"width":          "200",
-		"index":          "email",
-		"default_column": true,
+	g.Columns = append(g.Columns, ColumnType{
+		Header: "邮箱",
+		Align:  "center",
+		Width:  "200",
+		Index:  "email",
+		Show:   true,
+		Filter: true,
 	})
-	g.Columns = append(g.Columns, map[string]interface{}{
-		"header":         "状态",
-		"align":          "center",
-		"width":          "120",
-		"index":          "is_active",
-		"default_column": true,
-		"type":           "options",
-		"options":        gin.H{"0": "禁用", "1": "启用"},
+	g.Columns = append(g.Columns, ColumnType{
+		Header:  "状态",
+		Align:   "center",
+		Width:   "120",
+		Index:   "is_active",
+		Show:    true,
+		Filter:  true,
+		Type:    "options",
+		Options: gin.H{"0": "禁用", "1": "启用"},
+		Tag:     true,
+		Tags:    gin.H{"0": "info", "1": "success"}, //default success info danger warning
 	})
-	g.Columns = append(g.Columns, map[string]interface{}{
-		"header":         "创建日期",
-		"align":          "center",
-		"width":          "140",
-		"index":          "date_create",
-		"default_column": true,
-		"type":           "datetime",
-		"format":         "Y-m-d H:i:s",
+	g.Columns = append(g.Columns, ColumnType{
+		Header:    "创建日期",
+		Align:     "center",
+		Width:     "140",
+		Index:     "date_create",
+		Show:      false,
+		Filter:    true,
+		Type:      "datetime",
+		Format:    "Y-m-d H:i:s",
+		Timestamp: true,
+	})
+	g.Columns = append(g.Columns, ColumnType{
+		Header: "操作",
+		Align:  "center",
+		Width:  "140",
+		Index:  "action",
+		Type:   "action",
+		Fixed:  "right", //left, right
+		//使用renderer来渲染
 	})
 }
 
 // GetHeaderFilters 获取默认筛选项
 func (g *UserGrid) GetHeaderFilters() {
-	/*
-			$filters = array();
-			$filters[] = array(
-				"header"    => "",
-				"type"		=> "text",
-				"index"		=> "contract_query",
-				"placeholder" => "输入合同编号、名称...",
-				"style"	=> "width:220",
-			);
-			public function assignFilterValue($filterData) {
-		    	$filter   = $this->getParam($this->getVarNameFilter(), null);
+	g.HeaderFilters = append(g.HeaderFilters, gin.H{
+		"header":      "用户名",
+		"type":        "text",
+		"index":       "username",
+		"placeholder": "请输入用户名...",
+		"style":       "width:220px",
+	})
+	g.HeaderFilters = append(g.HeaderFilters, gin.H{
+		"header":      "",
+		"type":        "text",
+		"index":       "email",
+		"placeholder": "请输入邮箱地址..",
+		"style":       "width:220px",
+	})
 
-		        if (is_string($filter)) {
-		            $data = $this->helper("adminhtml")->prepareFilterString($filter);
-
-		            foreach ($filterData as &$_filter) {
-			    		if (array_key_exists($_filter["index"], $data)) {
-			    			$_filter["value"] = $data[$_filter["index"]];
-			    		}
-			    	}
-		        }
-			    return $filterData;
-		    }
-	*/
 }
+
+/*
+public function assignFilterValue($filterData) {
+	$filter   = $this->getParam($this->getVarNameFilter(), null);
+
+	if (is_string($filter)) {
+		$data = $this->helper("adminhtml")->prepareFilterString($filter);
+
+		foreach ($filterData as &$_filter) {
+			if (array_key_exists($_filter[Index], $data)) {
+				$_filter["value"] = $data[$_filter[Index]];
+			}
+		}
+	}
+	return $filterData;
+}*/
