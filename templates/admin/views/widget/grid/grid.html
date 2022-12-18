@@ -1,32 +1,85 @@
 {{define "grid"}}
 <div id="grid">
     <div class="grid-header">
-        <el-form ref="form" :model="form" :inline="true">
-            <span v-for="(filter,idx) in headerFilters">
-                <el-form-item :label="filter.header" v-if="filter.type=='text'">
-                    <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
-                </el-form-item>
-            </span>
-            <span>
-                <el-button size="small" type="primary" icon="ift i-search f-left fs12">&nbsp;搜索</el-button>
-                <el-button size="small" icon="ift i-reset f-left fs12">&nbsp;重置</el-button>
-            </span>
-        </el-form>
+        <div class="f-left">
+            <el-form ref="form" :model="form" :inline="true">
+                <span v-for="(filter,idx) in headerFilters">
+                    <el-form-item :label="filter.header" v-if="filter.type=='text'">
+                        <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
+                    </el-form-item>
+                </span>
+                <span>
+                    <el-button size="small" type="primary" icon="ift i-search f-left fs12">&nbsp;搜索</el-button>
+                    <el-button size="small" icon="ift i-reset f-left fs12">&nbsp;重置</el-button>
+                </span>
+            </el-form>
+        </div>
+        <div class="f-right grid-header-more">
+            <div class="f-left">
+                <ul>
+                    <li class="pr" :class="{'on':moreFilterShow}">
+                        <span class="el-dropdown-link more-hd" @click="toggleMoreFilters()"><i class="ift i-guolv mr5 fs14"></i>筛选项<i class="ift i-arrow-d2 ml5 fs12"></i></span>
+                    </li>
+                    <li class="pr" :class="{'on':allColumnShow}">
+                        <span class="el-dropdown-link more-hd" @click="toggleAllColumns()"><i class="ift i-config mr5 fs14"></i>展示栏目<i class="ift i-arrow-d2 ml5 fs12"></i></span>
+                        <div class="column-more pa" v-if="allColumnShow">
+                            <ul class="config-grid">
+                                <li v-for="(c,idx) in allColumns">
+                                    <el-checkbox v-model="c.show">${c.header}</el-checkbox>
+                                </li>
+                            </ul>
+                            <div class="clr"></div>
+                            <div class="btns a-right">
+                                <el-button size="small" @click="resetColumns()">重置</el-button>
+                                <el-button type="primary" size="small" @click="saveColumnConfig()">确认</el-button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="f-right ml20" v-if="buttons.length>0">
+                <ul>
+                    <li v-for="(btn,idx) in buttons" :key="idx">
+                        <el-button size="small" :class="btn.class"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
+                    </li>
+                </ul>
+            </div>
+            <div class="clr"></div>
+        </div>
+        <div class="clr"></div>
+        <div class="filter-more" v-if="moreFilterShow">
+            <el-form ref="form" :model="form" :inline="true">
+                <ul class="filter-grid">
+                    <li class="filter-item" v-for="(filter,idx) in moreFilters">
+                        <el-form-item :label="filter.header">
+                            <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
+                        </el-form-item>
+                    </li>
+                </ul>
+                <div class="clr"></div>
+                <div class="btns a-right">
+                    <el-button size="small" @click="toggleMoreFilters()">取消</el-button>
+                    <el-button size="small" type="primary">确认筛选</el-button>
+                </div>
+            </el-form>
+        </div>
     </div>
     <div class="grid">
         <div class="hor-scroll">
             <el-table
-                    :data="collection"
-                    style="width: 100%"
-                    :default-sort = "{prop: 'date', order: 'descending'}"
-            >
+                ref="gridTbl"
+                v-loading="loading"
+                @selection-change="selectionChange"
+                :data="collection"
+                style="width: 100%"
+                :default-sort = "{prop: 'date', order: 'descending'}">
+                <el-table-column type="selection" align="center" width="45" v-if="massAction.length>0"></el-table-column>
                 <el-table-column v-for="(column,idx) in columns" :index="idx"
-                                 :prop="column.index"
-                                 :label="column.header"
-                                 :align="column.align"
-                                 :sortable="column.sort?'custom' : false"
-                                 :width="column.width">
-
+                     :prop="column.index"
+                     :label="column.header"
+                     :align="column.align"
+                     :sortable="column.sort?'custom' : false"
+                     :width="column.width">
                     <template  slot-scope="scope">
                         <div v-if="column.type=='options'">
                             <el-tag size="medium" v-for="(v,k) in column.options" v-if="k==scope.row[column.index]">${v}</el-tag>
@@ -35,22 +88,30 @@
                             ${scope.row[column.index]}
                         </div>
                     </template>
-
                 </el-table-column>
-
             </el-table>
         </div>
     </div>
     <div class="actions-box">
         <table cellspacing="0" class="actions">
             <tr>
-                <td class="massact a-left">
-                </td>
-                <td class="export a-left">
-                    <el-select placeholder="请选择" size="small" style="width:100px">
-                        <el-option label="XML" value="xml">XML</el-option>
-                    </el-select>
-                    <el-button type="info" size="small" plain>导出</el-button>
+                <td class=" a-left">
+                    <span class="massact mr20" v-if="massAction.length>0">
+                        <el-checkbox v-model="checkedAll" size="small" class="mr10" @change="selectAll()">全选</el-checkbox>
+                        <span v-if="selection.length>0">
+                            <el-tag type="info">已选中<b class="c3">${selection.length}</b>项</el-tag>
+                        </span>
+                        <span v-for="(btn,idx) in massAction" :key="idx">
+                            <el-button size="small" :class="btn.class"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
+                        </span>
+                    </span>
+
+                    <span class="export " v-if="exports.length>0">
+                        <el-select size="small" style="width:100px" v-model="exportType" >
+                            <el-option :label="btn.label" :value="btn.url" v-for="(btn,idx) in exports" :key="idx"></el-option>
+                        </el-select>
+                        <el-button type="info" size="small" plain>导出</el-button>
+                    </span>
                 </td>
                 <td class="pager a-right">
                     <el-pagination
@@ -72,39 +133,118 @@ const appGrid = new Vue({
     el: '#grid',
     data() {
         return {
+            code:'',
             columns:[],
+            allColumns:[],
             collection:[],
             headerFilters:[],
+            moreFilters:[],
             pager:{size:10,page:1,total:0},
             form: {
 
             },
             pager: {
-                cur:1,
-            }
+                size:10,
+                page:1,
+                total:0,
+            },
+            buttons:[],
+            massAction:[],
+            exports:[],
+            exportType:'',
+            allColumnShow:false,
+            moreFilterShow:false,
+            selection:[],
+            checkedAll:false,
+            loading:false,
+
+            headerParams:{headers: {'Accept':'*/*','Content-Type': 'application/x-www-form-urlencoded'}},
         }
     },
     methods: {
-        pagerSizeChange(p) {
-
+        toggleMoreFilters() {
+            this.moreFilterShow = !this.moreFilterShow;
         },
-        pagerCurrentChange(p) {
-            console.log(`当前页: ${p}`);
+        toggleAllColumns() {
+            this.allColumnShow = !this.allColumnShow;
         },
-        // 异步加载
-        loadGrid() {
-            let data = new FormData();
-            axios.post('/admin/user/grid',data).then((res)=> {
-                if(res.data.code==1) {
-                    let _d = res.data.data;
-                    this.columns = _d.columns;
-                    this.collection = _d.collection;
-                    this.headerFilters = _d.headerFilters
-                    this.pager = _d.pager
+        resetColumns() {
+            axios.post('/admin/grid/configReset',{code:this.code}).then((res)=> {
+                if (res.data.code!=1) {
+                    tips(res.msg);
+                } else {
+                    window.location.reload();
                 }
             }).catch(function (err) {
                 console.log(err);
             });
+        },
+        saveColumnConfig() {
+            let _columns = [];
+            for (let i=0;i<this.allColumns.length;i++) {
+                if (this.allColumns[i].show) {
+                    _columns.push(this.allColumns[i].index);
+                }
+            }
+            if (_columns.length>0) {
+                axios.post('/admin/grid/configSave',{code:this.code,config:_columns},this.headerParams).then((res)=> {
+                    if (res.data.code!=1) {
+                        tips(res.data.msg);
+                    } else {
+                        window.location.reload();
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            } else {
+                this.resetColumns();
+            }
+        },
+        selectAll() {
+            this.$refs['gridTbl'].toggleAllSelection();
+        },
+        selectionChange(selection) {
+            if (selection.length==this.collection.length) {
+                this.checkedAll = true
+            } else {
+                this.checkedAll = false
+            }
+            this.selection = selection;
+        },
+        pagerSizeChange(size) {
+            this.pager.size = size;
+            this.pager.page = 1;
+            this.loadGrid();
+        },
+        pagerCurrentChange(page) {
+            this.pager.page = page;
+            this.loadGrid();
+        },
+        // 异步加载
+        loadGrid() {
+            this.loading = true;
+            let data = {};
+            data.page = this.pager.page;
+            data.size = this.pager.size;
+            axios.post('/admin/user/grid',data,this.headerParams).then((res)=> {
+                if(res.data.code==1) {
+                    let _d = res.data.data;
+                    this.code = _d.code;
+                    this.columns = _d.columns;
+                    this.allColumns = _d.allColumns;
+                    this.collection = _d.collection;
+                    this.headerFilters = _d.headerFilters
+                    this.moreFilters = _d.moreFilters
+                    this.pager = _d.pager
+                    this.buttons = _d.buttons ? _d.buttons : []
+                    this.massAction = _d.massAction ? _d.massAction : []
+                    this.exports = _d.exports ? _d.exports : []
+                    this.exportType = this.exports.length>0 ? this.exports[0].label : ''
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+            this.loading = false;
         }
     },
     created() {

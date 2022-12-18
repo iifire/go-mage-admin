@@ -9,13 +9,16 @@ import (
 type UserGrid struct {
 	Collection    []model.User           `json:"collection"`
 	Columns       ColumnsType            `json:"columns"`
-	MoreColumns   ColumnsType            `json:"moreColumns"`
+	AllColumns    ColumnsType            `json:"allColumns"`
 	HeaderFilters HeaderFiltersType      `json:"headerFilters"`
 	MoreFilters   MoreFiltersType        `json:"moreFilters"`
 	Code          string                 `json:"code"`
 	Pager         GridPager              `json:"pager"`
 	Orders        [2]string              `json:"orders"`
 	Filters       map[string]interface{} `json:"filters"`
+	Buttons       []ButtonType           `json:"buttons"`
+	MassAction    []ButtonType           `json:"massAction"`
+	Exports       []ButtonType           `json:"exports"`
 }
 
 func (g *UserGrid) PrepareCollection() {
@@ -26,11 +29,11 @@ func (g *UserGrid) PrepareCollection() {
 
 func (g *UserGrid) GetCollection() {
 	g.Columns = make(ColumnsType, 0)
-	g.MoreColumns = g.Columns
 	g.Code = helper.GridCodeUser
 	g.PrepareCollection()
 	g.PrepareColumns()
 	g.GetHeaderFilters()
+	g.PrepareExtra()
 	g.Columns, g.MoreFilters = PrepareGrid(g.Columns, g.Code)
 }
 
@@ -90,6 +93,7 @@ func (g *UserGrid) PrepareColumns() {
 		Fixed:  "right", //left, right
 		//使用renderer来渲染
 	})
+	g.AllColumns = g.Columns
 }
 
 // GetHeaderFilters 获取默认筛选项
@@ -108,21 +112,26 @@ func (g *UserGrid) GetHeaderFilters() {
 		"placeholder": "请输入邮箱地址..",
 		"style":       "width:220px",
 	})
-
 }
 
-/*
-public function assignFilterValue($filterData) {
-	$filter   = $this->getParam($this->getVarNameFilter(), null);
-
-	if (is_string($filter)) {
-		$data = $this->helper("adminhtml")->prepareFilterString($filter);
-
-		foreach ($filterData as &$_filter) {
-			if (array_key_exists($_filter[Index], $data)) {
-				$_filter["value"] = $data[$_filter[Index]];
-			}
-		}
-	}
-	return $filterData;
-}*/
+// PrepareExtra 渲染更多功能
+func (g *UserGrid) PrepareExtra() {
+	g.Buttons = append(g.Buttons, ButtonType{
+		Label: "新增",
+		Url:   "/admin/user/add",
+		Ajax:  true,
+		Class: "btn-blue",
+		Icon:  "plus",
+	})
+	g.MassAction = append(g.MassAction, ButtonType{
+		Label: "批量删除",
+		Url:   "/admin/user/massDel",
+		Ajax:  true,
+		Class: "btn-red",
+		Icon:  "delete",
+	})
+	g.Exports = append(g.Exports, ButtonType{
+		Label: "XML",
+		Url:   "/admin/user/exportXml",
+	})
+}

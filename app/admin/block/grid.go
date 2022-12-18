@@ -40,6 +40,13 @@ type ColumnType struct {
 	Fixed     string `json:"fixed"`
 }
 
+type ButtonType struct {
+	Label string `json:"label"`
+	Url   string `json:"url"`
+	Class string `json:"class"`
+	Ajax  bool   `json:"ajax"`
+	Icon  string `json:"icon"`
+}
 type ColumnsType = []ColumnType
 type HeaderFiltersType = []map[string]interface{}
 type MoreFiltersType = []ColumnType

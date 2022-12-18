@@ -18,6 +18,18 @@ type ConfigGrid struct {
 func (*ConfigGrid) TableName() string {
 	return "admin_config_grid"
 }
+func (cfg *ConfigGrid) Reset(uid int, code string) bool {
+	return cfg.Update(uid, code, "")
+}
+func (*ConfigGrid) Update(uid int, code string, configData string) bool {
+	var cfg ConfigGrid
+	result := core.AppDb["read"].Model(&cfg).Where("link_user = ? and link_code = ?", uid, code).Update("config", "")
+	if result.Error != nil {
+		return false
+	} else {
+		return true
+	}
+}
 
 // getConfig 获取一级菜单
 func (*ConfigGrid) getConfig(uid int, code string) []string {
