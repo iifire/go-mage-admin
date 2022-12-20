@@ -58,9 +58,9 @@ func (user *User) GetCollection(filters map[string]interface{}, orders [2]string
 	//多条件过滤
 	collection := model.Collection{}
 	db = collection.PrepareCollection(db, filters)
+	log.Println("filters:", filters)
 	db2 := db
-	db.Count(&total)
-	db2.Debug()
+	db.Debug().Count(&total)
 	res := collection.LoadCollection(db2, orders, page, size).Find(&users)
 	if res.Error != nil {
 		log.Println(res.Error)

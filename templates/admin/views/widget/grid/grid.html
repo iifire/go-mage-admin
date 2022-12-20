@@ -2,15 +2,15 @@
 <div id="grid">
     <div class="grid-header">
         <div class="f-left">
-            <el-form ref="form" :model="form" :inline="true">
+            <el-form ref="form" :inline="true">
                 <span v-for="(filter,idx) in headerFilters">
                     <el-form-item :label="filter.header" v-if="filter.type=='text'">
                         <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
                     </el-form-item>
                 </span>
                 <span>
-                    <el-button size="small" type="primary" icon="ift i-search f-left fs12">&nbsp;搜索</el-button>
-                    <el-button size="small" icon="ift i-reset f-left fs12">&nbsp;重置</el-button>
+                    <el-button size="small" type="primary" icon="ift i-search f-left fs12" @click="search">&nbsp;搜索</el-button>
+                    <el-button size="small" icon="ift i-reset f-left fs12" @click="searchReset">&nbsp;重置</el-button>
                 </span>
             </el-form>
         </div>
@@ -48,7 +48,7 @@
         </div>
         <div class="clr"></div>
         <div class="filter-more" v-if="moreFilterShow">
-            <el-form ref="form" :model="form" :inline="true">
+            <el-form ref="form" :inline="true">
                 <ul class="filter-grid">
                     <li class="filter-item" v-for="(filter,idx) in moreFilters">
                         <el-form-item :label="filter.header">
@@ -59,7 +59,7 @@
                 <div class="clr"></div>
                 <div class="btns a-right">
                     <el-button size="small" @click="toggleMoreFilters()">取消</el-button>
-                    <el-button size="small" type="primary">确认筛选</el-button>
+                    <el-button size="small" type="primary" @click="search">确认筛选</el-button>
                 </div>
             </el-form>
         </div>
@@ -140,14 +140,6 @@ const appGrid = new Vue({
             headerFilters:[],
             moreFilters:[],
             pager:{size:10,page:1,total:0},
-            form: {
-
-            },
-            pager: {
-                size:10,
-                page:1,
-                total:0,
-            },
             buttons:[],
             massAction:[],
             exports:[],
@@ -156,12 +148,20 @@ const appGrid = new Vue({
             moreFilterShow:false,
             selection:[],
             checkedAll:false,
-            loading:false,
-
+            loading:true,
             headerParams:{headers: {'Accept':'*/*','Content-Type': 'application/x-www-form-urlencoded'}},
         }
     },
     methods: {
+        search() {
+            this.loadGrid();
+        },
+        searchReset() {
+            for (let i=0;i<this.headerFilters.length;i++) {
+                this.headerFilters[i].value = "";
+            }
+            this.loadGrid();
+        },
         toggleMoreFilters() {
             this.moreFilterShow = !this.moreFilterShow;
         },
@@ -169,9 +169,9 @@ const appGrid = new Vue({
             this.allColumnShow = !this.allColumnShow;
         },
         resetColumns() {
-            axios.post('/admin/grid/configReset',{code:this.code}).then((res)=> {
+            axios.post('/admin/grid/configReset',{code:this.code},this.headerParams).then((res)=> {
                 if (res.data.code!=1) {
-                    tips(res.msg);
+                    tips(res.data.msg);
                 } else {
                     window.location.reload();
                 }
@@ -226,6 +226,21 @@ const appGrid = new Vue({
             let data = {};
             data.page = this.pager.page;
             data.size = this.pager.size;
+            data.filters = [];
+            for (let i=0;i<this.headerFilters.length;i++) {
+                let f = this.headerFilters[i]
+                if (f.value) {
+                    data.filters.push(f.index);
+                    data.filters.push(f.value);
+                }
+            }
+            for (let i=0;i<this.moreFilters.length;i++) {
+                let f = this.moreFilters[i]
+                if (f.value.trim()!=="") {
+                    data.filters.push(f.index);
+                    data.filters.push(f.value.trim());
+                }
+            }
             axios.post('/admin/user/grid',data,this.headerParams).then((res)=> {
                 if(res.data.code==1) {
                     let _d = res.data.data;
@@ -241,6 +256,7 @@ const appGrid = new Vue({
                     this.exports = _d.exports ? _d.exports : []
                     this.exportType = this.exports.length>0 ? this.exports[0].label : ''
                 }
+                this.loading = false;
             }).catch(function (err) {
                 console.log(err);
             });

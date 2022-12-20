@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -11,6 +10,7 @@ import (
 	"go-mage-admin/app/mage"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // init bootstrap初始化时调用 自动注册路由
@@ -56,10 +56,9 @@ func (g *Grid) ConfigSavePOST(c *gin.Context) {
 	session := sessions.Default(mage.AppGinContext)
 	uid, _ := strconv.Atoi(fmt.Sprintf("%v", session.Get("uid")))
 	code := mage.AppGinContext.DefaultPostForm("code", "")
-	configData, _ := mage.AppGinContext.GetPostFormArray("config")
+	configData, _ := mage.AppGinContext.GetPostFormArray("config[]")
 	if code != "" {
-		configStr, _ := json.Marshal(configData)
-		flag := config.Update(uid, code, string(configStr))
+		flag := config.Update(uid, code, strings.Join(configData, ","))
 		if flag {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 1,

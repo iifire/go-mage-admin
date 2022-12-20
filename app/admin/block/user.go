@@ -10,8 +10,8 @@ type UserGrid struct {
 	Collection    []model.User           `json:"collection"`
 	Columns       ColumnsType            `json:"columns"`
 	AllColumns    ColumnsType            `json:"allColumns"`
-	HeaderFilters HeaderFiltersType      `json:"headerFilters"`
-	MoreFilters   MoreFiltersType        `json:"moreFilters"`
+	HeaderFilters []FilterType           `json:"headerFilters"`
+	MoreFilters   []ColumnType           `json:"moreFilters"`
 	Code          string                 `json:"code"`
 	Pager         GridPager              `json:"pager"`
 	Orders        [2]string              `json:"orders"`
@@ -24,17 +24,19 @@ type UserGrid struct {
 func (g *UserGrid) PrepareCollection() {
 	user := &model.User{}
 	g.Pager = GetGridPager()
+	g.Filters = GetGridFilters(g.Columns)
 	g.Collection, g.Pager.Total = user.GetCollection(g.Filters, g.Orders, g.Pager.Page, g.Pager.Size)
 }
 
 func (g *UserGrid) GetCollection() {
 	g.Columns = make(ColumnsType, 0)
+	g.AllColumns = make(ColumnsType, 0)
 	g.Code = helper.GridCodeUser
-	g.PrepareCollection()
 	g.PrepareColumns()
+	g.PrepareCollection()
 	g.GetHeaderFilters()
 	g.PrepareExtra()
-	g.Columns, g.MoreFilters = PrepareGrid(g.Columns, g.Code)
+	g.Columns, g.AllColumns, g.MoreFilters = PrepareGrid(g.Columns, g.Code)
 }
 
 func (g *UserGrid) PrepareColumns() {
@@ -93,24 +95,25 @@ func (g *UserGrid) PrepareColumns() {
 		Fixed:  "right", //left, right
 		//使用renderer来渲染
 	})
-	g.AllColumns = g.Columns
 }
 
 // GetHeaderFilters 获取默认筛选项
 func (g *UserGrid) GetHeaderFilters() {
-	g.HeaderFilters = append(g.HeaderFilters, gin.H{
-		"header":      "用户名",
-		"type":        "text",
-		"index":       "username",
-		"placeholder": "请输入用户名...",
-		"style":       "width:220px",
+	g.HeaderFilters = append(g.HeaderFilters, FilterType{
+		Header:      "用户名",
+		Type:        "text",
+		Index:       "username",
+		Placeholder: "请输入用户名...",
+		Style:       "width:220px",
+		Value:       "",
 	})
-	g.HeaderFilters = append(g.HeaderFilters, gin.H{
-		"header":      "",
-		"type":        "text",
-		"index":       "email",
-		"placeholder": "请输入邮箱地址..",
-		"style":       "width:220px",
+	g.HeaderFilters = append(g.HeaderFilters, FilterType{
+		Header:      "",
+		Type:        "text",
+		Index:       "email",
+		Placeholder: "请输入邮箱地址..",
+		Style:       "width:220px",
+		Value:       "",
 	})
 }
 

@@ -2,6 +2,7 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"log"
 	"reflect"
 	"strings"
 )
@@ -15,10 +16,14 @@ func (c *Collection) PrepareCollection(db *gorm.DB, filters map[string]interface
 		vt := reflect.TypeOf(v)
 		switch vt.Kind() {
 		case reflect.Array, reflect.Slice:
-			if mv, ok := v.([]interface{}); ok && len(mv) == 2 {
-				expr, ok0 := mv[0].(string)
-				expv, ok1 := mv[1].(string)
-				if ok0 && ok1 {
+			log.Println("v:", v)
+			mv, ok := v.([2]string)
+			log.Println("ok:", ok)
+			log.Println("len(mv):", len(mv))
+			if ok && len(mv) == 2 {
+				expr := mv[0]
+				expv := mv[1]
+				if expr != "" {
 					//拼接SQL
 					db = AssembleSql(db, k, expr, expv)
 				}
@@ -64,7 +69,7 @@ func AssembleSql(db *gorm.DB, field string, expr string, value string) *gorm.DB 
 	} else if expr == "neq" {
 		db.Where(field+" != ?", value)
 	} else if expr == "like" {
-		db.Where(field+" like '%?%'", value)
+		db.Where(field+" like ?", "%"+value+"%")
 	} else if expr == "in" {
 		arr := strings.Split(value, "-")
 		db.Where(field+" in (?)", strings.Join(arr, ","))

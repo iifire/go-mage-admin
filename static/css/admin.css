@@ -2520,7 +2520,7 @@ table.actions {
     line-height: 23px;
     width: 100%;
 }
-.grid table { border:none;    table-layout: fixed;}
+.grid table { border:none;    table-layout: fixed;width:100% !important;}
 .grid th {
     background: #edeff9 none repeat scroll 0 0;
     border: 1px solid #e5e5e5;

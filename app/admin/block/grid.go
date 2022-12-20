@@ -38,6 +38,7 @@ type ColumnType struct {
 	Tags      gin.H  `json:"tags"`
 	Format    string `json:"format"`
 	Fixed     string `json:"fixed"`
+	Value     string `json:"value"`
 }
 
 type ButtonType struct {
@@ -47,13 +48,22 @@ type ButtonType struct {
 	Ajax  bool   `json:"ajax"`
 	Icon  string `json:"icon"`
 }
+
+type FilterType struct {
+	Header      string `json:"header"`
+	Type        string `json:"type"`
+	Index       string `json:"index"`
+	Placeholder string `json:"placeholder"`
+	Style       string `json:"style"`
+	Value       string `json:"value"`
+}
 type ColumnsType = []ColumnType
-type HeaderFiltersType = []map[string]interface{}
 type MoreFiltersType = []ColumnType
 
-func PrepareGrid(columns ColumnsType, gridCode string) (ColumnsType, MoreFiltersType) {
+func PrepareGrid(columns ColumnsType, gridCode string) (ColumnsType, ColumnsType, MoreFiltersType) {
 	var moreFilters MoreFiltersType
 	var columnsCopy ColumnsType
+	var allColumnsCopy ColumnsType
 	session := sessions.Default(mage.AppGinContext)
 	uid, _ := strconv.Atoi(fmt.Sprintf("%v", session.Get("uid")))
 	user := model.User{}
@@ -63,17 +73,32 @@ func PrepareGrid(columns ColumnsType, gridCode string) (ColumnsType, MoreFilters
 		if columnsCfg != nil && len(columnsCfg) > 0 {
 			if InMap(columnsCfgSet, column.Index) {
 				columnsCopy = append(columnsCopy, column)
+				if column.Type != "action" {
+					column.Show = true
+					allColumnsCopy = append(allColumnsCopy, column)
+				}
+			} else {
+				if column.Type == "action" {
+					columnsCopy = append(columnsCopy, column)
+				}
+				if column.Type != "action" {
+					column.Show = false
+					allColumnsCopy = append(allColumnsCopy, column)
+				}
 			}
 		} else {
-			if column.Show {
+			if column.Show || column.Type == "action" {
 				columnsCopy = append(columnsCopy, column)
+			}
+			if column.Type != "action" {
+				allColumnsCopy = append(allColumnsCopy, column)
 			}
 		}
 		if column.Filter {
 			moreFilters = append(moreFilters, column)
 		}
 	}
-	return columnsCopy, moreFilters
+	return columnsCopy, allColumnsCopy, moreFilters
 }
 
 // GetGridPager 获取分页对象
@@ -84,6 +109,28 @@ func GetGridPager() GridPager {
 	pager.Page = page
 	pager.Size = size
 	return pager
+}
+
+// GetGridFilters 获取过滤
+func GetGridFilters(columns ColumnsType) map[string]interface{} {
+	filters := make(map[string]interface{})
+	fs, _ := mage.AppGinContext.GetPostFormArray("filters[]")
+	if len(fs) > 1 {
+		i := 0
+		for ; i < len(fs); i++ {
+			for _, v := range columns {
+				if v.Index == fs[i] {
+					if v.Type == "" {
+						//TODO... 防SQL注入
+						filters[fs[i]] = [2]string{"like", fs[i+1]}
+					}
+					break
+				}
+			}
+			i++
+		}
+	}
+	return filters
 }
 func ConvertStrSlice2Map(sl []string) map[string]struct{} {
 	set := make(map[string]struct{}, len(sl))

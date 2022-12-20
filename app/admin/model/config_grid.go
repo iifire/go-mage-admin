@@ -1,9 +1,9 @@
 package model
 
 import (
-	"encoding/json"
 	"go-mage-admin/app/core"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type ConfigGrid struct {
@@ -23,7 +23,7 @@ func (cfg *ConfigGrid) Reset(uid int, code string) bool {
 }
 func (*ConfigGrid) Update(uid int, code string, configData string) bool {
 	var cfg ConfigGrid
-	result := core.AppDb["read"].Model(&cfg).Where("link_user = ? and link_code = ?", uid, code).Update("config", "")
+	result := core.AppDb["read"].Debug().Model(&cfg).Where("link_user = ? and link_code = ?", uid, code).Update("config", configData)
 	if result.Error != nil {
 		return false
 	} else {
@@ -42,9 +42,7 @@ func (*ConfigGrid) getConfig(uid int, code string) []string {
 		return nil
 	}
 	if cfg.Config != "" {
-		var s []string
-		json.Unmarshal([]byte(cfg.Config), &s)
-		return s
+		return strings.Split(cfg.Config, ",")
 	} else {
 		return nil
 	}
