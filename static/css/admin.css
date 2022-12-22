@@ -1006,14 +1006,55 @@ button:focus {outline:0;}
 .filter-more .filter-item {
     float: left;
     width: 26%;
-    padding-right: 35px;
+    padding-right: 60px;
     margin-bottom: 15px;
     height:65px;
+}
+.filter-more .el-form-item__content {
+    line-height: 32px;
 }
 .filter-more .filter-item.last { padding-right:0; width: 22%;}
 .filter-more .filter-item label {
     display:block;
+    text-align:left;
 }
+.filter-more .filter-item .el-form-item,
+.filter-more .filter-item .el-form-item__content,
+.filter-more .el-select,
+.filter-more .el-range-editor{
+    width: 100% !important;
+}
+.filter-more .number-range {
+    border:1px solid #DCDFE6;
+    height:32px;
+    padding:3px 10px;
+    border-radius: 4px;
+}
+.filter-more .number-range .el-input {
+    width: 44% !important;
+    display: inline-block;
+    float: left;
+    padding:0 !important;
+    line-height: 22px;
+}
+.filter-more .number-range .el-input__inner {
+    width:100%;
+    padding: 0 7px !important;
+    line-height:24px;
+    height:24px;
+    border: none;
+}
+.filter-more .number-range-separator {
+    width: 11% !important;
+    float: left;
+    display: inline-block !important;
+    line-height: 22px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 13px
+}
+.filter-more .el-date-editor .el-range-input {width:36% !important}
+.filter-more .el-date-editor .el-range-separator {width:11% !important;}
 .filter-more .search-bar > input[type="text"] {
     width:100% !important;
 }
@@ -1113,7 +1154,9 @@ table .progress {
     border: 1px solid #DDD;
     padding: 20px;
 }
-
+.el-picker-panel__icon-btn {
+    padding:2px 5px;
+}
 /********************** d-box **********************/
 .d-box,
 .h-box,
@@ -4677,6 +4720,11 @@ body,.app-wrap {
 }
 .grid-header .el-form-item {
     margin-bottom: 12px;
+}
+.grid-header .filter-grid .el-form-item,
+.grid-header .filter-grid .el-form-item__content,
+.grid-header .filter-grid .el-form-item__content > div {
+    width:100%;
 }
 .grid-header .el-form-item__label,
 .grid-header .el-form-item__content {

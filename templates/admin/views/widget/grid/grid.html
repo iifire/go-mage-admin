@@ -1,12 +1,14 @@
 {{define "grid"}}
 <div id="grid">
     <div class="grid-header">
-        <div class="f-left">
+        <div class="f-left" v-if="hasFilterHeader">
             <el-form ref="form" :inline="true">
-                <span v-for="(filter,idx) in headerFilters">
-                    <el-form-item :label="filter.header" v-if="filter.type=='text'">
-                        <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
-                    </el-form-item>
+                <span v-for="(c,idx) in allColumns">
+                    <span v-if="c.filter=='header'">
+                        <el-form-item :label="c.header" v-if="c.type=='text' || c.type==''">
+                            <el-input size="small" v-model="c.value" :placeholder="c.placeholder"></el-input>
+                        </el-form-item>
+                    </span>
                 </span>
                 <span>
                     <el-button size="small" type="primary" icon="ift i-search f-left fs12" @click="search">&nbsp;搜索</el-button>
@@ -17,7 +19,7 @@
         <div class="f-right grid-header-more">
             <div class="f-left">
                 <ul>
-                    <li class="pr" :class="{'on':moreFilterShow}">
+                    <li class="pr" :class="{'on':moreFilterShow}" v-if="hasFilterMore">
                         <span class="el-dropdown-link more-hd" @click="toggleMoreFilters()"><i class="ift i-guolv mr5 fs14"></i>筛选项<i class="ift i-arrow-d2 ml5 fs12"></i></span>
                     </li>
                     <li class="pr" :class="{'on':allColumnShow}">
@@ -47,25 +49,59 @@
             <div class="clr"></div>
         </div>
         <div class="clr"></div>
-        <div class="filter-more" v-if="moreFilterShow">
-            <el-form ref="form" :inline="true">
-                <ul class="filter-grid">
-                    <li class="filter-item" v-for="(filter,idx) in moreFilters">
-                        <el-form-item :label="filter.header">
-                            <el-input size="small" v-model="filter.value" :placeholder="filter.placeholder"></el-input>
-                        </el-form-item>
-                    </li>
-                </ul>
-                <div class="clr"></div>
-                <div class="btns a-right">
-                    <el-button size="small" @click="toggleMoreFilters()">取消</el-button>
-                    <el-button size="small" type="primary" @click="search">确认筛选</el-button>
-                </div>
-            </el-form>
-        </div>
+
     </div>
     <div class="grid">
         <div class="hor-scroll">
+            <div class="filter-more" v-if="moreFilterShow && hasFilterMore">
+                <el-form ref="form" :inline="true">
+                    <ul class="filter-grid">
+                        <li class="filter-item" v-for="(c,idx) in allColumns" v-if="c.filter=='more'">
+
+                            <el-form-item :label="c.header" v-if="c.type=='text' || c.type==''">
+                                <el-input size="small" v-model="c.value" :placeholder="c.placeholder"></el-input>
+                            </el-form-item>
+                            <el-form-item :label="c.header" v-if="c.type=='options'">
+                                <el-select v-model="c.value" :placeholder="c.placeholder" size="small">
+                                    <el-option label="不限" value=""></el-option>
+                                    <el-option v-for="(item,key) in c.options"
+                                               :key="key"
+                                               :label="item"
+                                               :value="key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item :label="c.header" v-if="c.type=='datetime'">
+                                <el-date-picker
+                                        type="daterange"
+                                        v-model="c.value"
+                                        size="small"
+                                        unlink-panels
+                                        range-separator="至"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期"
+                                        value-format="yyyy-MM-dd"
+                                        :picker-options="datePickerOptions">
+                                </el-date-picker>
+
+                            </el-form-item>
+                            <el-form-item :label="c.header" v-if="c.type=='number'">
+                                <div class="number-range">
+                                    <el-input v-model="c.from" placeholder="开始" size="small"></el-input>
+                                    <label class="number-range-separator">至</label>
+                                    <el-input v-model="c.to" placeholder="结束" size="small"></el-input>
+                                </div>
+
+                            </el-form-item>
+                        </li>
+                    </ul>
+                    <div class="clr"></div>
+                    <div class="btns a-right">
+                        <el-button size="small" @click="toggleMoreFilters()">取消</el-button>
+                        <el-button size="small" type="primary" @click="search">确认筛选</el-button>
+                    </div>
+                </el-form>
+            </div>
             <el-table
                 ref="gridTbl"
                 v-loading="loading"
@@ -137,8 +173,6 @@ const appGrid = new Vue({
             columns:[],
             allColumns:[],
             collection:[],
-            headerFilters:[],
-            moreFilters:[],
             pager:{size:10,page:1,total:0},
             buttons:[],
             massAction:[],
@@ -146,10 +180,40 @@ const appGrid = new Vue({
             exportType:'',
             allColumnShow:false,
             moreFilterShow:false,
+            hasFilterHeader:false,
+            hasFilterMore:false,
             selection:[],
             checkedAll:false,
             loading:true,
+
             headerParams:{headers: {'Accept':'*/*','Content-Type': 'application/x-www-form-urlencoded'}},
+            datePickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
         }
     },
     methods: {
@@ -157,13 +221,14 @@ const appGrid = new Vue({
             this.loadGrid();
         },
         searchReset() {
-            for (let i=0;i<this.headerFilters.length;i++) {
-                this.headerFilters[i].value = "";
+            for (let i=0;i<this.allColumns.length;i++) {
+                this.allColumns[i].value = "";
             }
             this.loadGrid();
         },
         toggleMoreFilters() {
             this.moreFilterShow = !this.moreFilterShow;
+            mage.admin.resizeBoard();
         },
         toggleAllColumns() {
             this.allColumnShow = !this.allColumnShow;
@@ -227,34 +292,89 @@ const appGrid = new Vue({
             data.page = this.pager.page;
             data.size = this.pager.size;
             data.filters = [];
-            for (let i=0;i<this.headerFilters.length;i++) {
-                let f = this.headerFilters[i]
-                if (f.value) {
-                    data.filters.push(f.index);
-                    data.filters.push(f.value);
-                }
-            }
-            for (let i=0;i<this.moreFilters.length;i++) {
-                let f = this.moreFilters[i]
-                if (f.value.trim()!=="") {
-                    data.filters.push(f.index);
-                    data.filters.push(f.value.trim());
+            for (let i=0;i<this.allColumns.length;i++) {
+                let f = this.allColumns[i]
+                if (f.type=="number") {
+                    if (f.from || f.to) {
+                        data.filters.push(f.index);
+                        data.filters.push(f.from+"_"+f.to);
+                    }
+                } else if(f.type=="datetime") {
+                    if (f.value[0] || f.value[1]) {
+                        data.filters.push(f.index);
+                        data.filters.push(f.value[0]+"_"+f.value[1]);
+                    }
+                } else if (f.type=="options") {
+                    if (f.multiple) {
+                        if (f.value.length>0) {
+                            data.filters.push(f.index);
+                            data.filters.push(f.value.join(","));
+                        }
+                    } else {
+                        if (f.value) {
+                            data.filters.push(f.index);
+                            data.filters.push(f.value);
+                        }
+                    }
+                } else if (f.type=="" || f.type=="text") {
+                    if (f.value) {
+                        data.filters.push(f.index);
+                        data.filters.push(f.value);
+                    }
                 }
             }
             axios.post('/admin/user/grid',data,this.headerParams).then((res)=> {
                 if(res.data.code==1) {
                     let _d = res.data.data;
+                    // 筛选等预处理
+                    for (let i in _d.allColumns) {
+                        if (_d.allColumns[i].type=="number") {
+                            _d.allColumns[i].from = "";
+                            _d.allColumns[i].to = "";
+                        } else {
+                            _d.allColumns[i].value = "";
+                        }
+                        for (let k in _d.filters) {
+                            if (_d.filters.hasOwnProperty(k) && _d.allColumns[i].index == k) {
+                                if (_d.allColumns[i].type=="number") {
+                                    let tmp = _d.filters[k][1].split("_")
+                                    _d.allColumns[i].from = tmp[0];
+                                    _d.allColumns[i].to = tmp[1];
+                                } else if (_d.allColumns[i].type=="datetime") {
+                                    let tmp = _d.filters[k][1].split("_")
+                                    _d.allColumns[i].value = [tmp[0],tmp[1]];
+                                } else if (_d.allColumns[i].type=="options") {
+                                    if (_d.allColumns[i].multiple) {
+                                        _d.allColumns[i].value = _d.filters[k][1].split(",");
+                                    } else {
+                                        _d.allColumns[i].value = _d.filters[k][1];
+                                    }
+                                } else if (_d.allColumns[i].type=="" || _d.allColumns[i].type=="text") {
+                                    _d.allColumns[i].value = _d.filters[k][1];
+                                }
+                            }
+                        }
+                        if (_d.allColumns[i].filter=="header") {
+                            this.hasFilterHeader = true;
+                        }
+                        if (_d.allColumns[i].filter=="more") {
+                            this.hasFilterMore = true;
+                        }
+                    }
+
+
                     this.code = _d.code;
                     this.columns = _d.columns;
                     this.allColumns = _d.allColumns;
                     this.collection = _d.collection;
-                    this.headerFilters = _d.headerFilters
-                    this.moreFilters = _d.moreFilters
                     this.pager = _d.pager
                     this.buttons = _d.buttons ? _d.buttons : []
                     this.massAction = _d.massAction ? _d.massAction : []
                     this.exports = _d.exports ? _d.exports : []
                     this.exportType = this.exports.length>0 ? this.exports[0].label : ''
+
+
+
                 }
                 this.loading = false;
             }).catch(function (err) {

@@ -60,7 +60,7 @@ func (c *Collection) LoadCollection(db *gorm.DB, orders [2]string, page int, siz
 //   - - array("lteq" => $value)
 func AssembleSql(db *gorm.DB, field string, expr string, value string) *gorm.DB {
 	if expr == "between" {
-		arr := strings.Split(value, "-")
+		arr := strings.Split(value, "_")
 		if len(arr) == 2 {
 			db.Where(field+" between ? and ?", arr[0], arr[1])
 		}
@@ -71,10 +71,10 @@ func AssembleSql(db *gorm.DB, field string, expr string, value string) *gorm.DB 
 	} else if expr == "like" {
 		db.Where(field+" like ?", "%"+value+"%")
 	} else if expr == "in" {
-		arr := strings.Split(value, "-")
+		arr := strings.Split(value, ",")
 		db.Where(field+" in (?)", strings.Join(arr, ","))
 	} else if expr == "nin" {
-		arr := strings.Split(value, "-")
+		arr := strings.Split(value, ",")
 		db.Where(field+" not in (?)", strings.Join(arr, ","))
 	} else if expr == "notnull" {
 		db.Where(field + " is not null")

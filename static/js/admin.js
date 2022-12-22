@@ -132,6 +132,7 @@ mage.admin = (function() {
         formatUrl:formatUrl,
         reset:reset,
         init:init,
+        resizeBoard:_resizeBoard,
     }
 })();
 $(function(){
