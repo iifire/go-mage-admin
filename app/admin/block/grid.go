@@ -35,10 +35,11 @@ type ColumnType struct {
 	Sort      bool   `json:"sort"`
 	Tag       bool   `json:"tag"`
 	Timestamp bool   `json:"timestamp"`
+	OnlyDate  bool   `json:"onlyDate"`
 	Options   gin.H  `json:"options"`
 	Tags      gin.H  `json:"tags"`
-	Format    string `json:"format"`
-	Fixed     string `json:"fixed"`
+
+	Fixed string `json:"fixed"`
 	//Value     string `json:"value"`
 	// 筛选属性
 	Filter      string `json:"filter"` //header|more
@@ -49,11 +50,13 @@ type ColumnType struct {
 
 // ButtonType 按钮类型
 type ButtonType struct {
-	Label string `json:"label"`
-	Url   string `json:"url"`
-	Class string `json:"class"`
-	Ajax  bool   `json:"ajax"`
-	Icon  string `json:"icon"`
+	Label      string `json:"label"`
+	Url        string `json:"url"`
+	Class      string `json:"class"`
+	Ajax       bool   `json:"ajax"`
+	Icon       string `json:"icon"`
+	Confirm    bool   `json:"confirm"`
+	ConfirmTxt string `json:"confirmTxt"`
 }
 
 // ColumnsType 列切片
@@ -136,7 +139,7 @@ func GetGridFilters(columns ColumnsType) map[string]interface{} {
 								tsEnd := ToTimeStamp(timeEndStr)
 								if timeStartStr != "" && timeEndStr != "" {
 									if tsStart != "" && tsEnd != "" {
-										filters[fs[i]] = [2]string{"between", tsStart + "-" + tsEnd}
+										filters[fs[i]] = [2]string{"between", tsStart + "_" + tsEnd}
 									}
 								} else if timeStartStr != "" && tsStart != "" {
 									filters[fs[i]] = [2]string{"gteq", tsStart}
@@ -146,7 +149,7 @@ func GetGridFilters(columns ColumnsType) map[string]interface{} {
 							} else {
 								//DB保存日期格式
 								if timeStartStr != "" && timeEndStr != "" {
-									filters[fs[i]] = [2]string{"between", timeStartStr + "-" + timeEndStr}
+									filters[fs[i]] = [2]string{"between", timeStartStr + "_" + timeEndStr}
 								} else if timeStartStr != "" {
 									filters[fs[i]] = [2]string{"gteq", timeStartStr}
 								} else if timeEndStr != "" {

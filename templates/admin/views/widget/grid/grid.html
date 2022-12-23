@@ -98,6 +98,7 @@
                     <div class="clr"></div>
                     <div class="btns a-right">
                         <el-button size="small" @click="toggleMoreFilters()">取消</el-button>
+                        <el-button size="small" type="info" @click="searchReset()">重置</el-button>
                         <el-button size="small" type="primary" @click="search">确认筛选</el-button>
                     </div>
                 </el-form>
@@ -118,7 +119,23 @@
                      :width="column.width">
                     <template  slot-scope="scope">
                         <div v-if="column.type=='options'">
-                            <el-tag size="medium" v-for="(v,k) in column.options" v-if="k==scope.row[column.index]">${v}</el-tag>
+                            <span v-if="column.tag">
+                                <el-tag size="medium" effect="dark" v-for="(v,k) in column.options" v-if="k==scope.row[column.index]"
+                                        :type="column.tags[k]">${v}</el-tag>
+                            </span>
+                            <span v-if="!column.tag">
+                                <span v-for="(v,k) in column.options" v-if="k==scope.row[column.index]">${v}</span>
+                            </span>
+                        </div>
+                        <div v-else-if="column.type=='datetime'">
+                            <span v-if="column.timestamp">
+                                <span v-if="column.onlyDate">${timestampToTime(scope.row[column.index],true)}</span>
+                                <span v-else>${timestampToTime(scope.row[column.index],false)}</span>
+                            </span>
+                            <span v-else>
+                                <span v-if="column.onlyDate">${scope.row[column.index].substr(0,10)}</span>
+                                <span v-else>${scope.row[column.index]}</span>
+                            </span>
                         </div>
                         <div v-else>
                             ${scope.row[column.index]}
@@ -138,10 +155,9 @@
                             <el-tag type="info">已选中<b class="c3">${selection.length}</b>项</el-tag>
                         </span>
                         <span v-for="(btn,idx) in massAction" :key="idx">
-                            <el-button size="small" :class="btn.class"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
+                            <el-button size="small" :class="btn.class" @click="massActionDo(btn)"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
                         </span>
                     </span>
-
                     <span class="export " v-if="exports.length>0">
                         <el-select size="small" style="width:100px" v-model="exportType" >
                             <el-option :label="btn.label" :value="btn.url" v-for="(btn,idx) in exports" :key="idx"></el-option>
@@ -170,6 +186,7 @@ const appGrid = new Vue({
     data() {
         return {
             code:'',
+            pk:'',
             columns:[],
             allColumns:[],
             collection:[],
@@ -275,6 +292,42 @@ const appGrid = new Vue({
                 this.checkedAll = false
             }
             this.selection = selection;
+            console.log(selection);
+        },
+        massActionDo(btn) {
+            let len = this.selection.length
+            let idArr = []
+            if (len<1) {
+                this.$message({
+                    type: 'info',
+                    message: '请至少选择一项！',
+                });
+                return;
+            }
+            for (let i=0;i<len;i++) {
+                idArr.push(this.selection[i][this.pk])
+            }
+            this.$confirm((btn.confirmTxt ? btn.confirmTxt : '当前已选择'+len+'项记录，您确认要批量操作吗？'), '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                axios.post(btn.url, {"ids":idArr},this.headerParams).then((res)=> {
+                    if(res.data.code==1) {
+                        this.$message({
+                            type: 'success',
+                            message: res.data.msg,
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                    this.loadGrid()
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }).catch(() => {
+                //nothing to do
+            });
         },
         pagerSizeChange(size) {
             this.pager.size = size;
@@ -306,7 +359,7 @@ const appGrid = new Vue({
                     }
                 } else if (f.type=="options") {
                     if (f.multiple) {
-                        if (f.value.length>0) {
+                        if (Array.isArray(f.value) && f.value.length>0) {
                             data.filters.push(f.index);
                             data.filters.push(f.value.join(","));
                         }
@@ -323,6 +376,7 @@ const appGrid = new Vue({
                     }
                 }
             }
+
             axios.post('/admin/user/grid',data,this.headerParams).then((res)=> {
                 if(res.data.code==1) {
                     let _d = res.data.data;
@@ -334,6 +388,9 @@ const appGrid = new Vue({
                         } else {
                             _d.allColumns[i].value = "";
                         }
+                        if (_d.allColumns[i].type=="datetime") {
+
+                        }
                         for (let k in _d.filters) {
                             if (_d.filters.hasOwnProperty(k) && _d.allColumns[i].index == k) {
                                 if (_d.allColumns[i].type=="number") {
@@ -342,7 +399,14 @@ const appGrid = new Vue({
                                     _d.allColumns[i].to = tmp[1];
                                 } else if (_d.allColumns[i].type=="datetime") {
                                     let tmp = _d.filters[k][1].split("_")
-                                    _d.allColumns[i].value = [tmp[0],tmp[1]];
+                                    if (tmp.length==2) {
+                                        if (_d.allColumns[i].timestamp) {
+                                            _d.allColumns[i].value = [timestampToTime(tmp[0],true)+"T00:00:00.000Z",timestampToTime(tmp[1],true)+"T23:59:59.000Z"];
+                                        } else {
+                                            _d.allColumns[i].value = [tmp[0]+"T00:00:00.000Z",tmp[1]+"T23:59:59.000Z"];
+                                        }
+
+                                    }
                                 } else if (_d.allColumns[i].type=="options") {
                                     if (_d.allColumns[i].multiple) {
                                         _d.allColumns[i].value = _d.filters[k][1].split(",");
@@ -361,9 +425,8 @@ const appGrid = new Vue({
                             this.hasFilterMore = true;
                         }
                     }
-
-
                     this.code = _d.code;
+                    this.pk = _d.pk;
                     this.columns = _d.columns;
                     this.allColumns = _d.allColumns;
                     this.collection = _d.collection;

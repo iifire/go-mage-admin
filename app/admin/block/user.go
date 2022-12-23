@@ -11,6 +11,7 @@ type UserGrid struct {
 	Columns    ColumnsType            `json:"columns"`
 	AllColumns ColumnsType            `json:"allColumns"`
 	Code       string                 `json:"code"`
+	Pk         string                 `json:"pk"`
 	Pager      GridPager              `json:"pager"`
 	Orders     [2]string              `json:"orders"`
 	Filters    map[string]interface{} `json:"filters"`
@@ -30,6 +31,7 @@ func (g *UserGrid) GetCollection() {
 	g.Columns = make(ColumnsType, 0)
 	g.AllColumns = make(ColumnsType, 0)
 	g.Code = helper.GridCodeUser
+	g.Pk = "user_id"
 	g.PrepareColumns()
 	g.PrepareCollection()
 	g.PrepareExtra()
@@ -86,7 +88,7 @@ func (g *UserGrid) PrepareColumns() {
 		Show:      false,
 		Filter:    "more",
 		Type:      "datetime",
-		Format:    "Y-m-d H:i:s",
+		OnlyDate:  true,
 		Timestamp: true,
 	})
 	g.Columns = append(g.Columns, ColumnType{

@@ -74,3 +74,14 @@ func (user *User) GetGridColumnsConfig(uid int, gridCode string) []string {
 	configGrid := new(ConfigGrid).getConfig(uid, gridCode)
 	return configGrid
 }
+
+// DelByIds 批量删除
+func (user *User) DelByIds(ids []string) bool {
+	where := map[string]interface{}{}
+	where["user_id"] = ids
+	res := core.AppDb["write"].Debug().Where(where).Delete(&User{})
+	if res.Error != nil {
+		return false
+	}
+	return true
+}

@@ -71,11 +71,11 @@ func AssembleSql(db *gorm.DB, field string, expr string, value string) *gorm.DB 
 	} else if expr == "like" {
 		db.Where(field+" like ?", "%"+value+"%")
 	} else if expr == "in" {
-		arr := strings.Split(value, ",")
-		db.Where(field+" in (?)", strings.Join(arr, ","))
+		where := map[string]interface{}{}
+		where[field] = strings.Split(value, ",")
+		db.Where(where)
 	} else if expr == "nin" {
-		arr := strings.Split(value, ",")
-		db.Where(field+" not in (?)", strings.Join(arr, ","))
+		//TODO...
 	} else if expr == "notnull" {
 		db.Where(field + " is not null")
 	} else if expr == "null" {
