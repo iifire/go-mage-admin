@@ -18,6 +18,7 @@ type UserGrid struct {
 	Buttons    []ButtonType           `json:"buttons"`
 	MassAction []ButtonType           `json:"massAction"`
 	Exports    []ButtonType           `json:"exports"`
+	Renderers  map[string]interface{} `json:"renderers"`
 }
 
 func (g *UserGrid) PrepareCollection() {
@@ -25,6 +26,7 @@ func (g *UserGrid) PrepareCollection() {
 	g.Pager = GetGridPager()
 	g.Filters = GetGridFilters(g.Columns)
 	g.Collection, g.Pager.Total = user.GetCollection(g.Filters, g.Orders, g.Pager.Page, g.Pager.Size)
+	g.Renderers = g.PrepareRenderers(g.Collection)
 }
 
 func (g *UserGrid) GetCollection() {
@@ -50,22 +52,35 @@ func (g *UserGrid) PrepareColumns() {
 		Filter: "more",
 	})
 	g.Columns = append(g.Columns, ColumnType{
-		Header:      "用户名",
-		Align:       "center",
-		Width:       "",
-		Index:       "username",
-		Show:        true,
-		Filter:      "header",
-		Placeholder: "请输入用户名...",
+		Header:       "用户名",
+		Align:        "center",
+		Width:        "",
+		Index:        "username",
+		Show:         true,
+		Filter:       "header",
+		Placeholder:  "请输入用户名...",
+		Renderer:     true,
+		RendererType: "after",
 	})
 	g.Columns = append(g.Columns, ColumnType{
-		Header:      "邮箱",
+		Header:      "手机号",
 		Align:       "center",
 		Width:       "200",
-		Index:       "email",
+		Index:       "mobile",
 		Show:        true,
 		Filter:      "header",
-		Placeholder: "请输入邮箱...",
+		Placeholder: "请输入手机号...",
+	})
+	g.Columns = append(g.Columns, ColumnType{
+		Header:       "邮箱",
+		Align:        "center",
+		Width:        "200",
+		Index:        "email",
+		Show:         true,
+		Filter:       "more",
+		Placeholder:  "请输入邮箱...",
+		Renderer:     true,
+		RendererType: "replace",
 	})
 	g.Columns = append(g.Columns, ColumnType{
 		Header:      "状态",
@@ -91,13 +106,26 @@ func (g *UserGrid) PrepareColumns() {
 		OnlyDate:  true,
 		Timestamp: true,
 	})
+	actions := make([]ButtonType, 0)
+	actions = append(actions, ButtonType{
+		Label: "编辑",
+		Url:   "/admin/user/edit",
+		Ajax:  true,
+	})
+	actions = append(actions, ButtonType{
+		Label: "详情",
+		Url:   "/admin/user/view",
+	})
 	g.Columns = append(g.Columns, ColumnType{
-		Header: "操作",
-		Align:  "center",
-		Width:  "140",
-		Index:  "action",
-		Type:   "action",
-		Fixed:  "right", //left, right
+		Header:       "操作",
+		Align:        "center",
+		Width:        "140",
+		Index:        "action",
+		Type:         "action",
+		Fixed:        "right", //left, right
+		Actions:      actions,
+		Renderer:     true,
+		RendererType: "after",
 		//使用renderer来渲染
 	})
 }
@@ -122,4 +150,93 @@ func (g *UserGrid) PrepareExtra() {
 		Label: "XML",
 		Url:   "/admin/user/exportXml",
 	})
+}
+
+// PrepareRenderers 自定义渲染器
+func (g *UserGrid) PrepareRenderers(collection []model.User) map[string]interface{} {
+	renderers := make(map[string]interface{})
+	actionRenderers := make([]interface{}, 0)
+	emailRenderers := make([]interface{}, 0)
+	usernameRenderers := make([]interface{}, 0)
+	collectionCopy := make([]model.User, 0)
+	for _, item := range collection {
+		actionRds := make([]interface{}, 0)
+		if item.IsActive == 0 {
+			actionRds = append(actionRds, gin.H{
+				"type": "button",
+				"button": ButtonType{
+					Label: "启用",
+					Url:   "/admin/user/enable",
+					Ajax:  true,
+					Class: "",
+					Icon:  "",
+				},
+			})
+		} else {
+			actionRds = append(actionRds, gin.H{
+				"type": "button",
+				"button": ButtonType{
+					Label: "禁用",
+					Url:   "/admin/user/enable",
+					Ajax:  true,
+					Class: "",
+					Icon:  "",
+				},
+			})
+		}
+		if item.IsAdmin == 0 {
+			actionRds = append(actionRds, gin.H{
+				"type": "button",
+				"button": ButtonType{
+					Label: "设为管理员",
+					Url:   "/admin/user/addAdmin",
+					Ajax:  true,
+					Class: "",
+					Icon:  "",
+				},
+			})
+		} else {
+			actionRds = append(actionRds, gin.H{
+				"type": "button",
+				"button": ButtonType{
+					Label: "取消管理员",
+					Url:   "/admin/user/rmAdmin",
+					Ajax:  true,
+					Class: "",
+					Icon:  "",
+				},
+			})
+		}
+		actionRenderers = append(actionRenderers, actionRds)
+
+		usernameRds := make([]interface{}, 0)
+		if item.IsAdmin == 1 {
+			usernameRds = append(usernameRds, gin.H{
+				"type": "text",
+				"text": "<span class='ca'>[管理员]</span>",
+			})
+		}
+		usernameRenderers = append(usernameRenderers, usernameRds)
+
+		emailRds := make([]interface{}, 0)
+		if item.Email != "" {
+			emailRds = append(emailRds, gin.H{
+				"type": "text",
+				"text": "<a href='mailto:" + item.Email + "'>" + item.Email + "</a>",
+			})
+		}
+		emailRenderers = append(emailRenderers, emailRds)
+
+		//mobile 隐藏中间4位
+		if item.Mobile != "" {
+			item.Mobile = item.Mobile[:3] + "****" + item.Mobile[7:]
+		}
+
+		collectionCopy = append(collectionCopy, item)
+	}
+	renderers["action"] = actionRenderers
+	renderers["email"] = emailRenderers
+	renderers["username"] = usernameRenderers
+	g.Collection = collectionCopy
+	return renderers
 }

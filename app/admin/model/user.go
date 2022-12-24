@@ -13,8 +13,10 @@ type User struct {
 	UserId     int    `gorm:"primary_key" json:"user_id"`
 	Username   string `json:"username"`
 	Password   string `json:"password"`
+	Mobile     string `json:"mobile"`
 	Email      string `json:"email"`
 	DateCreate int    `json:"date_create"`
+	IsAdmin    int    `json:"is_admin"`
 	IsActive   int    `json:"is_active"`
 }
 

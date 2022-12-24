@@ -26,23 +26,26 @@ type GridPager struct {
 
 // ColumnType 列类型
 type ColumnType struct {
-	Header    string `json:"header"`
-	Align     string `json:"align"`
-	Width     string `json:"width"`
-	Index     string `json:"index"`
-	Type      string `json:"type"`
-	Show      bool   `json:"show"`
-	Sort      bool   `json:"sort"`
-	Tag       bool   `json:"tag"`
-	Timestamp bool   `json:"timestamp"`
-	OnlyDate  bool   `json:"onlyDate"`
-	Options   gin.H  `json:"options"`
-	Tags      gin.H  `json:"tags"`
+	Header       string       `json:"header"`
+	Align        string       `json:"align"`
+	Width        string       `json:"width"`
+	Index        string       `json:"index"`
+	Type         string       `json:"type"`
+	Show         bool         `json:"show"`
+	Sort         bool         `json:"sort"`
+	Tag          bool         `json:"tag"`
+	Timestamp    bool         `json:"timestamp"`
+	OnlyDate     bool         `json:"onlyDate"`
+	Options      gin.H        `json:"options"`
+	Tags         gin.H        `json:"tags"`
+	Actions      []ButtonType `json:"actions"`
+	Renderer     bool         `json:"renderer"`
+	RendererType string       `json:"rendererType"` //replace / before / after
 
 	Fixed string `json:"fixed"`
 	//Value     string `json:"value"`
 	// 筛选属性
-	Filter      string `json:"filter"` //header|more
+	Filter      string `json:"filter"` //header / more
 	Multiple    bool   `json:"multiple"`
 	Placeholder string `json:"placeholder"`
 	Style       string `json:"style"`
@@ -53,6 +56,7 @@ type ButtonType struct {
 	Label      string `json:"label"`
 	Url        string `json:"url"`
 	Class      string `json:"class"`
+	Type       string `json:"type"` //primary / success / warning / danger / info / text
 	Ajax       bool   `json:"ajax"`
 	Icon       string `json:"icon"`
 	Confirm    bool   `json:"confirm"`

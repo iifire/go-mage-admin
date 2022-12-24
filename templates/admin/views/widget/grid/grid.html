@@ -116,30 +116,88 @@
                      :label="column.header"
                      :align="column.align"
                      :sortable="column.sort?'custom' : false"
+
                      :width="column.width">
                     <template  slot-scope="scope">
-                        <div v-if="column.type=='options'">
-                            <span v-if="column.tag">
-                                <el-tag size="medium" effect="dark" v-for="(v,k) in column.options" v-if="k==scope.row[column.index]"
-                                        :type="column.tags[k]">${v}</el-tag>
+                        <span v-if="column.type!='action'">
+                            <span v-if="column.renderer && column.rendererType=='before' && renderers.hasOwnProperty(column.index) && renderers[column.index][scope.$index].length>0">
+                                <span v-for="(rd,idxRd) in renderers[column.index][scope.$index]" :key="idxRd">
+                                    <span v-if="rd.type=='text'" v-html="rd.text"></span>
+                                    <span v-if="rd.type=='button'">
+                                        <el-button size="mini" type="text" :class="rd.button.class"  @click="btnDo(rd.button,scope.row[pk])"><i v-if="rd.button.icon" class="f-left mr2 fs12 ift" :class="'i-'+rd.button.icon"></i>${rd.button.label}</el-button>
+                                    </span>
+                                </span>
                             </span>
-                            <span v-if="!column.tag">
-                                <span v-for="(v,k) in column.options" v-if="k==scope.row[column.index]">${v}</span>
-                            </span>
-                        </div>
-                        <div v-else-if="column.type=='datetime'">
-                            <span v-if="column.timestamp">
-                                <span v-if="column.onlyDate">${timestampToTime(scope.row[column.index],true)}</span>
-                                <span v-else>${timestampToTime(scope.row[column.index],false)}</span>
+                            <span v-if="column.renderer && column.rendererType=='replace' && renderers.hasOwnProperty(column.index) && renderers[column.index][scope.$index].length>0">
+                                <span v-for="(rd,idxRd) in renderers[column.index][scope.$index]" :key="idxRd">
+                                    <span v-if="rd.type=='text'" v-html="rd.text"></span>
+                                    <span v-if="rd.type=='button'">
+                                        <el-button size="mini" type="text"  :class="rd.button.class" @click="btnDo(rd.button,scope.row[pk])"><i v-if="rd.button.icon" class="f-left mr2 fs12 ift" :class="'i-'+rd.button.icon"></i>${rd.button.label}</el-button>
+                                    </span>
+                                </span>
                             </span>
                             <span v-else>
-                                <span v-if="column.onlyDate">${scope.row[column.index].substr(0,10)}</span>
-                                <span v-else>${scope.row[column.index]}</span>
+                                <span v-if="column.type=='options'">
+                                    <span v-if="column.tag">
+                                        <el-tag size="medium" effect="dark" v-for="(v,k) in column.options" v-if="k==scope.row[column.index]"
+                                                :type="column.tags[k]">${v}</el-tag>
+                                    </span>
+                                    <span v-if="!column.tag">
+                                        <span v-for="(v,k) in column.options" v-if="k==scope.row[column.index]">${v}</span>
+                                    </span>
+                                </span>
+                                <span v-else-if="column.type=='datetime'">
+                                    <span v-if="column.timestamp">
+                                        <span v-if="column.onlyDate">${timestampToTime(scope.row[column.index],true)}</span>
+                                        <span v-else>${timestampToTime(scope.row[column.index],false)}</span>
+                                    </span>
+                                    <span v-else>
+                                        <span v-if="column.onlyDate">${scope.row[column.index].substr(0,10)}</span>
+                                        <span v-else>${scope.row[column.index]}</span>
+                                    </span>
+                                </span>
+                                <span v-else>
+                                    ${scope.row[column.index]}
+                                </span>
                             </span>
-                        </div>
-                        <div v-else>
-                            ${scope.row[column.index]}
-                        </div>
+                            <span v-if="column.renderer && column.rendererType=='after' && renderers.hasOwnProperty(column.index) && renderers[column.index][scope.$index].length>0">
+                                <span v-for="(rd,idxRd) in renderers[column.index][scope.$index]" :key="idxRd">
+                                    <span v-if="rd.type=='text'" v-html="rd.text"></span>
+                                    <span v-if="rd.type=='button'">
+                                        <el-button size="mini" type="text" :class="rd.button.class"  @click="btnDo(rd.button,scope.row[pk])"><i v-if="rd.button.icon" class="f-left mr2 fs12 ift" :class="'i-'+rd.button.icon"></i>${rd.button.label}</el-button>
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                        <!-- action 列渲染 -->
+                        <span v-else>
+                            <el-dropdown>
+                              <span class="el-dropdown-link p10_15">
+                                  <i class="ift i-action-dot fs20"></i>
+                              </span>
+                              <el-dropdown-menu slot="dropdown">
+                                  <span v-if="column.renderer && column.rendererType=='before' && renderers.hasOwnProperty(column.index) && renderers[column.index][scope.$index].length>0">
+                                    <el-dropdown-item v-for="(rd,idxRd) in renderers[column.index][scope.$index]" :key="idxRd">
+                                        <span v-if="rd.type=='text'" v-html="rd.text"></span>
+                                        <span v-if="rd.type=='button'">
+                                            <el-button size="mini" type="text" class="wp100 a-left" :class="rd.button.class" @click="btnDo(rd.button,scope.row[pk])"><i v-if="rd.button.icon" class="f-left mr2 fs12 ift" :class="'i-'+rd.button.icon"></i>${rd.button.label}</el-button>
+                                        </span>
+                                    </el-dropdown-item>
+                                  </span>
+                                  <el-dropdown-item v-for="(btn,idxAct) in column.actions" :key="idxAct">
+                                    <el-button size="mini" type="text" class="wp100 a-left" :class="btn.class" @click="btnDo(btn,scope.row[pk])"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
+                                  </el-dropdown-item>
+                                  <span v-if="column.renderer && column.rendererType=='after' && renderers.hasOwnProperty(column.index) && renderers[column.index][scope.$index].length>0">
+                                    <el-dropdown-item v-for="(rd,idxRd) in renderers[column.index][scope.$index]" :key="idxRd">
+                                        <span v-if="rd.type=='text'" v-html="rd.text"></span>
+                                        <span v-if="rd.type=='button'">
+                                            <el-button size="mini" type="text" class="wp100 a-left" :class="rd.button.class" @click="btnDo(rd.button,scope.row[pk])"><i v-if="rd.button.icon" class="f-left mr2 fs12 ift" :class="'i-'+rd.button.icon"></i>${rd.button.label}</el-button>
+                                        </span>
+                                    </el-dropdown-item>
+                                  </span>
+                              </el-dropdown-menu>
+                            </el-dropdown>
+                        </span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -194,6 +252,7 @@ const appGrid = new Vue({
             buttons:[],
             massAction:[],
             exports:[],
+            renderers:[],
             exportType:'',
             allColumnShow:false,
             moreFilterShow:false,
@@ -338,6 +397,45 @@ const appGrid = new Vue({
             this.pager.page = page;
             this.loadGrid();
         },
+        btnDo(btn,id) {
+            if (btn.confirm) {
+                this.$confirm((btn.confirmTxt ? btn.confirmTxt : '您确认要操作吗？'), '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
+                        if(res.data.code==1) {
+                            this.$message({
+                                type: 'success',
+                                message: res.data.msg,
+                            });
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                        this.loadGrid()
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }).catch(() => {
+                    //nothing to do
+                });
+            } else {
+                axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
+                    if(res.data.code==1) {
+                        this.$message({
+                            type: 'success',
+                            message: res.data.msg,
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                    this.loadGrid()
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+        },
         // 异步加载
         loadGrid() {
             this.loading = true;
@@ -433,6 +531,7 @@ const appGrid = new Vue({
                     this.pager = _d.pager
                     this.buttons = _d.buttons ? _d.buttons : []
                     this.massAction = _d.massAction ? _d.massAction : []
+                    this.renderers = _d.renderers
                     this.exports = _d.exports ? _d.exports : []
                     this.exportType = this.exports.length>0 ? this.exports[0].label : ''
 
