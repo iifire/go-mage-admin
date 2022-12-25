@@ -46,18 +46,6 @@ func (c *Collection) LoadCollection(db *gorm.DB, orders [2]string, page int, siz
 }
 
 // AssembleSql 拼接SQL
-//   - - array("between" => $fromValue-$toValue)
-//   - - array("eq" => $value)
-//   - - array("neq" => $value)
-//   - - array("like" => $value)
-//   - - array("in" => $v1-$v2-$v3)
-//   - - array("nin" => $v1-$v2-$v3)
-//   - - array("notnull" => true)
-//   - - array("null" => true)
-//   - - array("gt" => $value)
-//   - - array("lt" => $value)
-//   - - array("gteq" => $value)
-//   - - array("lteq" => $value)
 func AssembleSql(db *gorm.DB, field string, expr string, value string) *gorm.DB {
 	if expr == "between" {
 		arr := strings.Split(value, "_")

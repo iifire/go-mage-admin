@@ -98,14 +98,51 @@
                 <action>admin/wxmedia/index</action>
                 <icon>ext-pic</icon>
             </media>
+        </children>
+    </wxapp>
+    <wxmp>
+        <title>公众号</title>
+        <sort>32</sort>
+        <icon>chat</icon>
+        <children>
+            <design>
+                <sort>10</sort>
+                <title>自动回复</title>
+                <action>admin/wxdesign/index</action>
+                <icon>tpl</icon>
+            </design>
+            <page>
+                <sort>20</sort>
+                <title>自定义菜单</title>
+                <action>admin/wxpage/index</action>
+                <icon>sdesc</icon>
+            </page>
+            <product>
+                <sort>30</sort>
+                <title>定时群发</title>
+                <action>admin/wxproduct/index</action>
+                <icon>product</icon>
+            </product>
+            <media>
+                <sort>40</sort>
+                <title>素材管理</title>
+                <action>admin/wxmedia/index</action>
+                <icon>ext-pic</icon>
+            </media>
             <mp>
                 <sort>50</sort>
-                <title>公众号</title>
+                <title>粉丝管理</title>
                 <action>admin/wxmp/index</action>
                 <icon>chat</icon>
             </mp>
+            <config>
+                <sort>60</sort>
+                <title>公众号设置</title>
+                <action>admin/wxmp/index</action>
+                <icon>chat</icon>
+            </config>
         </children>
-    </wxapp>
+    </wxmp>
     <system>
         <title>系统管理</title>
         <sort>40</sort>
@@ -133,6 +170,23 @@
                 <sort>40</sort>
                 <title>日志管理</title>
                 <icon>dir</icon>
+                <children>
+                    <login>
+                        <sort>10</sort>
+                        <title>登录日志</title>
+                        <action>admin/logLogin/index</action>
+                    </login>
+                    <op>
+                        <sort>20</sort>
+                        <title>操作日志</title>
+                        <action>admin/logOps/index</action>
+                    </op>
+                    <sms>
+                        <sort>30</sort>
+                        <title>短信日志</title>
+                        <action>admin/logSms/index</action>
+                    </sms>
+                </children>
             </log>
         </children>
     </system>

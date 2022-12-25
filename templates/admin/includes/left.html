@@ -9,7 +9,7 @@
             <li class="parent level0" :class="{'on':curMenuId==item.action}" v-for="(item,idx) in menus" :key="idx">
                 <a :href="'/'+item.action" class="v-ajax"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.title}</span></a>
                 <ul v-if="item.children">
-
+                    <li v-for="(child,idx2) in item.children"><a :href="'/'+child.action" class="v-ajax">${child.title}</a></li>
                 </ul>
             </li>
         </ul>

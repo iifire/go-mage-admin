@@ -20,10 +20,10 @@
             <div class="f-left">
                 <ul>
                     <li class="pr" :class="{'on':moreFilterShow}" v-if="hasFilterMore">
-                        <span class="el-dropdown-link more-hd" @click="toggleMoreFilters()"><i class="ift i-guolv mr5 fs14"></i>筛选项<i class="ift i-arrow-d2 ml5 fs12"></i></span>
+                        <span class="el-dropdown-link more-hd" @click="toggleMoreFilters()"><i class="ift i-guolv mr2 fs12"></i>筛选项<i class="ift i-arrow-d3 ml5 fs12"></i></span>
                     </li>
                     <li class="pr" :class="{'on':allColumnShow}">
-                        <span class="el-dropdown-link more-hd" @click="toggleAllColumns()"><i class="ift i-config mr5 fs14"></i>展示栏目<i class="ift i-arrow-d2 ml5 fs12"></i></span>
+                        <span class="el-dropdown-link more-hd" @click="toggleAllColumns()"><i class="ift i-config mr2 fs12"></i>展示栏目<i class="ift i-arrow-d3 ml5 fs12"></i></span>
                         <div class="column-more pa" v-if="allColumnShow">
                             <ul class="config-grid">
                                 <li v-for="(c,idx) in allColumns">
@@ -42,7 +42,7 @@
             <div class="f-right ml20" v-if="buttons.length>0">
                 <ul>
                     <li v-for="(btn,idx) in buttons" :key="idx">
-                        <el-button size="small" :class="btn.class"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
+                        <el-button size="small" :class="btn.class" @click="btnDo(btn,0)"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
                     </li>
                 </ul>
             </div>
@@ -107,9 +107,10 @@
                 ref="gridTbl"
                 v-loading="loading"
                 @selection-change="selectionChange"
+                @sort-change="sortChange"
                 :data="collection"
                 style="width: 100%"
-                :default-sort = "{prop: 'date', order: 'descending'}">
+                :default-sort = "defaultSort">
                 <el-table-column type="selection" align="center" width="45" v-if="massAction.length>0"></el-table-column>
                 <el-table-column v-for="(column,idx) in columns" :index="idx"
                      :prop="column.index"
@@ -249,6 +250,8 @@ const appGrid = new Vue({
             allColumns:[],
             collection:[],
             pager:{size:10,page:1,total:0},
+            orders:[],
+            defaultSort:{},
             buttons:[],
             massAction:[],
             exports:[],
@@ -351,7 +354,12 @@ const appGrid = new Vue({
                 this.checkedAll = false
             }
             this.selection = selection;
-            console.log(selection);
+            //console.log(selection);
+        },
+        sortChange( column) {
+            console.log(column);
+            this.orders = [column.prop,(column.order=='ascending' ? 'asc' : 'desc')]
+            this.loadGrid()
         },
         massActionDo(btn) {
             let len = this.selection.length
@@ -442,6 +450,11 @@ const appGrid = new Vue({
             let data = {};
             data.page = this.pager.page;
             data.size = this.pager.size;
+            console.log(this.orders);
+            if (this.orders.length==2 && this.orders[0] && this.orders[1]) {
+                data.sort = this.orders[0].trim();
+                data.order = this.orders[1].trim();
+            }
             data.filters = [];
             for (let i=0;i<this.allColumns.length;i++) {
                 let f = this.allColumns[i]
@@ -475,7 +488,7 @@ const appGrid = new Vue({
                 }
             }
 
-            axios.post('/admin/user/grid',data,this.headerParams).then((res)=> {
+            axios.post('/{{.urlGrid}}',data,this.headerParams).then((res)=> {
                 if(res.data.code==1) {
                     let _d = res.data.data;
                     // 筛选等预处理
@@ -523,12 +536,22 @@ const appGrid = new Vue({
                             this.hasFilterMore = true;
                         }
                     }
+                    if (_d.orders.length==2 && _d.orders[0] && _d.orders[1]) {
+                        if (_d.orders[1]=='asc') {
+                            _d.orders[1]='ascending';
+                        } else {
+                            _d.orders[1]='descending';
+                            this.default = {}
+                        }
+                        this.default = {'prop':_d.orders[0],'order':_d.orders[1]}
+                    }
                     this.code = _d.code;
                     this.pk = _d.pk;
                     this.columns = _d.columns;
                     this.allColumns = _d.allColumns;
                     this.collection = _d.collection;
                     this.pager = _d.pager
+                    this.order = _d.orders
                     this.buttons = _d.buttons ? _d.buttons : []
                     this.massAction = _d.massAction ? _d.massAction : []
                     this.renderers = _d.renderers

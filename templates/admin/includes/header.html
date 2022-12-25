@@ -10,7 +10,7 @@
             {{.s1}}
             <ul class="nav-b f-left">
                 <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(idx,item.children)">
-                    <a :class="{'on':curMenuId==idx}"><i class="ift i-apps" :class="`i-${item.icon}`"></i>${item.title}</a>
+                    <a :class="{'on':curMenuId==idx}"><i class="ift" :class="`i-${item.icon}`"></i>${item.title}</a>
                 </li>
             </ul>
         </div>

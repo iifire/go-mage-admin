@@ -51,13 +51,13 @@ type ColumnType struct {
 	Style       string `json:"style"`
 }
 
-// ButtonType 按钮类型
+// ButtonType 按钮类型 页面跳转
 type ButtonType struct {
 	Label      string `json:"label"`
 	Url        string `json:"url"`
 	Class      string `json:"class"`
-	Type       string `json:"type"` //primary / success / warning / danger / info / text
-	Ajax       bool   `json:"ajax"`
+	Type       string `json:"type"`   //link / popup / action / form / view
+	ElType     string `json:"elType"` //primary / success / warning / danger / info / text
 	Icon       string `json:"icon"`
 	Confirm    bool   `json:"confirm"`
 	ConfirmTxt string `json:"confirmTxt"`
@@ -112,6 +112,22 @@ func GetGridPager() GridPager {
 	pager.Page = page
 	pager.Size = size
 	return pager
+}
+
+// GetGridOrders 获取排序
+func GetGridOrders(columns ColumnsType) [2]string {
+	orders := [2]string{}
+	index := mage.AppGinContext.DefaultPostForm("sort", "")
+	order := mage.AppGinContext.DefaultPostForm("order", "")
+	if index != "" && (order == "asc" || order == "desc") {
+		for _, v := range columns {
+			if v.Sort && v.Index == index {
+				orders[0] = v.Index
+				orders[1] = order
+			}
+		}
+	}
+	return orders
 }
 
 // GetGridFilters 获取过滤

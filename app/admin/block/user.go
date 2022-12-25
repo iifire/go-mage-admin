@@ -24,6 +24,7 @@ type UserGrid struct {
 func (g *UserGrid) PrepareCollection() {
 	user := &model.User{}
 	g.Pager = GetGridPager()
+	g.Orders = GetGridOrders(g.Columns)
 	g.Filters = GetGridFilters(g.Columns)
 	g.Collection, g.Pager.Total = user.GetCollection(g.Filters, g.Orders, g.Pager.Page, g.Pager.Size)
 	g.Renderers = g.PrepareRenderers(g.Collection)
@@ -110,11 +111,12 @@ func (g *UserGrid) PrepareColumns() {
 	actions = append(actions, ButtonType{
 		Label: "编辑",
 		Url:   "/admin/user/edit",
-		Ajax:  true,
+		Type:  "form",
 	})
 	actions = append(actions, ButtonType{
 		Label: "详情",
 		Url:   "/admin/user/view",
+		Type:  "view",
 	})
 	g.Columns = append(g.Columns, ColumnType{
 		Header:       "操作",
@@ -135,14 +137,14 @@ func (g *UserGrid) PrepareExtra() {
 	g.Buttons = append(g.Buttons, ButtonType{
 		Label: "新增",
 		Url:   "/admin/user/add",
-		Ajax:  true,
+		Type:  "action",
 		Class: "btn-blue",
 		Icon:  "plus",
 	})
 	g.MassAction = append(g.MassAction, ButtonType{
 		Label: "批量删除",
 		Url:   "/admin/user/massDel",
-		Ajax:  true,
+		Type:  "action",
 		Class: "btn-red",
 		Icon:  "delete",
 	})
@@ -167,7 +169,7 @@ func (g *UserGrid) PrepareRenderers(collection []model.User) map[string]interfac
 				"button": ButtonType{
 					Label: "启用",
 					Url:   "/admin/user/enable",
-					Ajax:  true,
+					Type:  "action",
 					Class: "",
 					Icon:  "",
 				},
@@ -178,7 +180,7 @@ func (g *UserGrid) PrepareRenderers(collection []model.User) map[string]interfac
 				"button": ButtonType{
 					Label: "禁用",
 					Url:   "/admin/user/enable",
-					Ajax:  true,
+					Type:  "action",
 					Class: "",
 					Icon:  "",
 				},
@@ -190,7 +192,7 @@ func (g *UserGrid) PrepareRenderers(collection []model.User) map[string]interfac
 				"button": ButtonType{
 					Label: "设为管理员",
 					Url:   "/admin/user/addAdmin",
-					Ajax:  true,
+					Type:  "action",
 					Class: "",
 					Icon:  "",
 				},
@@ -201,7 +203,7 @@ func (g *UserGrid) PrepareRenderers(collection []model.User) map[string]interfac
 				"button": ButtonType{
 					Label: "取消管理员",
 					Url:   "/admin/user/rmAdmin",
-					Ajax:  true,
+					Type:  "action",
 					Class: "",
 					Icon:  "",
 				},

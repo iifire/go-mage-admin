@@ -30,18 +30,19 @@ func (u *User) IndexGET(c *gin.Context) {
 	c.HTML(http.StatusOK, tplName, gin.H{
 		"code":    1,
 		"menu":    "system",
-		"menucur": "admin/user/index",
+		"urlCur":  "admin/user/index",
+		"urlGrid": "admin/user/grid",
 		"msg":     "ok",
 	})
 }
 
 func (u *User) GridREQ(c *gin.Context) {
-	userGrid := block.UserGrid{}
-	userGrid.GetCollection()
+	grid := block.UserGrid{}
+	grid.GetCollection()
 	c.JSON(http.StatusOK, gin.H{
 		"code": 1,
 		"msg":  "ok",
-		"data": userGrid,
+		"data": grid,
 	})
 }
 
