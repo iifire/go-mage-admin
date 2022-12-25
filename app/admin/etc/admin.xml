@@ -1,31 +1,6 @@
 <?xml version="1.0"?>
 <!-- 菜单设置 -->
 <menu>
-    <saas>
-        <title>办公</title>
-        <sort>10</sort>
-        <icon>apps</icon>
-        <children>
-            <bulletin>
-                <sort>10</sort>
-                <title>公告管理</title>
-                <action>admin/bulletin/index</action>
-                <icon>bulletin</icon>
-            </bulletin>
-            <report>
-                <sort>20</sort>
-                <title>报告管理</title>
-                <action>admin/report/index</action>
-                <icon>report</icon>
-            </report>
-            <doc>
-                <sort>20</sort>
-                <title>文档管理</title>
-                <action>admin/doc/index</action>
-                <icon>doc</icon>
-            </doc>
-        </children>
-    </saas>
     <mall>
         <title>商城</title>
         <sort>20</sort>

@@ -1874,41 +1874,16 @@ table .progress {
 }
 
 .navigation .menu > li > ul {
-    background: #fff none repeat scroll 0 0;
-    box-shadow: 1px 0 6px rgba(0, 0, 0, 0.2);
-    left: 150px;
-    padding: 15px 20px;
+    background: #FFF;
     position: absolute;
-    width: 200px;
-    display:none;
-    top:0;
     z-index:999;
+    display:none;
 }
 
-.navigation .menu > li > ul.cn2 {
-    width: 300px;
-}
-.navigation .menu > li > ul.cn3 {
-    width: 400px;
-}
-.navigation .menu > li > ul.cn4 {
-    width: 560px;
-}
-.navigation .menu > li > ul.cn5 {
-    width: 650px;
-}
-.navigation .menu > li > ul.cn6 {
-    width: 780px;
-}
 .navigation .menu > li > ul > li {
-    display: inline-block;
-    float: left;
-    margin-right: 25px;
-    width: 102px;
+    display: block;
 }
-.navigation .menu > li > ul > li:last-child {
-    margin:0;
-}
+
 .navigation .menu:hover > li.active:hover > a,
 .navigation .menu > li.active > a,
 .navigation .menu > li:hover > a {
@@ -3487,10 +3462,7 @@ body,.app-wrap {
 .main-wrap {
     margin-left:130px;
 }
-.navigation .menu > li {
-    position: initial;
-    margin-bottom:3px;
-}
+
 .navigation .menu:hover > li.on:hover > a, .navigation .menu > li.on > a, .navigation .menu > li:hover > a {
     background:#409EFF;
 }
@@ -3513,17 +3485,18 @@ body,.app-wrap {
 }
 .navigation .menu > li > ul {
     left: 120px;
-    top: 92px;
-    bottom: 0;
-    width: 460px;
-    padding: 10px 40px 20px;
+    top: 0;
+    width: 160px;
+    padding: 10px 25px;
     box-shadow: 0 5px 15px rgba(0,0,0,.35);
-
 }
 .navigation .menu > li > ul > li {
     width: 100%;
     margin: 0;
+    line-height: 35px;
 }
+.navigation .menu > li > ul > li > a {color:#333;}
+.navigation .menu > li > ul > li > a:hover {color:#409EFF;}
 .navigation .menu li.level3 {
     float: left;
     width: 125px;
@@ -3657,8 +3630,11 @@ body,.app-wrap {
 .cmenu.scroll .cmenu-ctl {
     display:block;
 }
-
+.actions-box {
+    padding: 12px 15px 0;
+}
 /***** reset element-ui *****/
+.grid .el-table__empty-text {padding:80px;}
 .grid-header {
     padding:0 15px;
 }
