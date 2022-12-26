@@ -39,14 +39,11 @@ func (a *Abstract) loadTemplates(moduleName string, isAlone bool, layoutName str
 	if err != nil {
 		panic(err.Error())
 	}
-	//log.Println(views)
 	for _, v := range views {
 		includeCopy := make([]string, 0)
 		includeCopy = append(includeCopy, pathLayout)
-		//copy(includeCopy, includes)
 		files := append(includeCopy, v)
 		files = append(files, includes...)
-
 		//log.Println("files:", files)
 		r.AddFromFiles(filepath.Base(v), files...)
 	}

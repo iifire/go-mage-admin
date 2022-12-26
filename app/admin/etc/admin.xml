@@ -80,41 +80,41 @@
         <sort>32</sort>
         <icon>chat</icon>
         <children>
-            <design>
+            <reply>
                 <sort>10</sort>
                 <title>自动回复</title>
-                <action>admin/wxdesign/index</action>
-                <icon>tpl</icon>
-            </design>
-            <page>
+                <action>admin/wxmpReply/index</action>
+                <icon>msg</icon>
+            </reply>
+            <menu>
                 <sort>20</sort>
                 <title>自定义菜单</title>
-                <action>admin/wxpage/index</action>
-                <icon>sdesc</icon>
-            </page>
-            <product>
+                <action>admin/wxmpMenu/index</action>
+                <icon>dir</icon>
+            </menu>
+            <mass>
                 <sort>30</sort>
                 <title>定时群发</title>
-                <action>admin/wxproduct/index</action>
-                <icon>product</icon>
-            </product>
-            <media>
+                <action>admin/wxmpMass/index</action>
+                <icon>submit</icon>
+            </mass>
+            <material>
                 <sort>40</sort>
                 <title>素材管理</title>
-                <action>admin/wxmedia/index</action>
+                <action>admin/wxmpMaterial/index</action>
                 <icon>ext-pic</icon>
-            </media>
-            <mp>
+            </material>
+            <fans>
                 <sort>50</sort>
                 <title>粉丝管理</title>
-                <action>admin/wxmp/index</action>
-                <icon>chat</icon>
-            </mp>
+                <action>admin/wxmpFans/index</action>
+                <icon>users</icon>
+            </fans>
             <config>
                 <sort>60</sort>
                 <title>公众号设置</title>
-                <action>admin/wxmp/index</action>
-                <icon>chat</icon>
+                <action>admin/wxmpConfig/index</action>
+                <icon>config</icon>
             </config>
         </children>
     </wxmp>

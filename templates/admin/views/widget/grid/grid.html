@@ -42,7 +42,7 @@
             <div class="f-right ml20" v-if="buttons.length>0">
                 <ul>
                     <li v-for="(btn,idx) in buttons" :key="idx">
-                        <el-button size="small" :class="btn.class" @click="btnDo(btn,0)"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
+                        <el-button size="small" :type="btn.elType" :class="btn.class" @click="btnDo(btn,0)"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
                     </li>
                 </ul>
             </div>

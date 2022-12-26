@@ -7,4 +7,6 @@ import (
 	_ "go-mage-admin/app/core"
 	_ "go-mage-admin/app/customer"
 	_ "go-mage-admin/app/customer/controller"
+	_ "go-mage-admin/app/wxmp/controller/admin"
+	//_ "go-mage-admin/app/wxapp/controller/admin"
 )

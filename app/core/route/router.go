@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-mage-admin/app/core/helper"
 	mageApp "go-mage-admin/app/mage"
-	"log"
 	"net/http"
 	"reflect"
 	"strings"
@@ -118,7 +117,7 @@ func match(path string, route Route) gin.HandlerFunc {
 				count = v.(int)
 				count++
 			}
-			log.Println("count=", count)
+
 			session.Set("count", count)
 			session.Save()
 			/******** 临时手动注册用户 start *******/
@@ -126,7 +125,6 @@ func match(path string, route Route) gin.HandlerFunc {
 			/******** 临时手动注册用户 end *******/
 			//判断后台请求 未登录则跳转到登录页面
 			uid := session.Get("uid")
-			log.Println("uid=", uid)
 			if strings.HasPrefix(path, "/admin") && path != "/admin/login/index" {
 				//判断是否已登录
 				if uid == nil {
