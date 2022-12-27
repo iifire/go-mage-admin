@@ -68,7 +68,7 @@ let vueHeader = new Vue({
             axios.get('/admin/page/menu').then((res) =>{
                 var _d = res.data.data;
                 if(res.data.code==1) {
-                    this.menus = _d.menu
+                    this.menus = _d.menus
                     if (this.menus.hasOwnProperty(this.curMenuId) && this.menus[this.curMenuId].hasOwnProperty('children')) {
                         this.switchMenu(this.curMenuId,this.menus[this.curMenuId]['children'])
                     }

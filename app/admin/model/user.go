@@ -15,6 +15,7 @@ type User struct {
 	Password   string `json:"password"`
 	Mobile     string `json:"mobile"`
 	Email      string `json:"email"`
+	Menus      string `json:"menus"`
 	DateCreate int    `json:"date_create"`
 	IsAdmin    int    `json:"is_admin"`
 	IsActive   int    `json:"is_active"`
@@ -81,9 +82,17 @@ func (user *User) GetGridColumnsConfig(uid int, gridCode string) []string {
 func (user *User) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["user_id"] = ids
-	res := core.AppDb["write"].Debug().Where(where).Delete(&User{})
+	res := core.AppDb["write"].Where(where).Delete(&User{})
 	if res.Error != nil {
 		return false
 	}
 	return true
+}
+
+func (user *User) LoadById(id int) *User {
+	u := new(User)
+	if id > 0 {
+		core.AppDb["read"].First(&u, "user_id = ?", id)
+	}
+	return u
 }

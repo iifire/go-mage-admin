@@ -43,7 +43,7 @@ func (g *CoreSmsLog) GetCollection(filters map[string]interface{}, orders [2]str
 func (g *CoreSmsLog) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["log_id"] = ids
-	res := core.AppDb["write"].Debug().Where(where).Delete(&CoreSmsLog{})
+	res := core.AppDb["write"].Where(where).Delete(&CoreSmsLog{})
 	if res.Error != nil {
 		return false
 	}

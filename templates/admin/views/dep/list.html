@@ -1,0 +1,55 @@
+{{define "list"}}
+<template id="deplist">
+    <div class="grid">
+        <el-table
+                :data="tableData"
+                stripe
+                style="width: 100%">
+            <el-table-column
+                    prop="date"
+                    label="部门名称"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="排序"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="address"
+                    label="状态">
+            </el-table-column>
+            <el-table-column
+                    align="center"
+                    prop="address"
+                    label="创建时间">
+            </el-table-column>
+            <el-table-column
+                    align="center"
+                    prop="address"
+                    label="操作">
+            </el-table-column>
+        </el-table>
+    </div>
+
+</template>
+<script>
+    const app = new Vue({
+        el: '#deplist',
+        data() {
+            return {
+                tableData: []
+            }
+        },
+        methods: {
+            doLogin() {
+
+            }
+
+        },
+        created() {
+
+        }
+    })
+</script>
+{{end}}

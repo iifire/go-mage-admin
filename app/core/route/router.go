@@ -130,8 +130,7 @@ func match(path string, route Route) gin.HandlerFunc {
 				if uid == nil {
 					c.Redirect(http.StatusFound, "/admin/login/index")
 				} else {
-					//更新cookie失效时间
-
+					//TODO... 更新cookie失效时间
 				}
 			} else if path == "/admin/login/index" {
 				if uid != nil {

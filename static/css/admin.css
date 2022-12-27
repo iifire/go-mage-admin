@@ -1871,6 +1871,7 @@ table .progress {
     padding: 0 20px;
     transition: all 0.3s ease 0s;
     white-space: nowrap;
+    cursor: pointer;
 }
 
 .navigation .menu > li > ul {
