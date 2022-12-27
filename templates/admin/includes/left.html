@@ -27,10 +27,15 @@ let vueLeft = new Vue({
     methods: {
         switchMenu(submenu) {
             this.menus = submenu;
+            let cur = '{{.urlCur}}';
+            if (cur) {
+                this.curMenuId = cur;
+            }
+
         },
     },
     created() {
-        this.curMenuId = $('#menucur').val();
+
     }
 })
 </script>

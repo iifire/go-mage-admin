@@ -1,0 +1,311 @@
+{{define "menu"}}
+<div class="bgw p15">
+    <template id="menu-editor">
+        <div class="menu-editor wx">
+            <div class="menu-setting-area">
+                <div class="menu-preview-area pb20">
+                    <div class="mobile-menu-preview ">
+                        <div class="mobile-hd ng-binding">默认菜单</div>
+                        <div class="mobile-bd">
+                            <div class="js-quickmenu nav-menu-wx clearfix has-nav-3">
+                                <div class="menu1">
+                                    <draggable :list="menus" @update="datadragEnd">
+                                        <transition-group>
+                                            <div v-for="(item, idx) in menus" :key="idx" class="item" :class="{'c2':menus.length==1,'c3':menus.length>1}">
+                                                <div class="btn1" :class="{'on':item.name==curMenu.name}" @click="toggleMenu(item)">${item.name}</div>
+                                                <draggable class="menu2" :list="item.sub_button" @update="datadragEndSub(index, $event)">
+                                                    <transition-group>
+                                                        <p class="btn2" :class="{'on':item2.name==curMenu.name}" v-for="(item2, index) in item.sub_button" :key="index" @click="toggleMenu(item2)">${ item2.name }</p>
+                                                        <p class="btn2" v-if="item.sub_button.length<5" :key="item.sub_button.length+1" @click="addMenu(item)"><i class="ift i-plus2"></i></p>
+                                                    </transition-group>
+                                                </draggable>
+                                            </div>
+                                            <div class="item" v-if="menus.length<3" :key="menus.length+1"  :class="{'c2':menus.length==1,'c3':menus.length>1}">
+                                                <div class="btn1" @click="addMenu2"><i class="ift i-plus2"></i>添加</div>
+                                            </div>
+                                        </transition-group>
+                                    </draggable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt20">
+                        <button type="button" class="w150 btn btn-blue p10 mr10 fs14" @click="publish"><span>发布</span></button>
+                        <button type="button" class="w150 btn btn-blue p10 fs14" @click="preview"><span>预览</span></button>
+                    </div>
+                </div>
+                <div class="menu-form-area">
+                    <div class="portable-editor">
+                        <div class="editor-inner">
+                            <div>
+                                <el-card shadow="never">
+                                    <el-form ref="menuForm" label-width="70px" class="mt15">
+                                        <el-form-item label="菜单名称">
+                                            <el-input placeholder="请填写菜单名称" class="w400" v-model="curMenu.name"></el-input>
+                                            <div class="c9">字数不超过4个汉字或8个字母. </div>
+                                        </el-form-item>
+                                        <el-form-item label="菜单内容" v-if="!curMenu.sub_button">
+                                            <el-radio-group v-model="curMenu.type">
+                                                <el-radio class="mb10 w130 mr5" label="click">发送消息</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="miniprogram">关联小程序</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="view">跳转网页</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="scancode_push">扫码</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="scancode_waitmsg">扫码(等待信息)</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="location_select">地理位置</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="pic_sysphoto">拍照发图</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="pic_photo_or_album">拍照相册</el-radio>
+                                                <el-radio class="mb10 w130 mr5" label="pic_weixin">相册发图</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+
+                                    </el-form>
+                                    <div class=""  v-if="!curMenu.sub_button">
+                                        <el-card class="box-card" v-if="curMenu.type=='click'" shadow="never">
+                                            <div slot="header" class="clearfix">
+                                                <span>回复内容</span>
+                                            </div>
+                                            <div class="send-keyword mb20" v-if="curMenu.key">
+                                                <label class="c3">[关键字]${curMenu.key}</label>
+                                            </div>
+                                            <div class="send-types">
+                                                <div class="send-type-item w150" @click="openMaterial">
+                                                    <label><i class="ift i-tuwen fs20 mr5"></i>图文</label>
+                                                </div>
+                                                <div class="send-type-item w150" @click="openImg">
+                                                    <app-attachment :multiple="false" :max="1" @selected="comfirmImg">
+                                                        <label><i class="ift i-img fs20 mr5"></i>图片</label>
+                                                    </app-attachment>
+                                                </div>
+                                                <div class="send-type-item w150" @click="openTxt">
+                                                    <label><i class="ift i-edit fs20 mr5"></i>触发关键字</label>
+                                                </div>
+                                                <div class="clr"></div>
+                                            </div>
+                                        </el-card>
+                                        <!--  -->
+                                        <el-card class="box-card" v-if="curMenu.type=='view'" shadow="never">
+                                            <div slot="header" class="clearfix">
+                                                <span>订阅者点击该子菜单会跳转到以下链接</span>
+                                            </div>
+                                            <el-form ref="menuForm" label-width="70px">
+                                                <el-form-item label="页面地址" class="mb0">
+                                                    <el-input class="" v-model="curMenu.url"></el-input>
+                                                    <div class="c9">指定点击此菜单时要跳转的链接（注：链接需加https://）</div>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-card>
+                                        <!-- 小程序 -->
+                                        <el-card class="box-card" v-if="curMenu.type=='miniprogram'" shadow="never">
+                                            <div slot="header" class="clearfix">
+                                                <span>点击该菜单跳转到关联的小程序</span>
+                                            </div>
+                                            <el-form ref="menuForm" label-width="100px">
+                                                <el-form-item label="APPID" class="mb0">
+                                                    <el-input placeholder="请确保小程序与公众号已关联" class="w400" v-model="curMenu.appid"></el-input>
+                                                    <div class="c9">如何获取？</div>
+                                                </el-form-item>
+                                                <el-form-item label="页面" class="mb0">
+                                                    <el-input placeholder="请填写跳转页面的小程序访问路径" class="w400" v-model="curMenu.pagepath"></el-input>
+                                                    <div class="c9">填写指引</div>
+                                                </el-form-item>
+                                                <el-form-item label="备用网页" class="mb0">
+                                                    <el-input placeholder="旧版微信客户端不支持小程序，用户点击菜单时会打开该网页" class="w400" v-model="curMenu.url"></el-input>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-card>
+                                        <!-- 其他类型 -->
+                                        <el-card class="box-card" v-if="curMenu.type=='scancode_push' || curMenu.type=='scancode_waitmsg' || curMenu.type=='location_select' || curMenu.type=='pic_sysphoto' || curMenu.type=='pic_photo_or_album' || curMenu.type=='pic_weixin'" shadow="never">
+                                            <div slot="header" class="clearfix">
+                                                <span>回复内容</span>
+                                            </div>
+                                            <el-form ref="menuForm" label-width="100px">
+                                                <p class="c9">菜单内容为扫码，那么点击这个菜单是，手机扫描二维码</p>
+                                                <div class="send-keyword mb20" v-if="curMenu.key">
+                                                    <label class="c3">[关键字]${curMenu.key}</label>
+                                                </div>
+                                                <div class="send-types">
+                                                    <div class="send-type-item w150" @click="openTxt">
+                                                        <label><i class="ift i-edit fs20 mr5"></i>触发关键字</label>
+                                                    </div>
+                                                    <div class="clr"></div>
+                                                </div>
+                                            </el-form>
+                                        </el-card>
+                                    </div>
+                                </el-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <reply-keyword-pop ref="txtPop" @comfirm="comfirmTxt"></reply-keyword-pop>
+            <el-dialog title="" class="mobile-preview-dialog" ref="previewPop" width="327px" :visible.sync="previewDialogVisible">
+                <div class="mobile-preview">
+                    <div class="mobile-preview-hd">
+                        <strong>默认菜单</strong>
+                    </div>
+                    <div class="mobile-preview-bd">
+                        <ul id="viewShow" class="show-list"></ul>
+                    </div>
+                    <div class="mobile-preview-ft">
+                        <ul class="pre-menu-list grid-line" id="viewList">
+                            <li class="pre-menu-item" v-for="(item,idx) in menus">
+                                <a href="javascript:void(0);" class="pre-menu-link ng-binding">
+                                    <i class="icon-menu-dot"></i>${item.name}
+                                </a>
+                                <div class="sub-pre-menu-box" style="display: block;">
+                                    <ul class="sub-pre-menu-list">
+                                        <li v-for="(item2, index) in item.sub_button">
+                                            <a href="javascript:;">${item2.name}</a>
+                                        </li>
+                                    </ul>
+                                    <i class="arrow arrow-out"></i>
+                                    <i class="arrow arrow-in"></i>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="javascript:;" @click="previewClose" class="el-button el-button--default btn-preview-close">退出预览</a>
+                </div>
+            </el-dialog>
+        </div>
+    </template>
+</div>
+<script>
+    var app = new Vue({
+        el: '#menu-editor',
+        data() {
+            return {
+                dialogLoading: false,
+                searchLoading: false,
+                title:'',
+                menus: [],
+                idCopy:0,
+                curMenu: {},
+                previewDialogVisible:false,
+            }
+        },
+        methods: {
+            datadragEnd(evt) {
+                console.log(this.list);
+            },
+            datadragEndSub(index, evt) {
+                console.log(this.list);
+            },
+            //新增菜单 默认是发送消息类型
+            addMenu(item) {
+                let sub = {
+                    name:'子菜单名称',
+                    type:'click',
+                };
+                item.sub_button.push(sub)
+                this.curMenu = sub;
+            },
+            addMenu2() {
+                let cur = {
+                    name:'子菜单名称',
+                    type:'click',
+                    sub_button:[],
+                };
+                this.menus.push(cur);
+            },
+            delMenu() {
+                if (this.curMenu.sub_button) {
+                    //一级
+                    if (confirm('将同时删除所有子菜单,是否继续？')) {
+                        let menusNew = [];
+                        for (let i = 0;i<this.menus.length;i++) {
+                            if (this.menus[i].name!=this.curMenu.name) {
+                                menusNew.push(this.menus[i]);
+                            }
+                        }
+                        this.menus = menusNew;
+                        this.curMenu = this.menus[this.menus.length-1];
+                    }
+                } else {
+                    //二级
+                    let k = 0; //删除后激活的一级菜单
+                    for (let i = 0;i<this.menus.length;i++) {
+                        let curSubButton = [];
+                        for (let j = 0;j<this.menus[i].sub_button.length;j++) {
+                            if (this.menus[i].sub_button[j].name!=this.curMenu.name) {
+                                curSubButton.push(this.menus[i].sub_button[j]);
+                            } else {
+                                k = i;
+                            }
+                        }
+                        this.menus[i].sub_button = curSubButton;
+                    }
+                    this.curMenu = this.menus[k];
+                }
+
+            },
+            toggleMenu(item) {
+                this.curMenu = item;
+            },
+            openMaterial(){
+
+            },
+            openTxt(){
+                this.$refs.txtPop.openDialog()
+            },
+            comfirmTxt(txt) {
+                this.$refs.txtPop.clloseDialog()
+                this.curMenu.key = txt;
+                this.$message.success("关键字更新成功！");
+            },
+            openImg(){
+
+            },
+            comfirmImg(res) {
+                console.log(res);
+            },
+            publish() {
+                //TODO...提交前校验菜单内容和回复内容是否填写完成，否则微信API返回错误
+                if (!this.default && !this.title) {
+                    this.$message.error("请填写菜单组名称！");
+                    return;
+                }
+                let params = {};
+                params['r'] = 'wx/menu/publish';
+                this.searchLoading = true;
+                this.$request({
+                    params: params,
+                    data: {'button':this.menus,'id':this.idCopy,'title':this.title},
+                    method: 'post',
+                }).then(e => {
+                    this.searchLoading = false;
+                    if (e.data.code === 0) {
+                        this.$message.success(e.data.msg);
+                        if (!this.default) {
+                            this.$navigate({r:'wx/menu/index'})
+                        }
+
+                    } else {
+                        this.$message.error(e.data.msg);
+                    }
+                }).catch(e => {
+
+                });
+            },
+            preview() {
+                this.previewDialogVisible = true;
+            },
+            previewClose() {
+                this.previewDialogVisible = false;
+            },
+        },
+        created() {
+
+        }
+    })
+</script>
+<style>
+    .wrapper .item p {
+        margin: 5px;
+        padding: 10px;
+        height: 20px;
+        background: lightcoral;
+    }
+</style>
+{{end}}

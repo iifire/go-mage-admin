@@ -75,49 +75,7 @@
             </media>
         </children>
     </wxapp>
-    <wxmp>
-        <title>公众号</title>
-        <sort>32</sort>
-        <icon>chat</icon>
-        <children>
-            <reply>
-                <sort>10</sort>
-                <title>自动回复</title>
-                <action>admin/wxmpReply/index</action>
-                <icon>msg</icon>
-            </reply>
-            <menu>
-                <sort>20</sort>
-                <title>自定义菜单</title>
-                <action>admin/wxmpMenu/index</action>
-                <icon>dir</icon>
-            </menu>
-            <mass>
-                <sort>30</sort>
-                <title>定时群发</title>
-                <action>admin/wxmpMass/index</action>
-                <icon>submit</icon>
-            </mass>
-            <material>
-                <sort>40</sort>
-                <title>素材管理</title>
-                <action>admin/wxmpMaterial/index</action>
-                <icon>ext-pic</icon>
-            </material>
-            <fans>
-                <sort>50</sort>
-                <title>粉丝管理</title>
-                <action>admin/wxmpFans/index</action>
-                <icon>users</icon>
-            </fans>
-            <config>
-                <sort>60</sort>
-                <title>公众号设置</title>
-                <action>admin/wxmpConfig/index</action>
-                <icon>config</icon>
-            </config>
-        </children>
-    </wxmp>
+
     <system>
         <title>系统管理</title>
         <sort>40</sort>

@@ -1,0 +1,190 @@
+{{define "edit"}}
+<div id="materials">
+  <el-card v-loading="loading" class="material-edit" shadow="never" style="border:0" body-style="background-color: #f3f3f3;padding:0;">
+    <div slot="header">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>
+          <span class="link c3" @click="$navigate({r:'wx/material/index'})"><i class="ift i-nav-back fs20 lh_22 mr5"></i>返回素材库</span>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item >编辑素材</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <div class="appmsg-edit-box">
+      <div class="appmsg-preview-area">
+        <div class="appmsg-edit-container appmsg-preview-container js-aside">
+          <div class="appmsg-container-hd">
+            <h4 class="appmsg-container-title">图文列表</h4>
+          </div>
+          <div class="appmsg-container-bd">
+            <div class="material-appmsg-item multi" :class="{'on':newsInfo.id==item.id}" @click="toggleNews(item)" v-for="(item,index) in this.info.news" :key="index">
+              <div class="appmsg-content">
+                <div class="cover-appmsg-item">
+                  <h4 class="appmsg-title">
+                    <a>{{item.title}}</a>
+                  </h4>
+                  <wx-img class="appmsg-thumb" :link="item.thumb_url" :isBg="true"></wx-img>
+                </div>
+              </div>
+            </div>
+            <a title="添加一篇图文" @click="addNews()" class="appmsg-add" href="javascript:;">
+              <i class="c9">+</i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="appmsg-input-area" id="edit-container">
+        <div class="" style="width: 640px !important; margin: auto; border-color: currentcolor rgb(221, 221, 221) rgb(221, 221, 221); border-style: none solid solid; border-width: 0px 1px 1px; border-image: none 100% / 1 / 0 stretch;">
+          <div class="appmsg-edit-item title">
+            <input id="title" placeholder="请在这里输入标题" class="form-control fs22" name="title" v-model="newsInfo.title" max-length="64" type="text" style="">
+          </div>
+          <div class="appmsg-edit-item author">
+            <input id="author" placeholder="请输入作者" class="form-control" v-model="newsInfo.author" name="author" max-length="8" type="text">
+          </div>
+          <wx-editor v-if="hackContent" :value="newsInfo.content" @input="contentUpdate"></wx-editor>
+        </div>
+      </div>
+      <div class="appmsg-edit-highlight-area">
+        <div class="appmsg-edit-title b">发布样式编辑</div>
+        <!-- EBGIN 封面 -->
+        <div class="appmsg-edit-item">
+          <div class="form-group">
+            <label class="col-sm-12 control-label">封面<span class="c9 fs13 ml5">(小图片建议尺寸：200像素 * 200像素)</span></label>
+            <div class="mt10">
+              <app-attachment :multiple="false" :max="1" @selected="comfirmImg">
+                <a href="javascript:void(0);" class="el-button el-button--default we7-margin-left" ng-click="pickPicture('wechat')">微信图片</a>
+              </app-attachment>
+
+              <div class="mt20 mb10">
+                <el-checkbox
+                        v-model="newsInfo.show_cover_pic"
+                        @click="switchDisplayCover()" >
+                </el-checkbox>
+                <label @click="switchDisplayCover()">在正文顶部显示封面图</label>
+
+              </div>
+              <wx-img :link="newsInfo.thumb_url" v-if="newsInfo.thumb_url"></wx-img>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt10">摘要<span class="c9 ml5 fs13">(选填，如果不填写会默认抓取正文前54个字)</span></div>
+            <div class="mt10">
+							<span class="form-textarea-box">
+								<textarea class="form-textarea" v-model="newsInfo.digest" name="digest" max-length="120" rows="4"></textarea>
+								<em class="form-control-append hidden">0/120</em>
+							</span>
+            </div>
+          </div>
+        </div>
+        <!-- END 封面 -->
+      </div>
+    </div>
+    <!-- END 主体编辑区 -->
+    <nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
+      <a type="button" class="el-button el-button--primary" @click="saveMaterial()">保存到本地</a>
+    </nav>
+  </el-card>
+</div>
+<script>
+  const app = new Vue({
+    el: '#materials',
+    data() {
+
+      return {
+        info: {
+          id:'',
+          news:[],
+        },
+        newsInfo: {
+          id:0,
+          show_cover_pic:1,
+          title:'',
+          author:'',
+          content:'',
+        },
+
+        loading:false,
+        cardLoading:false,
+        activeName:'default',
+        hackContent:true, //用来强制更新编辑器内容
+      }
+    },
+    methods: {
+      handleClick() {
+
+      },
+      addNews() {
+        this.hackContent = false;
+        this.newsInfo = {};
+        this.info.news.push(this.newsInfo);
+
+        this.$nextTick(() => {
+          this.hackContent = true;
+        })
+      },
+      toggleNews(item) {
+        this.hackContent = false;
+        this.newsInfo = item;
+        this.$nextTick(() => {
+          this.hackContent = true;
+        })
+      },
+      contentUpdate(res) {
+        this.newsInfo.content = res;
+      },
+      comfirmImg(res) {
+        console.log(res);
+      },
+      switchDisplayCover() {
+        if (this.newsInfo.show_cover_pic>0) {
+          this.newsInfo.show_cover_pic = 0;
+        } else {
+          this.newsInfo.show_cover_pic = 1;
+        }
+      },
+      loadInfo() {
+        if (this.info.id) {
+          let params = {};
+          params['r'] = 'wx/material/edit';
+          params['id'] = this.info.id;
+          this.$request({
+            params: params,
+            method: 'get',
+          }).then(e => {
+            if (e.data.code == 0) {
+              this.info = e.data.data;
+              this.newsInfo = this.info.news[0];
+            } else {
+              this.$message.error(e.data.msg);
+            }
+          }).catch(e => {
+
+          });
+        }
+      },
+      saveMaterial() {
+        let params = {};
+        params['r'] = 'wx/material/save';
+        this.$request({
+          params: params,
+          data: this.info,
+          method: 'post',
+        }).then(e => {
+
+          if (e.data.code == 0) {
+            //this.$navigate({r:'wx/material/index'});
+          } else {
+            this.$message.error(e.data.msg);
+          }
+        }).catch(e => {
+
+        })
+      }
+
+    },
+    created() {
+      //this.loadInfo();
+    }
+  })
+</script>
+{{end}}
