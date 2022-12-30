@@ -27,8 +27,8 @@ func (g *Role) IndexGET(c *gin.Context) {
 	c.HTML(http.StatusOK, tplName, gin.H{
 		"code":    1,
 		"menu":    "system",
-		"urlCur":  "admin/role/index",
-		"urlGrid": "admin/role/grid",
+		"urlCur":  "/admin/role/index",
+		"urlGrid": "/admin/role/grid",
 		"msg":     "ok",
 	})
 }

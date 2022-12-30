@@ -30,8 +30,8 @@ func (u *User) IndexGET(c *gin.Context) {
 	c.HTML(http.StatusOK, tplName, gin.H{
 		"code":    1,
 		"menu":    "system",
-		"urlCur":  "admin/user/index",
-		"urlGrid": "admin/user/grid",
+		"urlCur":  "/admin/user/index",
+		"urlGrid": "/admin/user/grid",
 		"msg":     "ok",
 	})
 }

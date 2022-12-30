@@ -29,6 +29,6 @@ func (m *WxmpMenu) IndexGET(c *gin.Context) {
 		"code":   1,
 		"msg":    "ok",
 		"menu":   "wxmp",
-		"urlCur": "admin/wxmpMenu/index",
+		"urlCur": "/admin/wxmpMenu/index",
 	})
 }

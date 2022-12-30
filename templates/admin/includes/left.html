@@ -51,13 +51,17 @@ let vueLeft = new Vue({
                     }
                 }
             }
-
         },
         setCurMenu(url) {
             if (url) {
-                if (url.indexOf('/')==0) {
-                    //console.log('url='+url);
-                    this.curMenuId = url;
+                let _curUrl = '';
+                for (let i in this.menus) {
+                    if (this.menus[i].action==url) {
+                        _curUrl = url;
+                    }
+                }
+                if (_curUrl) {
+                    this.curMenuId = _curUrl;
                 } else {
                     for (let i in this.menus) {
                         if (this.menus[i].children) {

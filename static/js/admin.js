@@ -2,7 +2,7 @@
 Vue.options.delimiters = ['${', '}'];
 var mage = mage || {};
 mage.admin = (function() {
-    function goPage(url,showLast) {
+    function goPage(url) {
         history.replaceState(null,null, url);
         $.showLoading();
         $.ajax({
@@ -12,12 +12,10 @@ mage.admin = (function() {
                 req.setRequestHeader("ajax-menu",url);
             },
             success:function(res){
-                $('#menu').val($(res).find('#menu').val());
-                $('#menucur').val($(res).find('#menucur').val());
-
+                $('#menu').html($(res).find('#menu').val());
+                $('#menucur').html($(res).find('#menucur').val());
                 $('#main').html($(res).find('#main').html());
-                //处理历史菜单
-                getHistoryMenu(url,showLast);
+                getHistoryMenu(url);
                 resizeBoard();
             },
             complete:function(res) {
@@ -25,16 +23,12 @@ mage.admin = (function() {
             }
         })
     }
-    function getHistoryMenu(url,showLast) {
+    function getHistoryMenu(url) {
         $.get('/admin/page/menuHistory',{},function(res){
             if (res.code==1) {
                 vueHeader.renderHistory(res.data,url);
-                vueHeader.switchMenuCopy($('#menu').val(),url);
             }
         },'json')
-        if (showLast) {
-            $('.cmenu-ctl-r').click();
-        }
     }
     function resizeBoard() {
         let h = document.documentElement.clientHeight-$('.app-wrap > .header').height();

@@ -27,8 +27,8 @@ func (g *logSms) IndexGET(c *gin.Context) {
 	c.HTML(http.StatusOK, tplName, gin.H{
 		"code":    1,
 		"menu":    "system",
-		"urlCur":  "admin/logSms/index",
-		"urlGrid": "admin/logSms/grid",
+		"urlCur":  "/admin/logSms/index",
+		"urlGrid": "/admin/logSms/grid",
 		"msg":     "ok",
 	})
 }

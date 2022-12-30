@@ -28,8 +28,8 @@ func (m *WxmpReply) IndexGET(c *gin.Context) {
 	c.HTML(http.StatusOK, tplName, gin.H{
 		"code":    1,
 		"menu":    "wxmp",
-		"urlCur":  "admin/wxmpReply/index",
-		"urlGrid": "admin/wxmpReply/grid",
+		"urlCur":  "/admin/wxmpReply/index",
+		"urlGrid": "/admin/wxmpReply/grid",
 		"msg":     "ok",
 	})
 }

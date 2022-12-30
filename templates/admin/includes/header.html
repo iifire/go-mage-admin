@@ -1,6 +1,5 @@
 {{define "header"}}
-<div class="header" id="headerbox">
-    <!-- 一级菜单 -->
+<div class="header" id="headerBox">
     <div class="nav-box">
         <div class="nav f-left">
             <div class="nav-indent f-left">
@@ -10,7 +9,7 @@
             {{.s1}}
             <ul class="nav-b f-left">
                 <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(idx,item.children)">
-                    <a :class="{'on':curMenuId==idx}"><i class="ift" :class="`i-${item.icon}`"></i>${item.title}</a>
+                    <a :class="{'on':curMenuId==item.code}"><i class="ift" :class="`i-${item.icon}`"></i>${item.title}</a>
                 </li>
             </ul>
         </div>
@@ -20,15 +19,12 @@
                 <li>
                     <a><i class="ift i-search"></i></a>
                 </li>
-                <!-- 全屏模式 -->
                 <li>
                     <a><i class="ift i-full"></i></a>
                 </li>
-                <!-- 消息 -->
                 <li>
                     <a><i class="ift i-msg"></i></a>
                 </li>
-                <!-- 我的 -->
                 <li>
                     <a><i class="ift i-user2"></i></a>
                 </li>
@@ -52,7 +48,7 @@
 </div>
 <script>
 let vueHeader = new Vue({
-    el: '#headerbox',
+    el: '#headerBox',
     data() {
         return {
             menus:[],
@@ -64,48 +60,61 @@ let vueHeader = new Vue({
     },
     methods: {
         goPage(url) {
-            //判断切换menu
-            vueLeft.setCurMenu(url)
-            this.curMenuHistory = url;
             mage.admin.goPage(url)
-            return false
         },
         getMenus() {
             axios.get('/admin/page/menu').then((res) =>{
-                var _d = res.data.data;
+                let _d = res.data.data;
                 if(res.data.code==1) {
-                    //URL前缀和历史菜单名称处理
                     let menuNameArr = [];
                     let menusCopy = [];
+                    let tmpK = [];
+                    //排序&历史菜单名称处理
                     for (let k in _d.menus) {
+                        let tmpM = []
                         if (_d.menus.hasOwnProperty(k) && _d.menus[k].children) {
-                            for (let m in _d.menus[k].children) {
-                                if (_d.menus[k].children.hasOwnProperty(m)) {
-                                    if (_d.menus[k].children[m].action) {
-                                        if (_d.menus[k].children[m].action.indexOf('/')!=0) {
-                                            _d.menus[k].children[m].action = '/'+_d.menus[k].children[m].action;
-                                        }
-                                        menuNameArr.push(_d.menus[k].children[m]);
-                                    }
-                                    if (_d.menus[k].children[m].children) {
-                                        for (let n in _d.menus[k].children[m].children) {
-                                            if (_d.menus[k].children[m].children.hasOwnProperty(n)) {
-                                                if (_d.menus[k].children[m].children[n].action.indexOf('/')!=0) {
-                                                    _d.menus[k].children[m].children[n].action = '/'+_d.menus[k].children[m].children[n].action;
-                                                }
-                                                menuNameArr.push(_d.menus[k].children[m].children[n]);
+                            let mChildren = _d.menus[k].children
+                            for (let m in mChildren) {
+                                if (mChildren.hasOwnProperty(m)) {
+                                    mChildren[m].menu = k;
+                                    menuNameArr.push(mChildren[m]);
+                                    let tmpN = [];
+                                    if (mChildren[m].children) {
+                                        let nChildren = mChildren[m].children;
+                                        for (let n in nChildren) {
+                                            if (nChildren.hasOwnProperty(n)) {
+                                                nChildren[n].code = n;
+                                                nChildren[n].menu = k;
+                                                menuNameArr.push(nChildren[n]);
+                                                tmpN.push(nChildren[n])
                                             }
                                         }
+                                        tmpN.sort((a,b)=>{
+                                            return a.sort - b.sort
+                                        })
+                                        mChildren[m].children = tmpN;
                                     }
+                                    tmpM.push(mChildren[m])
                                 }
                             }
+                            tmpM.sort((a,b)=>{
+                                return a.sort - b.sort
+                            })
+                        }
+                        _d.menus[k].code = k;
+                        _d.menus[k].children = tmpM;
+                        tmpK.push(_d.menus[k])
+                    }
+                    tmpK.sort((a,b)=>{
+                        return a.sort - b.sort
+                    })
+                    this.menus = tmpK
+                    //console.log('curMenuId='+this.curMenuId);
+                    for (let i in tmpK) {
+                        if (tmpK[i]['code']==this.curMenuId && tmpK[i].hasOwnProperty('children')) {
+                            this.switchMenu(this.curMenuId,tmpK[i]['children'])
                         }
                     }
-                    this.menus = _d.menus
-                    if (this.menus.hasOwnProperty(this.curMenuId) && this.menus[this.curMenuId].hasOwnProperty('children')) {
-                        this.switchMenu(this.curMenuId,this.menus[this.curMenuId]['children'])
-                    }
-                    console.log(menuNameArr);
                     this.menuName = menuNameArr;
                     this.renderHistory(_d.menuHistory);
                 }
@@ -113,10 +122,13 @@ let vueHeader = new Vue({
                 console.log(err);
             });
         },
+
+        switchMenu(idx,childMenu) {
+            this.curMenuId = idx;
+            vueLeft.switchMenu(childMenu)
+        },
         renderHistory(history,curUrl) {
-            if (curUrl) {
-                this.curMenuHistory = curUrl
-            }
+            //console.log('curUrl='+curUrl);
             this.menuHistory = [];
             for (let i = 0;i<history.length;i++) {
                 for (let j = 0;j<this.menuName.length;j++) {
@@ -125,20 +137,23 @@ let vueHeader = new Vue({
                     }
                 }
             }
-        },
-        switchMenu(idx,childMenu) {
-            this.curMenuId = idx;
-            vueLeft.switchMenu(childMenu)
-        },
-        switchMenuCopy(idx,curUrl) {
-            this.curMenuId = idx;
-            vueLeft.setCurMenu(curUrl)
-            for (let k in this.menus) {
-                if (idx==k) {
-                    vueLeft.switchMenu(this.menus[k].children)
+            if (curUrl) {
+                this.curMenuHistory = curUrl
+                for (let i in this.menuName) {
+                    mu = this.menuName[i]
+                    if (mu.action==curUrl) {
+                        this.curMenuId = mu.menu;
+                        for (let j in this.menus) {
+                            if (mu.menu==this.menus[j].code) {
+                                vueLeft.switchMenu(this.menus[j].children)
+                                vueLeft.setCurMenu(curUrl)
+                            }
+                        }
+                    }
                 }
             }
         },
+
         init() {
             this.curMenuId = $('#menu').val();
             this.curMenuHistory = $('#menucur').val();

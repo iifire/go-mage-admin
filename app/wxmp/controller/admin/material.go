@@ -29,7 +29,7 @@ func (m *WxmpMaterial) IndexGET(c *gin.Context) {
 		"code":   1,
 		"msg":    "ok",
 		"menu":   "wxmp",
-		"urlCur": "admin/wxmpMaterial/index",
+		"urlCur": "/admin/wxmpMaterial/index",
 	})
 }
 
@@ -44,6 +44,6 @@ func (m *WxmpMaterial) EditGET(c *gin.Context) {
 		"code":   1,
 		"msg":    "ok",
 		"menu":   "wxmp",
-		"urlCur": "admin/wxmpMaterial/index",
+		"urlCur": "/admin/wxmpMaterial/index",
 	})
 }

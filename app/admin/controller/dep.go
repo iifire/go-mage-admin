@@ -29,7 +29,7 @@ func (d *Dep) IndexGET(c *gin.Context) {
 		"code":   1,
 		"msg":    "ok",
 		"menu":   "system",
-		"urlCur": "admin/dep/index",
+		"urlCur": "/admin/dep/index",
 	})
 
 }

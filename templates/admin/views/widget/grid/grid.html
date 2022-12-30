@@ -485,7 +485,7 @@ const appGrid = new Vue({
                 }
             }
 
-            axios.post('/{{.urlGrid}}',data,this.headerParams).then((res)=> {
+            axios.post('{{.urlGrid}}',data,this.headerParams).then((res)=> {
                 if(res.data.code==1) {
                     let _d = res.data.data;
                     // 筛选等预处理
