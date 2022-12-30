@@ -8,12 +8,14 @@
     <div class="page" id="page">
         <div class="no-display">
             <input type="hidden" id="menu" value="{{.menu}}">
-            <input type="hidden" id="menucur" value="{{.menucur}}">
+            <input type="hidden" id="menucur" value="{{.urlCur}}">
         </div>
         <div class="app-wrap">
             {{ template "left" . }}
-            <div class="inner-wrap mro-wrapper">
-                {{ template "header" . }}
+            <div class="inner-wrap">
+                <div id="header">
+                    {{ template "header" . }}
+                </div>
                 <div class="main-wrap pr mt10" id="main">
                     <div class="box-admin">
                         {{ template "content" . }}

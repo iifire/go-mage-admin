@@ -1,7 +1,7 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
+	"go-mage-admin/app/mage"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -23,7 +23,7 @@ func (cfg *ConfigGrid) Reset(uid int, code string) bool {
 }
 func (*ConfigGrid) Update(uid int, code string, configData string) bool {
 	var cfg ConfigGrid
-	result := core.AppDb["read"].Debug().Model(&cfg).Where("link_user = ? and link_code = ?", uid, code).Update("config", configData)
+	result := mage.AppDb["read"].Debug().Model(&cfg).Where("link_user = ? and link_code = ?", uid, code).Update("config", configData)
 	if result.Error != nil {
 		return false
 	} else {
@@ -34,7 +34,7 @@ func (*ConfigGrid) Update(uid int, code string, configData string) bool {
 // getConfig 获取一级菜单
 func (*ConfigGrid) getConfig(uid int, code string) []string {
 	var cfg ConfigGrid
-	result := core.AppDb["read"].First(&cfg, "link_user = ? and link_code = ?", uid, code)
+	result := mage.AppDb["read"].First(&cfg, "link_user = ? and link_code = ?", uid, code)
 	if result.Error != nil && result.Error != gorm.ErrRecordNotFound {
 		panic("获取Grid Column配置失败")
 	}

@@ -6,11 +6,11 @@
     </div>
     <div class="menu-box">
         <ul class="menu">
-            <li class="parent level0" :class="{'on':curMenuId==item.action}" v-for="(item,idx) in menus" :key="idx">
-                <a v-if="item.action" :href="'/'+item.action" class="v-ajax"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.title}</span></a>
+            <li class="parent level0" :data="item.action" :class="{'on':curMenuId==item.action || curMenuId==item.title}" v-for="(item,idx) in menus" :key="idx">
+                <a v-if="item.action" @click="goPage(item.action)" class="v-ajax"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.title}</span></a>
                 <a v-if="!item.action"><i class="ift mr5" :class="`i-${item.icon}`"></i><span>${item.title}</span></a>
                 <ul v-if="item.children">
-                    <li v-for="(child,idx2) in item.children"><a :href="'/'+child.action" class="v-ajax">${child.title}</a></li>
+                    <li v-for="(child,idx2) in item.children"><a  @click="goPage(child.action,item.title)" class="v-ajax">${child.title}</a></li>
                 </ul>
             </li>
         </ul>
@@ -26,6 +26,16 @@ let vueLeft = new Vue({
         }
     },
     methods: {
+        goPage(url,title) {
+            if (title) {
+                this.curMenuId = title
+            } else {
+                this.curMenuId = url
+            }
+            vueHeader.curMenuHistory = url;
+            mage.admin.goPage(url)
+            return false
+        },
         switchMenu(submenu) {
             this.menus = submenu;
             let cur = '{{.urlCur}}';
@@ -35,13 +45,32 @@ let vueLeft = new Vue({
                     if (this.menus[i].children) {
                         for (let j in this.menus[i].children) {
                             if (this.menus[i].children[j].action==cur) {
-                                this.curMenuId = this.menus[i].action;
+                                this.curMenuId = this.menus[i].title;
                             }
                         }
                     }
                 }
             }
+
         },
+        setCurMenu(url) {
+            if (url) {
+                if (url.indexOf('/')==0) {
+                    //console.log('url='+url);
+                    this.curMenuId = url;
+                } else {
+                    for (let i in this.menus) {
+                        if (this.menus[i].children) {
+                            for (let j in this.menus[i].children) {
+                                if (this.menus[i].children[j].action==url) {
+                                    this.curMenuId = this.menus[i].title;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
     created() {
 

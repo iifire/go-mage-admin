@@ -1,7 +1,7 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
+	"go-mage-admin/app/mage"
 	"log"
 )
 
@@ -26,7 +26,7 @@ func (*Menu) TableName() string {
 // GetTopMenus 获取一级菜单
 func (menu *Menu) GetTopMenus() []Menu {
 	var menus []Menu
-	result := core.AppDb["read"].Where("parent = ?", "0").Find(&menus)
+	result := mage.AppDb["read"].Where("parent = ?", "0").Find(&menus)
 	if result.Error != nil {
 		panic("获取菜单失败")
 	}
@@ -37,7 +37,7 @@ func (menu *Menu) GetTopMenus() []Menu {
 func (menu *Menu) GetSubMenus(pid string) []Menu {
 	var menus []Menu
 	log.Println("pid=", pid)
-	result := core.AppDb["read"].Where("parent = ?", pid).Find(&menus)
+	result := mage.AppDb["read"].Where("parent = ?", pid).Find(&menus)
 	if result.Error != nil {
 		panic("获取菜单失败")
 	}

@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	_admin "go-mage-admin/app/admin"
 	"go-mage-admin/app/admin/model"
-	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/route"
 	mageApp "go-mage-admin/app/mage"
 	"golang.org/x/crypto/bcrypt"
@@ -80,7 +79,7 @@ func (login *Login) RegGET(c *gin.Context) {
 		fmt.Println(err)
 	}
 	u.Password = string(hash)
-	core.AppDb["Write"].Create(u)
+	mageApp.AppDb["Write"].Create(u)
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "",

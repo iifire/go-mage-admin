@@ -44,3 +44,28 @@ func (p *Page) MenuGET(c *gin.Context) {
 	})
 
 }
+
+// MenuHistoryGET 历史菜单
+func (p *Page) MenuHistoryGET(c *gin.Context) {
+	// 输出JSON
+
+	//历史菜单
+	sess := new(model.Session)
+	user := sess.GetUser()
+	history := make([]string, 0)
+	if sess.GetUser().Menus != "" {
+		history = strings.Split(user.Menus, ",")
+		//TODO... 权限校验
+		c.JSON(http.StatusOK, gin.H{
+			"code": 1,
+			"msg":  "ok",
+			"data": history,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 0,
+			"msg":  "没有历史菜单",
+		})
+	}
+
+}

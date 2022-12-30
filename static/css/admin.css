@@ -3414,10 +3414,7 @@ span.delete-image, span.delete-file {
 body,.app-wrap {
     background-color: #f0f1f5;
 }
-.mio-dg-shade,
-.mio-dg-wrap {
-    top:-1px;
-}
+.v-ajax {cursor: pointer}
 .nav-m li, .nav-h li.level0,
 .nav-m > li > a {
     height:50px;
@@ -3570,23 +3567,44 @@ body,.app-wrap {
     display: inline-block;
     float: left;
     font-size: 14px;
-    -webkit-transition:color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
-    transition:color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
+    -webkit-transition: color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
+    transition: color .3s cubic-bezier(.645,.045,.355,1),padding .3s cubic-bezier(.645,.045,.355,1);
 }
 .cmenu-item.home {padding:0 20px;}
 .cmenu-box .cmenu-item:last-child {
     border-right: 0;
 }
+.cmenu-item > span {float:left;}
 .cmenu-item i {
     font-size: 8px !important;
     margin-left: 2px;
     padding: 2px;
-    display:none;
+    display: inline;
     -webkit-transform-origin: 100% 50%;
     transform-origin: 100% 50%;
+    -webkit-transition: all .3s cubic-bezier(.645,.045,.355,1);
+    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    -webkit-transform-origin: 100% 50%;
+    transform-origin: 100% 50%;
+    float:left;
+    margin-top:12px;
 }
-.cmenu-item:hover > i {
-    display: inline;
+.cmenu-item i,
+.cmenu-item i::before {
+    width: 0;
+    display: inline-block;
+    overflow: hidden;
+    line-height: 14px;
+    height: 14px;
+}
+.cmenu-item.on > i,
+.cmenu-item:hover > i {margin-left:5px;}
+.cmenu-item.on > i,
+.cmenu-item:hover > i,
+.cmenu-item:hover > i::before,
+.cmenu-item.on > i::before{
+    width:14px;
+
 }
 .cmenu-item > i:hover  {
     color:#FFF !important;

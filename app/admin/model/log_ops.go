@@ -1,8 +1,8 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/model"
+	"go-mage-admin/app/mage"
 	"log"
 )
 
@@ -26,7 +26,7 @@ func (*LogOps) TableName() string {
 func (g *LogOps) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]LogOps, int64) {
 	var logs []LogOps
 	var total int64
-	db := core.AppDb["read"].Model(LogOps{})
+	db := mage.AppDb["read"].Model(LogOps{})
 
 	//多条件过滤
 	collection := model.Collection{}
@@ -46,7 +46,7 @@ func (g *LogOps) GetCollection(filters map[string]interface{}, orders [2]string,
 func (g *LogOps) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["log_id"] = ids
-	res := core.AppDb["write"].Debug().Where(where).Delete(&LogOps{})
+	res := mage.AppDb["write"].Debug().Where(where).Delete(&LogOps{})
 	if res.Error != nil {
 		return false
 	}

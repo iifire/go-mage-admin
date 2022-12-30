@@ -1,8 +1,8 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/model"
+	"go-mage-admin/app/mage"
 )
 
 type LogLogin struct {
@@ -22,7 +22,7 @@ func (*LogLogin) TableName() string {
 func (g *LogLogin) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]LogLogin, int64) {
 	var logs []LogLogin
 	var total int64
-	db := core.AppDb["read"].Model(LogLogin{})
+	db := mage.AppDb["read"].Model(LogLogin{})
 
 	collection := model.Collection{}
 	db = collection.PrepareCollection(db, filters)
@@ -39,7 +39,7 @@ func (g *LogLogin) GetCollection(filters map[string]interface{}, orders [2]strin
 func (g *LogLogin) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["log_id"] = ids
-	res := core.AppDb["write"].Where(where).Delete(&LogLogin{})
+	res := mage.AppDb["write"].Where(where).Delete(&LogLogin{})
 	if res.Error != nil {
 		return false
 	}

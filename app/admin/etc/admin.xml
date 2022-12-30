@@ -9,37 +9,37 @@
             <order>
                 <sort>10</sort>
                 <title>订单管理</title>
-                <action>admin/order/index</action>
+                <action>/admin/order/index</action>
                 <icon>dir</icon>
             </order>
             <product>
                 <sort>20</sort>
                 <title>商品管理</title>
-                <action>admin/product/index</action>
+                <action>/admin/product/index</action>
                 <icon>product</icon>
             </product>
             <customer>
                 <sort>30</sort>
                 <title>客户管理</title>
-                <action>admin/doc/index</action>
+                <action>/admin/doc/index</action>
                 <icon>customers</icon>
             </customer>
             <cms>
                 <sort>40</sort>
                 <title>页面管理</title>
-                <action>admin/doc/index</action>
+                <action>/admin/doc/index</action>
                 <icon>sdesc</icon>
             </cms>
             <media>
                 <sort>50</sort>
                 <title>内容管理</title>
-                <action>admin/doc/index</action>
+                <action>/admin/doc/index</action>
                 <icon>ext-pic</icon>
             </media>
             <config>
                 <sort>60</sort>
                 <title>商城设置</title>
-                <action>admin/doc/index</action>
+                <action>/admin/doc/index</action>
                 <icon>config</icon>
             </config>
         </children>
@@ -52,25 +52,25 @@
             <design>
                 <sort>10</sort>
                 <title>店铺设计</title>
-                <action>admin/wxdesign/index</action>
+                <action>/admin/wxdesign/index</action>
                 <icon>tpl</icon>
             </design>
             <page>
                 <sort>20</sort>
                 <title>页面管理</title>
-                <action>admin/wxpage/index</action>
+                <action>/admin/wxpage/index</action>
                 <icon>sdesc</icon>
             </page>
             <product>
                 <sort>30</sort>
                 <title>商品设置</title>
-                <action>admin/wxproduct/index</action>
+                <action>/admin/wxproduct/index</action>
                 <icon>product</icon>
             </product>
             <media>
                 <sort>40</sort>
                 <title>内容管理</title>
-                <action>admin/wxmedia/index</action>
+                <action>/admin/wxmedia/index</action>
                 <icon>ext-pic</icon>
             </media>
         </children>
@@ -84,19 +84,19 @@
             <bulletin>
                 <sort>10</sort>
                 <title>用户管理</title>
-                <action>admin/user/index</action>
+                <action>/admin/user/index</action>
                 <icon>user2</icon>
             </bulletin>
             <role>
                 <sort>20</sort>
                 <title>角色管理</title>
-                <action>admin/role/index</action>
+                <action>/admin/role/index</action>
                 <icon>customers</icon>
             </role>
             <dep>
                 <sort>30</sort>
                 <title>部门管理</title>
-                <action>admin/dep/index</action>
+                <action>/admin/dep/index</action>
                 <icon>dep</icon>
             </dep>
             <log>
@@ -107,17 +107,17 @@
                     <login>
                         <sort>10</sort>
                         <title>登录日志</title>
-                        <action>admin/logLogin/index</action>
+                        <action>/admin/logLogin/index</action>
                     </login>
                     <op>
                         <sort>20</sort>
                         <title>操作日志</title>
-                        <action>admin/logOps/index</action>
+                        <action>/admin/logOps/index</action>
                     </op>
                     <sms>
                         <sort>30</sort>
                         <title>短信日志</title>
-                        <action>admin/logSms/index</action>
+                        <action>/admin/logSms/index</action>
                     </sms>
                 </children>
             </log>

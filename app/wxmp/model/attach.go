@@ -1,8 +1,8 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/model"
+	"go-mage-admin/app/mage"
 	"log"
 )
 
@@ -27,7 +27,7 @@ func (*Attach) TableName() string {
 func (r *Attach) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]Attach, int64) {
 	var rs []Attach
 	var total int64
-	db := core.AppDb["read"].Model(Attach{})
+	db := mage.AppDb["read"].Model(Attach{})
 
 	//多条件过滤
 	collection := model.Collection{}
@@ -46,7 +46,7 @@ func (r *Attach) GetCollection(filters map[string]interface{}, orders [2]string,
 func (r *Attach) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["attach_id"] = ids
-	res := core.AppDb["write"].Where(where).Delete(&Attach{})
+	res := mage.AppDb["write"].Where(where).Delete(&Attach{})
 	if res.Error != nil {
 		return false
 	}

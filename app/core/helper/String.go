@@ -75,3 +75,13 @@ func (s *String) DeCapitalize(str string) string {
 	}
 	return upperStr
 }
+
+// InSlice 判断是在数组中
+func InSlice(items []string, item string) bool {
+	for _, eachItem := range items {
+		if eachItem == item {
+			return true
+		}
+	}
+	return false
+}

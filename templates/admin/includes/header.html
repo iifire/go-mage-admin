@@ -1,5 +1,5 @@
 {{define "header"}}
-<div class="header" id="header">
+<div class="header" id="headerbox">
     <!-- 一级菜单 -->
     <div class="nav-box">
         <div class="nav f-left">
@@ -38,15 +38,11 @@
     </div>
     <div class="cmenu" id="cmenu">
         <div class="cmenu-box" id="cmenu-box">
-            <div class="cmenu-item m-ajax on home" data-url="admin/dashboard/index">
+            <div class="cmenu-item home" :class="{'on':!curMenuHistory}" data-url="admin/dashboard/index">
                 <span>首页</span>
             </div>
-            <div class="cmenu-item m-ajax " data-url="wx/reply">
-                <span>自动回复</span>
-                <i class="ift i-close fs12"></i>
-            </div>
-            <div class="cmenu-item m-ajax " data-url="wx/menu">
-                <span>自定义菜单</span>
+            <div class="cmenu-item" :class="{'on':curMenuHistory==item.action}" :data-url="item.action" v-for="(item,idx) in menuHistory" @click="goPage(item.action)">
+                <span>${item.title}</span>
                 <i class="ift i-close fs12"></i>
             </div>
         </div>
@@ -56,34 +52,101 @@
 </div>
 <script>
 let vueHeader = new Vue({
-    el: '#header',
+    el: '#headerbox',
     data() {
         return {
             menus:[],
-            curMenuId:0
+            menuHistory:[],
+            menuName:[],
+            curMenuId:0,
+            curMenuHistory:'',
         }
     },
     methods: {
+        goPage(url) {
+            //判断切换menu
+            vueLeft.setCurMenu(url)
+            this.curMenuHistory = url;
+            mage.admin.goPage(url)
+            return false
+        },
         getMenus() {
             axios.get('/admin/page/menu').then((res) =>{
                 var _d = res.data.data;
                 if(res.data.code==1) {
+                    //URL前缀和历史菜单名称处理
+                    let menuNameArr = [];
+                    let menusCopy = [];
+                    for (let k in _d.menus) {
+                        if (_d.menus.hasOwnProperty(k) && _d.menus[k].children) {
+                            for (let m in _d.menus[k].children) {
+                                if (_d.menus[k].children.hasOwnProperty(m)) {
+                                    if (_d.menus[k].children[m].action) {
+                                        if (_d.menus[k].children[m].action.indexOf('/')!=0) {
+                                            _d.menus[k].children[m].action = '/'+_d.menus[k].children[m].action;
+                                        }
+                                        menuNameArr.push(_d.menus[k].children[m]);
+                                    }
+                                    if (_d.menus[k].children[m].children) {
+                                        for (let n in _d.menus[k].children[m].children) {
+                                            if (_d.menus[k].children[m].children.hasOwnProperty(n)) {
+                                                if (_d.menus[k].children[m].children[n].action.indexOf('/')!=0) {
+                                                    _d.menus[k].children[m].children[n].action = '/'+_d.menus[k].children[m].children[n].action;
+                                                }
+                                                menuNameArr.push(_d.menus[k].children[m].children[n]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     this.menus = _d.menus
                     if (this.menus.hasOwnProperty(this.curMenuId) && this.menus[this.curMenuId].hasOwnProperty('children')) {
                         this.switchMenu(this.curMenuId,this.menus[this.curMenuId]['children'])
                     }
+                    console.log(menuNameArr);
+                    this.menuName = menuNameArr;
+                    this.renderHistory(_d.menuHistory);
                 }
             }).catch(function (err) {
                 console.log(err);
             });
         },
+        renderHistory(history,curUrl) {
+            if (curUrl) {
+                this.curMenuHistory = curUrl
+            }
+            this.menuHistory = [];
+            for (let i = 0;i<history.length;i++) {
+                for (let j = 0;j<this.menuName.length;j++) {
+                    if (history[i]==this.menuName[j].action) {
+                        this.menuHistory.push(this.menuName[j])
+                    }
+                }
+            }
+        },
         switchMenu(idx,childMenu) {
             this.curMenuId = idx;
             vueLeft.switchMenu(childMenu)
+        },
+        switchMenuCopy(idx,curUrl) {
+            this.curMenuId = idx;
+            vueLeft.setCurMenu(curUrl)
+            for (let k in this.menus) {
+                if (idx==k) {
+                    vueLeft.switchMenu(this.menus[k].children)
+                }
+            }
+        },
+        init() {
+            this.curMenuId = $('#menu').val();
+            this.curMenuHistory = $('#menucur').val();
+            this.curMenuHistory = this.curMenuHistory ? (this.curMenuHistory.indexOf("/")==0 ? this.curMenuHistory:'/'+this.curMenuHistory) : '';
         }
     },
     created() {
-        this.curMenuId = $('#menu').val();
+        this.init();
         this.getMenus();
     }
 })

@@ -1,8 +1,8 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
 	"go-mage-admin/app/core/model"
+	"go-mage-admin/app/mage"
 	"log"
 )
 
@@ -34,7 +34,7 @@ func (*News) TableName() string {
 func (r *News) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]News, int64) {
 	var rs []News
 	var total int64
-	db := core.AppDb["read"].Model(News{})
+	db := mage.AppDb["read"].Model(News{})
 
 	//多条件过滤
 	collection := model.Collection{}
@@ -53,7 +53,7 @@ func (r *News) GetCollection(filters map[string]interface{}, orders [2]string, p
 func (r *News) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["news_id"] = ids
-	res := core.AppDb["write"].Where(where).Delete(&News{})
+	res := mage.AppDb["write"].Where(where).Delete(&News{})
 	if res.Error != nil {
 		return false
 	}

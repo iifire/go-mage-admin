@@ -1,10 +1,12 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
+	helper2 "go-mage-admin/app/core/helper"
 	"go-mage-admin/app/core/model"
+	"go-mage-admin/app/mage"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"strings"
 )
 
 type User struct {
@@ -34,7 +36,7 @@ func (*User) TableName() string {
 // Authenticate 用户名和密码验证
 func (user *User) Authenticate(username string, password string) (bool, string, *User) {
 	u := new(User)
-	core.AppDb["read"].First(&u, "username = ?", username)
+	mage.AppDb["read"].First(&u, "username = ?", username)
 	msg := ""
 	flag := false
 	if u.UserId != 0 {
@@ -56,7 +58,7 @@ func (user *User) Authenticate(username string, password string) (bool, string, 
 func (user *User) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]User, int64) {
 	var users []User
 	var total int64
-	db := core.AppDb["read"].Model(User{})
+	db := mage.AppDb["read"].Model(User{})
 
 	//多条件过滤
 	collection := model.Collection{}
@@ -82,7 +84,7 @@ func (user *User) GetGridColumnsConfig(uid int, gridCode string) []string {
 func (user *User) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["user_id"] = ids
-	res := core.AppDb["write"].Where(where).Delete(&User{})
+	res := mage.AppDb["write"].Where(where).Delete(&User{})
 	if res.Error != nil {
 		return false
 	}
@@ -92,7 +94,22 @@ func (user *User) DelByIds(ids []string) bool {
 func (user *User) LoadById(id int) *User {
 	u := new(User)
 	if id > 0 {
-		core.AppDb["read"].First(&u, "user_id = ?", id)
+		mage.AppDb["read"].First(&u, "user_id = ?", id)
 	}
 	return u
+}
+
+// UpdateMenus 更新历史菜单
+func (user *User) UpdateMenus(url string) bool {
+	if user.UserId > 0 {
+		menus := strings.Split(user.Menus, ",")
+		if !helper2.InSlice(menus, url) {
+			menus = append(menus, url)
+		}
+		res := mage.AppDb["write"].Model(&user).Where("user_id = ? ", user.UserId).Update("menus", strings.Join(menus, ","))
+		if res.Error != nil {
+			return false
+		}
+	}
+	return true
 }

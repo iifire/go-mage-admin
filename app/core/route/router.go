@@ -3,6 +3,7 @@ package route
 import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"go-mage-admin/app/admin/model"
 	"go-mage-admin/app/core/helper"
 	mageApp "go-mage-admin/app/mage"
 	"net/http"
@@ -131,6 +132,15 @@ func match(path string, route Route) gin.HandlerFunc {
 					c.Redirect(http.StatusFound, "/admin/login/index")
 				} else {
 					//TODO... 更新cookie失效时间
+				}
+				//ajax menu
+				ajaxMenuUrl := c.GetHeader("ajax-menu")
+				if ajaxMenuUrl != "" {
+					if !strings.HasPrefix(ajaxMenuUrl, "/") {
+						ajaxMenuUrl = "/" + ajaxMenuUrl
+					}
+					user := new(model.Session).GetUser()
+					user.UpdateMenus(ajaxMenuUrl)
 				}
 			} else if path == "/admin/login/index" {
 				if uid != nil {

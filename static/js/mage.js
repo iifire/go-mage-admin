@@ -12,19 +12,11 @@ function setLocation(url){
 function newLocation(url) {
     window.open(url);
 }
-function confirmSetLocation(message, url, tips){
-    layer.confirm(message, function(){
-            setLocation(url);
-        }
-    );
-    return false;
-}
 $(function(){
     setTimeout(function(){
         console.log("%c欢迎使用GoMageAdmin! (o(╯□╰)o)"," font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', Helvetica, Arial, sans-serif;margin:.5em;padding:.25em 1em;border-radius:5em;font-size:1.75em;background:#909399;color:#F5F5F5;text-align:center;text-shadow:0 0 5px rgba(0,0,0,0.5);")
     },2000)
 });
-var callbacks = $.Callbacks();
 function loadScript(url,callback){var head=document.head||document.getElementsByTagName("head")[0]||document.documentElement,script,options,s;if(typeof url==="object"){options=url;url=undefined}s=options||{};url=url||s.url;callback=callback||s.success;script=document.createElement("script");script.async=s.async||false;script.type="text/javascript";if(s.charset){script.charset=s.charset}if(s.cache===false){url=url+(/\?/.test(url)?"&":"?")+"_="+new Date().getTime()}script.src=url;head.insertBefore(script,head.firstChild);if(callback){document.addEventListener?script.addEventListener("load",callback,false):(script.onreadystatechange=function(){if(/loaded|complete/.test(script.readyState)){script.onreadystatechange=null;callback()}})}};
 (function(window, undefined){
     var SimpleTool = {};
@@ -33,39 +25,6 @@ function loadScript(url,callback){var head=document.head||document.getElementsBy
     //判断是否是手机号
     SimpleTool.isMobile=function(val){if(SimpleTool.isNull(val)){val=""}var pattern=/^1\d{10}$/;return patternReg(pattern,val)};
     SimpleTool.guid=function(prefix){function S4(){return(((1+Math.random())*65536)|0).toString(16).substring(1)}return prefix+"_"+(S4()+S4()+"_"+S4()+"_"+S4()+"_"+S4()+"_"+S4()+S4()+S4())};
-    SimpleTool.hasAjaxException = function(response,$obj)
-    {
-        try
-        {
-            var json={};
-            if(typeof(response)=="object")
-            {
-                json=response;
-            }
-            else
-            {
-                json = $.parseJSON(response);
-            }
-            if (json != undefined && json.success == false&&json.exception==true)
-            {
-                var tip = "出现异常！";
-                if (!SimpleTool.isNull(json.msg))
-                {
-                    tip = json.msg;
-                }
-                window.top.layer.alert(tip, -1);
-                if($($obj))
-                {
-                    $($obj).empty();
-                }
-                return true;
-            }
-            return false;
-        } catch (e)
-        {
-            return false;
-        }
-    }
     window.SimpleTool = SimpleTool;
 })(window);
 
@@ -75,19 +34,6 @@ jQuery.extend({
     },
     removeLoading: function () {
         if ($("#_loading").length) $("#_loading").remove();
-    },
-    enable: function (el) {
-        if (typeof (el) == "undefined" || el === null || el === "") return;
-        $(el).removeClass("btn-disabled");
-        $.removeLoading();
-    },
-    disable: function (el) {
-        if (typeof (el) == "undefined" || el === null || el === "") return;
-        $(el).addClass("btn-disabled");
-        $.showLoading();
-    },
-    isDisabled: function (el) {
-        return $(el).hasClass("btn-disabled");
     },
     scrollTo:function(selector,callback){var _el=$(selector),_timer,_dead_time=100,_min_dead_time=10,_first_position=document.documentElement.scrollTop||document.body.scrollTop,_distance,_min_distance=200,_step,_top_position,_curr_position,_scroll_height=$(document).height(),_window_height=$(window).height(),_runTop=function(){_curr_position=document.documentElement.scrollTop||document.body.scrollTop;_curr_position+=_step;if((_step<0&&_curr_position>=_top_position)||(_step>0&&_curr_position<=_top_position)){if(_step>0&&(_curr_position+_window_height>=_scroll_height)){clearInterval(_timer);callback&&callback()}window.scrollTo(0,_curr_position)}else{clearInterval(_timer);callback&&callback()}};if(!_el||!_el.length){return false}_top_position=_el.offset().top;_distance=_top_position-_first_position;_step=_distance/(Math.abs(_distance)<=_min_distance?_min_dead_time:_dead_time);_timer=setInterval(_runTop,1)},
 })

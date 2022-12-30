@@ -18,7 +18,7 @@ import (
 )
 
 // AppDb 全局变量 controller action需要渲染模版时要给mageApp.AppGin.HTMLRender赋值
-var AppDb = make(map[string]*gorm.DB)
+
 var AppConfig *Config
 var APPSid string
 
@@ -77,13 +77,13 @@ func (app *App) InitDb() {
 	if err != nil {
 		panic(err)
 	}
-	AppDb["read"] = *&Rdb
+	mageApp.AppDb["read"] = *&Rdb
 	wDsn := w.Username + ":" + w.Password + "@tcp(" + w.Host + ":" + strconv.Itoa(w.Port) + ")/" + w.Dbname + "?charset=utf8mb4&parseTime=True&loc=Local"
 	Wdb, err := gorm.Open(mysql.Open(wDsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-	AppDb["write"] = *&Wdb
+	mageApp.AppDb["write"] = *&Wdb
 	return
 }
 
@@ -164,10 +164,9 @@ func (app *App) Run(options map[string]interface{}) {
 
 	//加载静态资源
 	g.Static("/static", "./static")
-	//模块化
-	//app.InitModules();
+
 	app.InitRequest()
-	//
+
 	//g.HTMLRender = app.LoadTemplates("/templates")
 	app.GetController(g).Dispatch()
 	g.Run(":8082")

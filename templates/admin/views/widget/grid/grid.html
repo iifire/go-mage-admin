@@ -354,10 +354,8 @@ const appGrid = new Vue({
                 this.checkedAll = false
             }
             this.selection = selection;
-            //console.log(selection);
         },
         sortChange( column) {
-            console.log(column);
             this.orders = [column.prop,(column.order=='ascending' ? 'asc' : 'desc')]
             this.loadGrid()
         },
@@ -450,7 +448,6 @@ const appGrid = new Vue({
             let data = {};
             data.page = this.pager.page;
             data.size = this.pager.size;
-            console.log(this.orders);
             if (this.orders.length==2 && this.orders[0] && this.orders[1]) {
                 data.sort = this.orders[0].trim();
                 data.order = this.orders[1].trim();

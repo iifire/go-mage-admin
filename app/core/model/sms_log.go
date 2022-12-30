@@ -1,7 +1,7 @@
 package model
 
 import (
-	"go-mage-admin/app/core"
+	"go-mage-admin/app/mage"
 	"log"
 )
 
@@ -24,7 +24,7 @@ func (*CoreSmsLog) TableName() string {
 func (g *CoreSmsLog) GetCollection(filters map[string]interface{}, orders [2]string, page int, size int) ([]CoreSmsLog, int64) {
 	var logs []CoreSmsLog
 	var total int64
-	db := core.AppDb["read"].Model(CoreSmsLog{})
+	db := mage.AppDb["read"].Model(CoreSmsLog{})
 
 	//多条件过滤
 	collection := Collection{}
@@ -43,7 +43,7 @@ func (g *CoreSmsLog) GetCollection(filters map[string]interface{}, orders [2]str
 func (g *CoreSmsLog) DelByIds(ids []string) bool {
 	where := map[string]interface{}{}
 	where["log_id"] = ids
-	res := core.AppDb["write"].Where(where).Delete(&CoreSmsLog{})
+	res := mage.AppDb["write"].Where(where).Delete(&CoreSmsLog{})
 	if res.Error != nil {
 		return false
 	}
