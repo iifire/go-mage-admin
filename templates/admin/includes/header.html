@@ -37,9 +37,9 @@
             <div class="cmenu-item home" :class="{'on':!curMenuHistory}" data-url="admin/dashboard/index">
                 <span>首页</span>
             </div>
-            <div class="cmenu-item" :class="{'on':curMenuHistory==item.action}" :data-url="item.action" v-for="(item,idx) in menuHistory" @click="goPage(item.action)">
-                <span>${item.title}</span>
-                <i class="ift i-close fs12"></i>
+            <div class="cmenu-item" :class="{'on':curMenuHistory==item.action}" :data-url="item.action" v-for="(item,idx) in menuHistory" >
+                <span @click="goPage(item.action)">${item.title}</span>
+                <i class="ift i-close fs12" @click="delPage(item.action)"></i>
             </div>
         </div>
         <div class="cmenu-ctl cmenu-ctl-l"><i class="ift i-arrow-l3 fs18"></i></div>
@@ -61,6 +61,19 @@ let vueHeader = new Vue({
     methods: {
         goPage(url) {
             mage.admin.goPage(url)
+        },
+        delPage(url) {
+            if (this.curMenuHistory==url) {
+                let urlReplace = "";
+                for (let i in this.menuHistory) {
+                    if (this.menuHistory[i].action!=url) {
+                        urlReplace = this.menuHistory[i].action;
+                    }
+                }
+                mage.admin.delPage(url,urlReplace)
+            } else {
+                mage.admin.delPage(url)
+            }
         },
         getMenus() {
             axios.get('/admin/page/menu').then((res) =>{
@@ -153,7 +166,15 @@ let vueHeader = new Vue({
                 }
             }
         },
-
+        delHistory(url) {
+            let copy = [];
+            for (let i in this.menuHistory) {
+                if (this.menuHistory[i].action!=url) {
+                    copy.push(this.menuHistory[i]);
+                }
+            }
+            this.menuHistory = copy;
+        },
         init() {
             this.curMenuId = $('#menu').val();
             this.curMenuHistory = $('#menucur').val();

@@ -6,6 +6,7 @@ import (
 	"go-mage-admin/app/admin/helper"
 	"go-mage-admin/app/admin/model"
 	"go-mage-admin/app/core/route"
+	"go-mage-admin/app/mage"
 	"net/http"
 	"strings"
 )
@@ -47,8 +48,6 @@ func (p *Page) MenuGET(c *gin.Context) {
 
 // MenuHistoryGET 历史菜单
 func (p *Page) MenuHistoryGET(c *gin.Context) {
-	// 输出JSON
-
 	//历史菜单
 	sess := new(model.Session)
 	user := sess.GetUser()
@@ -65,6 +64,26 @@ func (p *Page) MenuHistoryGET(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 0,
 			"msg":  "没有历史菜单",
+		})
+	}
+}
+
+// MenuDelPOST 根据URL移除历史菜单
+func (p *Page) MenuDelPOST(c *gin.Context) {
+	url := mage.AppGinContext.DefaultPostForm("url", "")
+
+	if url != "" {
+		sess := new(model.Session)
+		user := sess.GetUser()
+		user.DelMenuByUrl(url)
+		c.JSON(http.StatusOK, gin.H{
+			"code": 1,
+			"msg":  "ok",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 0,
+			"msg":  "url参数不能为空",
 		})
 	}
 

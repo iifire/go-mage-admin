@@ -23,6 +23,16 @@ mage.admin = (function() {
             }
         })
     }
+    function delPage(url,urlReplace) {
+        $.post('/admin/page/menuDel',{url:url},function(res){
+            if (res.code==1) {
+                vueHeader.delHistory(url);
+                if (urlReplace) {
+                    goPage(urlReplace)
+                }
+            }
+        },'json')
+    }
     function getHistoryMenu(url) {
         $.get('/admin/page/menuHistory',{},function(res){
             if (res.code==1) {
@@ -49,6 +59,7 @@ mage.admin = (function() {
     return {
         init:init,
         goPage: goPage,
+        delPage: delPage,
         resizeBoard:resizeBoard,
     }
 })();

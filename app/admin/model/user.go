@@ -113,3 +113,21 @@ func (user *User) UpdateMenus(url string) bool {
 	}
 	return true
 }
+
+// DelMenuByUrl 历史菜单项移除
+func (user *User) DelMenuByUrl(url string) bool {
+	if user.UserId > 0 {
+		menus := strings.Split(user.Menus, ",")
+		menusCopy := make([]string, 0)
+		for _, v := range menus {
+			if v != "" && v != url {
+				menusCopy = append(menusCopy, v)
+			}
+		}
+		res := mage.AppDb["write"].Model(&user).Where("user_id = ? ", user.UserId).Update("menus", strings.Join(menusCopy, ","))
+		if res.Error != nil {
+			return false
+		}
+	}
+	return true
+}
