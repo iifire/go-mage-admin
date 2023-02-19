@@ -8,6 +8,37 @@
                         <el-form-item :label="c.header" v-if="c.type=='text' || c.type==''">
                             <el-input size="small" v-model="c.value" :placeholder="c.placeholder"></el-input>
                         </el-form-item>
+                        <el-form-item :label="c.header" v-if="c.type=='options'">
+                                <el-select v-model="c.value" :placeholder="c.placeholder" size="small">
+                                    <el-option label="不限" value=""></el-option>
+                                    <el-option v-for="(item,key) in c.options"
+                                               :key="key"
+                                               :label="item"
+                                               :value="key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item :label="c.header" v-if="c.type=='datetime'">
+                                <el-date-picker
+                                        type="daterange"
+                                        v-model="c.value"
+                                        size="small"
+                                        unlink-panels
+                                        range-separator="至"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期"
+                                        value-format="yyyy-MM-dd"
+                                        :picker-options="datePickerOptions">
+                                </el-date-picker>
+
+                            </el-form-item>
+                            <el-form-item :label="c.header" v-if="c.type=='number'">
+                                <div class="number-range">
+                                    <el-input v-model="c.from" placeholder="开始" size="small"></el-input>
+                                    <label class="number-range-separator">至</label>
+                                    <el-input v-model="c.to" placeholder="结束" size="small"></el-input>
+                                </div>
+                            </el-form-item>
                     </span>
                 </span>
                 <span>
@@ -17,12 +48,12 @@
             </el-form>
         </div>
         <div class="f-right grid-header-more">
-            <div class="f-left">
+            <div class="f-left ">
                 <ul>
                     <li class="pr" :class="{'on':moreFilterShow}" v-if="hasFilterMore">
                         <span class="el-dropdown-link more-hd" @click="toggleMoreFilters()"><i class="ift i-guolv mr2 fs12"></i>筛选项<i class="ift i-arrow-d3 ml5 fs12"></i></span>
                     </li>
-                    <li class="pr" :class="{'on':allColumnShow}">
+                    <li class="pr" :class="{'on':allColumnShow}" v-if="code">
                         <span class="el-dropdown-link more-hd" @click="toggleAllColumns()"><i class="ift i-config mr2 fs12"></i>展示栏目<i class="ift i-arrow-d3 ml5 fs12"></i></span>
                         <div class="column-more pa" v-if="allColumnShow">
                             <ul class="config-grid">
@@ -39,7 +70,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="f-right ml20" v-if="buttons.length>0">
+            <div class="f-right ml20 btns" v-if="buttons.length>0">
                 <ul>
                     <li v-for="(btn,idx) in buttons" :key="idx">
                         <el-button size="small" :type="btn.elType" :class="btn.class" @click="btnDo(btn,0)"><i v-if="btn.icon" class="f-left mr2 fs12 ift" :class="'i-'+btn.icon"></i>${btn.label}</el-button>
@@ -57,7 +88,6 @@
                 <el-form ref="form" :inline="true">
                     <ul class="filter-grid">
                         <li class="filter-item" v-for="(c,idx) in allColumns" v-if="c.filter=='more'">
-
                             <el-form-item :label="c.header" v-if="c.type=='text' || c.type==''">
                                 <el-input size="small" v-model="c.value" :placeholder="c.placeholder"></el-input>
                             </el-form-item>
@@ -91,7 +121,6 @@
                                     <label class="number-range-separator">至</label>
                                     <el-input v-model="c.to" placeholder="结束" size="small"></el-input>
                                 </div>
-
                             </el-form-item>
                         </li>
                     </ul>
@@ -117,7 +146,6 @@
                      :label="column.header"
                      :align="column.align"
                      :sortable="column.sort?'custom' : false"
-
                      :width="column.width">
                     <template  slot-scope="scope">
                         <span v-if="column.type!='action'">
@@ -238,6 +266,7 @@
             </tr>
         </table>
     </div>
+    <!-- ajax form -->
 </div>
 <script>
 const appGrid = new Vue({
@@ -293,6 +322,14 @@ const appGrid = new Vue({
                     }
                 }]
             },
+
+            form:{
+                title:"",
+                visible:"",
+                data: {
+
+                }
+            }
         }
     },
     methods: {
@@ -404,12 +441,30 @@ const appGrid = new Vue({
             this.loadGrid();
         },
         btnDo(btn,id) {
-            if (btn.confirm) {
-                this.$confirm((btn.confirmTxt ? btn.confirmTxt : '您确认要操作吗？'), '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
+            if (btn.type=='action') {
+                if (btn.confirm) {
+                    this.$confirm((btn.confirmTxt ? btn.confirmTxt : '您确认要操作吗？'), '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
+                            if(res.data.code==1) {
+                                this.$message({
+                                    type: 'success',
+                                    message: res.data.msg,
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                            this.loadGrid()
+                        }).catch(function (err) {
+                            console.log(err);
+                        });
+                    }).catch(() => {
+                        //nothing to do
+                    });
+                } else {
                     axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
                         if(res.data.code==1) {
                             this.$message({
@@ -423,16 +478,13 @@ const appGrid = new Vue({
                     }).catch(function (err) {
                         console.log(err);
                     });
-                }).catch(() => {
-                    //nothing to do
-                });
-            } else {
-                axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
+                }
+            } else if (btn.type=='link') {
+
+            } else if (btn.type=='form') {
+                axios.post(btn.url, {"id":id ? id : ""},this.headerParams).then((res)=> {
                     if(res.data.code==1) {
-                        this.$message({
-                            type: 'success',
-                            message: res.data.msg,
-                        });
+
                     } else {
                         this.$message.error(res.data.msg);
                     }
@@ -555,7 +607,10 @@ const appGrid = new Vue({
                     this.exports = _d.exports ? _d.exports : []
                     this.exportType = this.exports.length>0 ? this.exports[0].label : ''
 
-
+                    //buttons排序
+                    this.buttons.sort((a,b)=>{
+                        return a.sort - b.sort
+                    })
 
                 }
                 this.loading = false;

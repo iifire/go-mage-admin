@@ -8,7 +8,7 @@
             </div>
             {{.s1}}
             <ul class="nav-b f-left">
-                <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(idx,item.children)">
+                <li v-for="(item,idx) in menus" :key="idx" @click="switchMenu(item.code,item.children)">
                     <a :class="{'on':curMenuId==item.code}"><i class="ift" :class="`i-${item.icon}`"></i>${item.title}</a>
                 </li>
             </ul>
@@ -34,8 +34,8 @@
     </div>
     <div class="cmenu" id="cmenu">
         <div class="cmenu-box" id="cmenu-box">
-            <div class="cmenu-item home" :class="{'on':!curMenuHistory}" data-url="admin/dashboard/index">
-                <span>首页</span>
+            <div class="cmenu-item home" :class="{'on':curMenuHistory=='/admin/dashboard/index' || !curMenuHistory}" data-url="admin/dashboard/index">
+                <span @click="goPage('/admin/dashboard/index')">首页</span>
             </div>
             <div class="cmenu-item" :class="{'on':curMenuHistory==item.action}" :data-url="item.action" v-for="(item,idx) in menuHistory" >
                 <span @click="goPage(item.action)">${item.title}</span>

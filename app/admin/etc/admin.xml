@@ -1,49 +1,6 @@
 <?xml version="1.0"?>
 <!-- 菜单设置 -->
 <menu>
-    <mall>
-        <title>商城</title>
-        <sort>20</sort>
-        <icon>cart</icon>
-        <children>
-            <order>
-                <sort>10</sort>
-                <title>订单管理</title>
-                <action>/admin/order/index</action>
-                <icon>dir</icon>
-            </order>
-            <product>
-                <sort>20</sort>
-                <title>商品管理</title>
-                <action>/admin/product/index</action>
-                <icon>product</icon>
-            </product>
-            <customer>
-                <sort>30</sort>
-                <title>客户管理</title>
-                <action>/admin/doc/index</action>
-                <icon>customers</icon>
-            </customer>
-            <cms>
-                <sort>40</sort>
-                <title>页面管理</title>
-                <action>/admin/doc/index</action>
-                <icon>sdesc</icon>
-            </cms>
-            <media>
-                <sort>50</sort>
-                <title>内容管理</title>
-                <action>/admin/doc/index</action>
-                <icon>ext-pic</icon>
-            </media>
-            <config>
-                <sort>60</sort>
-                <title>商城设置</title>
-                <action>/admin/doc/index</action>
-                <icon>config</icon>
-            </config>
-        </children>
-    </mall>
     <wxapp>
         <title>小程序</title>
         <sort>30</sort>
@@ -123,4 +80,17 @@
             </log>
         </children>
     </system>
+    <dev>
+        <title>开发工具</title>
+        <sort>50</sort>
+        <icon>dev</icon>
+        <children>
+            <codegen>
+                <sort>10</sort>
+                <title>代码生成</title>
+                <action>/admin/codegen/index</action>
+                <icon>dir</icon>
+            </codegen>
+        </children>
+    </dev>
 </menu>

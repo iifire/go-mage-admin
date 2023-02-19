@@ -6,6 +6,7 @@ import (
 	"go-mage-admin/app/admin/model"
 	"go-mage-admin/app/core/helper"
 	mageApp "go-mage-admin/app/mage"
+	"log"
 	"net/http"
 	"reflect"
 	"strings"
@@ -23,6 +24,14 @@ type Route struct {
 var Routes []Route
 
 func InitRouter(g *gin.Engine) {
+	//后台默认页
+	g.GET("/admin", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/admin/dashboard/index")
+	})
+	//前台默认页
+	g.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/admin/dashboard/index")
+	})
 	Bind(g)
 	return
 }
@@ -59,6 +68,7 @@ func Register(controller interface{}, moduleName string) bool {
 		if httpMethod == "" {
 			continue
 		}
+
 		method := v.Method(i)
 		actName := strings.Replace(action, httpMethod, "", -1)
 		path := "/" + moduleName + "/" + strHelper.DeCapitalize(ctrlNameCopy) + "/" + strHelper.DeCapitalize(actName)
@@ -69,12 +79,20 @@ func Register(controller interface{}, moduleName string) bool {
 		}
 		route := Route{path: path, Method: method, Args: params, httpMethod: httpMethod}
 		Routes = append(Routes, route)
+
+		//indexGET做为默认页
+		if strHelper.DeCapitalize(actName) == "index" && httpMethod == "GET" {
+			route = Route{path: "/" + moduleName + "/" + strHelper.DeCapitalize(ctrlNameCopy), Method: method, Args: params, httpMethod: httpMethod}
+			Routes = append(Routes, route)
+			route = Route{path: "/" + moduleName + "/" + strHelper.DeCapitalize(ctrlNameCopy) + "/", Method: method, Args: params, httpMethod: httpMethod}
+			Routes = append(Routes, route)
+		}
 	}
 	//fmt.Println("Routes=", Routes)
 	return true
 }
 
-// Bind 绑定路由 m是方法GET POST等
+// Bind 绑定
 func Bind(e *gin.Engine) {
 	//路由分组
 	for _, route := range Routes {
@@ -101,7 +119,6 @@ func Bind(e *gin.Engine) {
 func match(path string, route Route) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fields := strings.Split(path, "/")
-		//fmt.Println("fields,len(fields)=", fields, len(fields))
 		if len(fields) < 3 {
 			return
 		}
@@ -124,6 +141,7 @@ func match(path string, route Route) gin.HandlerFunc {
 			/******** 临时手动注册用户 start *******/
 			session.Set("uid", 1)
 			/******** 临时手动注册用户 end *******/
+			log.Println("match.path=", path)
 			//判断后台请求 未登录则跳转到登录页面
 			uid := session.Get("uid")
 			if strings.HasPrefix(path, "/admin") && path != "/admin/login/index" {
@@ -131,8 +149,10 @@ func match(path string, route Route) gin.HandlerFunc {
 				if uid == nil {
 					c.Redirect(http.StatusFound, "/admin/login/index")
 				} else {
+
 					//TODO... 更新cookie失效时间
 				}
+
 				//ajax menu
 				ajaxMenuUrl := c.GetHeader("ajax-menu")
 				if ajaxMenuUrl != "" {

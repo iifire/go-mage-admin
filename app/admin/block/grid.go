@@ -56,7 +56,8 @@ type ButtonType struct {
 	Label      string `json:"label"`
 	Url        string `json:"url"`
 	Class      string `json:"class"`
-	Type       string `json:"type"`   //link / popup / action / form / view
+	Sort       int    `json:"sort"`
+	Type       string `json:"type"`   //link|tab[历史菜单] / popup / action / form / view
 	ElType     string `json:"elType"` //primary / success / warning / danger / info / text
 	Icon       string `json:"icon"`
 	Confirm    bool   `json:"confirm"`
@@ -93,7 +94,7 @@ func PrepareGrid(columns ColumnsType, gridCode string) (ColumnsType, ColumnsType
 				}
 			}
 		} else {
-			if column.Show || column.Type == "action" {
+			if gridCode == "" || column.Show || column.Type == "action" {
 				columnsCopy = append(columnsCopy, column)
 			}
 			if column.Type != "action" {

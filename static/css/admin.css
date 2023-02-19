@@ -1,8 +1,8 @@
 @font-face {
     font-family: "ift"; /* Project id 3774570 */
-    src: url('//at.alicdn.com/t/c/font_3774570_5cccrb805pv.woff2?t=1668781729092') format('woff2'),
-    url('//at.alicdn.com/t/c/font_3774570_5cccrb805pv.woff?t=1668781729092') format('woff'),
-    url('//at.alicdn.com/t/c/font_3774570_5cccrb805pv.ttf?t=1668781729092') format('truetype');
+    src: url('//at.alicdn.com/t/c/font_3774570_s033nxjw4l.woff2?t=1673509241612') format('woff2'),
+    url('//at.alicdn.com/t/c/font_3774570_s033nxjw4l.woff?t=1673509241612') format('woff'),
+    url('//at.alicdn.com/t/c/font_3774570_s033nxjw4l.ttf?t=1673509241612') format('truetype');
 }
 
 .ift {
@@ -11,6 +11,26 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.i-table:before {
+    content: "\e69a";
+}
+
+.i-module:before {
+    content: "\e63e";
+}
+
+.i-model:before {
+    content: "\e66e";
+}
+
+.i-dev:before {
+    content: "\e70f";
+}
+
+.i-arrow-d3:before {
+    content: "\e616";
 }
 
 .i-chat:before {
@@ -352,7 +372,6 @@
 .i-wxapp:before {
     content: "\e661";
 }
-
 
 /****** Backend CSS ******/
 .ift {
@@ -931,6 +950,9 @@ button:focus {outline:0;}
 }
 .grid-header .grid-header-more li  {
     display:inline-block;
+}
+.grid-header .grid-header-more .btns button {
+    margin-left:5px;
 }
 .grid-header .grid-header-more li .more-hd {
     color:#333;
