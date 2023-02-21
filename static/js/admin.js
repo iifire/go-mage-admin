@@ -15,6 +15,7 @@ mage.admin = (function() {
                 $('#menu').html($(res).find('#menu').val());
                 $('#menucur').html($(res).find('#menucur').val());
                 $('#main').html($(res).find('#main').html());
+                $('title').text($(res).filter("title").text());
                 getHistoryMenu(url);
                 resizeBoard();
             },

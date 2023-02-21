@@ -2,9 +2,12 @@ package controller
 
 import (
 	"github.com/gin-contrib/multitemplate"
+	"github.com/gin-contrib/sessions"
 	moduleAdmin "go-mage-admin/app/admin"
 	"go-mage-admin/app/admin/model"
 	"go-mage-admin/app/core/controller"
+	"go-mage-admin/app/core/helper"
+	mageApp "go-mage-admin/app/mage"
 	"log"
 	"path/filepath"
 )
@@ -19,6 +22,12 @@ type Admin struct {
 func (admin *Admin) GetSession() *model.Session {
 	session := &model.Session{}
 	return session
+}
+
+func (admin *Admin) GetUserId() int {
+	sess := sessions.Default(mageApp.AppGinContext)
+	uid := sess.Get("uid")
+	return helper.GetInterfaceToInt(uid)
 }
 
 func (admin *Admin) SetLayout(layout string) {

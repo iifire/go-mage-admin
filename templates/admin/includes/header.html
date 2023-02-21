@@ -1,6 +1,6 @@
 {{define "header"}}
 <div class="header" id="headerBox">
-    <div class="nav-box">
+    <div class="nav-box"  >
         <div class="nav f-left">
             <div class="nav-indent f-left">
                 <a class="on"><i class="ift i-indent"></i></a>
@@ -17,16 +17,31 @@
             <ul class="nav-m">
                 <!-- 功能/菜单搜索 -->
                 <li>
-                    <a><i class="ift i-search"></i></a>
+                    <a @click="toggleSearch" v-show="!wShow"><i class="ift i-search"></i></a>
+
+                    <el-autocomplete ref="wRef"  class="nav-search" :autofocus="true" prefix-icon="el-icon-search" v-show="wShow"
+                            class="inline-input"
+                            v-model="w"
+                            :fetch-suggestions="wSearch"
+                            placeholder="请输入内容"
+                            @select="wSelect"
+                    ></el-autocomplete>
                 </li>
-                <li>
-                    <a><i class="ift i-full"></i></a>
-                </li>
+
                 <li>
                     <a><i class="ift i-msg"></i></a>
                 </li>
                 <li>
-                    <a><i class="ift i-user2"></i></a>
+                    <a @click="toggleFullscreen"><i class="ift i-full"></i></a>
+                </li>
+                <li>
+                    <el-dropdown @command="handleMyCommand">
+                        <a><i class="ift i-user2"></i></a>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="goAccount">账户信息</el-dropdown-item>
+                            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </li>
             </ul>
         </div>
@@ -45,20 +60,115 @@
         <div class="cmenu-ctl cmenu-ctl-l"><i class="ift i-arrow-l3 fs18"></i></div>
         <div class="cmenu-ctl cmenu-ctl-r"><i class="ift i-arrow-r3 fs18"></i></div>
     </div>
+    <el-dialog title="系统提示" :visible.sync="logoutDialogVisible" width="30%">
+        <span>您确定要退出登录吗？</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="logoutDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doLogout">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
 <script>
 let vueHeader = new Vue({
     el: '#headerBox',
     data() {
         return {
+            w:"",//菜单搜索关键字
+            wList:[],
+            wShow:false,
             menus:[],
             menuHistory:[],
             menuName:[],
             curMenuId:0,
             curMenuHistory:'',
+
+            isFullscreen:false,
+            logoutDialogVisible:false,
         }
     },
     methods: {
+        toggleSearch() {
+            if (!this.w) {
+                this.wShow = !this.wShow;
+                if (this.wShow) {
+                    this.$nextTick(() => {
+                        this.$refs.wRef.focus();
+                    })
+                }
+            }
+        },
+        renderWList() {
+            for (let i in this.menuName) {
+                let tmp = this.menuName[i];
+                this.wList.push({"value":tmp.title,"url":tmp.action})
+            }
+        },
+        wSearch(w, cb) {
+            let wList = this.wList;
+            let results = w ? wList.filter(this.wFilter(w)) : wList;
+            // 调用 callback 返回建议列表的数据
+            cb(results);
+        },
+        wFilter(w) {
+            return (item) => {
+                return (item.value.toLowerCase().indexOf(w.toLowerCase()) === 0);
+            };
+        },
+        wSelect(item) {
+            console.log(item);
+            this.w = item.value;
+            this.goPage(item.url);
+        },
+        toggleFullscreen() {
+            if (this.isFullscreen) {
+                if(document.exitFullScreen){
+                    document.exitFullscreen()
+                }
+                //兼容火狐
+                if(document.mozCancelFullScreen){
+                    document.mozCancelFullScreen()
+                }
+                //兼容谷歌等
+                if(document.webkitExitFullscreen){
+                    document.webkitExitFullscreen()
+                }
+                //兼容IE
+                if(document.msExitFullscreen){
+                    document.msExitFullscreen()
+                }
+            } else {
+                if(document.documentElement.RequestFullScreen){
+                    document.documentElement.RequestFullScreen();
+                }
+                //兼容火狐
+                if(document.documentElement.mozRequestFullScreen){
+                    document.documentElement.mozRequestFullScreen();
+                }
+                //兼容谷歌等
+                if(document.documentElement.webkitRequestFullScreen){
+                    document.documentElement.webkitRequestFullScreen();
+                }
+                //兼容IE,只能写msRequestFullscreen
+                if(document.documentElement.msRequestFullscreen){
+                    document.documentElement.msRequestFullscreen();
+                }
+            }
+            this.isFullscreen = !this.isFullscreen;
+        },
+        handleMyCommand(c) {
+            if (c=='goAccount') {
+                let url = "/admin/account/index";
+                this.goPage(url);
+            } else if (c=='logout') {
+                this.logoutDialogVisible = true;
+            }
+        },
+        doLogout() {
+            this.logoutDialogVisible = false;
+            let url = "/admin/login/logout";
+            window.location.href = url;
+        },
+
         goPage(url) {
             mage.admin.goPage(url)
         },
@@ -123,12 +233,21 @@ let vueHeader = new Vue({
                     })
                     this.menus = tmpK
                     //console.log('curMenuId='+this.curMenuId);
+                    let firstMenu;
                     for (let i in tmpK) {
+                        if (!firstMenu) {
+                            firstMenu = tmpK[i];
+                        }
                         if (tmpK[i]['code']==this.curMenuId && tmpK[i].hasOwnProperty('children')) {
                             this.switchMenu(this.curMenuId,tmpK[i]['children'])
                         }
                     }
+                    //首页则显示第一个菜单
+                    if (firstMenu && !this.curMenuId && (this.curMenuHistory=='/admin/dashboard/index' || !this.curMenuHistory)) {
+                        this.switchMenu(firstMenu['code'],firstMenu['children'])
+                    }
                     this.menuName = menuNameArr;
+                    this.renderWList();
                     this.renderHistory(_d.menuHistory);
                 }
             }).catch(function (err) {

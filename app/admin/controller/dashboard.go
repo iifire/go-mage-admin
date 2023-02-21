@@ -23,8 +23,7 @@ func (d *Dashboard) IndexGET(c *gin.Context) {
 	admin := &Admin{}
 	mageApp.AppGin.HTMLRender = admin.LoadLayout()
 	c.HTML(http.StatusOK, "dashboard.html", gin.H{
-		"code": 1,
-		"msg":  "ok",
+		"title": "首页",
 	})
 
 }

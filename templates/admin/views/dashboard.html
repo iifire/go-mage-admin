@@ -1,8 +1,204 @@
 {{define "content"}}
+<script src="/static/js/echarts.js"></script>
 <div id="dashboard">
-    <p>Dashboard</p>
+    <el-row :gutter="12" class="stat wp100 mt5">
+        <el-col :span="6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3><small>￥</small>53500</h3>
+                    <p>今日新订单额</p>
+                </div>
+                <div class="icon">
+                    <i class="ift i-cart2"></i>
+                </div>
+                <a href="#" class="small-box-footer">更多详情<i class="ift i-arrow-r2"></i></a>
+            </div>
+        </el-col>
+        <el-col :span="6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>2159</h3>
+                    <p>今日活跃客户</p>
+                </div>
+                <div class="icon">
+                    <i class="ift i-user-on"></i>
+                </div>
+                <a href="#" class="small-box-footer">更多详情<i class="ift i-arrow-r2"></i></a>
+            </div>
+        </el-col>
+        <el-col :span="6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>210</h3>
+                    <p>今日新增用户</p>
+                </div>
+                <div class="icon">
+                    <i class="ift i-user-add"></i>
+                </div>
+                <a href="#" class="small-box-footer">更多详情<i class="ift i-arrow-r2"></i></a>
+            </div>
+        </el-col>
+        <el-col :span="6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>20<small>W+</small></h3>
+                    <p>今日PV(浏览量)</p>
+                </div>
+                <div class="icon">
+                    <i class="ift i-trend"></i>
+                </div>
+                <a href="#" class="small-box-footer">更多详情<i class="ift i-arrow-r2"></i></a>
+            </div>
+        </el-col>
+    </el-row>
+    <el-row :gutter="12" class=" wp100">
+        <el-col :span="12" class="bgw" style="padding:25px 20px 0">
+            <div id="chart1" style="width: 100%;height:400px;"></div>
+        </el-col>
+        <el-col :span="12" class="bgw" style="padding:25px 20px 0">
+            <div id="chart2" style="width: 100%;height:400px;"></div>
+        </el-col>
+    </el-row>
+    <script type="text/javascript">
+        $(function(){
+            var myChart = echarts.init(document.getElementById('chart1'));
+            var option = {
+                color:['#ffc107 ','#28a745'],
+                title: {
+                    text: '商城订单趋势图'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['GMV','销售额']
+                },
+                xAxis: {
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月','7月','8月','9月','10月','11月','12月']
+                },
+                yAxis: {},
+                series: [
+                    {
+                        name: 'GMV',
+                        type: 'line',
+                        data: [80000, 116000, 80000, 65000, 72000, 95000,69000,125900,112090,180000,170500,150080]
+                    },
+                    {
+                        name: '销售额',
+                        type: 'bar',
+                        data: [60000, 100000, 50000, 55000, 62000, 65000,60000,75900,82090,120000,140500,120080]
+                    }
+                ]
+            };
+            myChart.setOption(option);
+
+            var myChart2 = echarts.init(document.getElementById('chart2'));
+            var option2 = {
+                color:['#ffc107 ','#28a745'],
+                title: {
+                    text: '7天访问量趋势图'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['PV','UV']
+                },
+                xAxis: {
+                    data: ['12/1', '12/2', '12/3', '12/4', '12/5', '12/6','12/7']
+                },
+                yAxis: {},
+                series: [
+                    {
+                        name: 'PV',
+                        type: 'line',
+                        data: [120000, 136000, 180000, 125000, 132000, 185000,309000]
+                    },
+                    {
+                        name: 'UV',
+                        type: 'line',
+                        data: [20000, 19000, 25000, 45000, 32000, 45000,90000]
+                    }
+                ]
+            };
+            myChart2.setOption(option2);
+        })
+
+    </script>
+    <el-calendar v-model="calendar" class="mt20">
 </div>
 <script>
+const dashboard = new Vue({
+    el: '#dashboard',
+    data() {
+        return {
+            loading:true,
+            calendar: new Date()
 
+        }
+    },
+    methods: {
+        // 异步加载
+        loadDashboard() {
+
+        },
+    },
+    created() {
+        this.loadDashboard();
+    }
+})
 </script>
+<style>
+    .main-wrap > .box-admin {background:none;}
+    .small-box {
+        border-radius: .25rem;
+        box-shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2);
+        display: block;
+        margin-bottom: 20px;
+        position: relative;
+        background:#FFF;
+        color:#FFF;
+        height:160px;
+    }
+    .small-box > .inner {
+        padding: 18px;
+    }
+    .small-box h3 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0 0 10px;
+        padding: 0;
+        white-space: nowrap;
+        color:#FFF;
+    }
+    .small-box h3 small {
+        font-size:1.2rem;
+    }
+    .small-box p {
+        font-size: 0.95rem;
+    }
+    .small-box .icon {
+        color: rgba(0,0,0,.15);
+        z-index: 0;
+    }
+    .small-box .icon i {
+        font-size: 60px;
+        top: 45px;
+        position: absolute;
+        right: 15px;
+        display: block;
+        height: 70px;
+    }
+    .small-box > .small-box-footer {
+        background-color: rgba(0,0,0,.1);
+        color: rgba(255,255,255,.8);
+        display: block;
+        padding: 3px 0;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        z-index: 10;
+        position: absolute;
+        right: 0;
+        width: 40%;
+        bottom: 0;
+    }
+
+</style>
 {{end}}

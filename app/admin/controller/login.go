@@ -85,3 +85,11 @@ func (login *Login) RegGET(c *gin.Context) {
 		"msg":  "",
 	})
 }
+
+// LogoutGET 退出登录
+func (login *Login) LogoutGET(c *gin.Context) {
+	// 输出页面 调用对象来处理
+	s := sessions.Default(c)
+	s.Set("uid", 0)
+	c.Redirect(http.StatusFound, "/admin/login/index")
+}

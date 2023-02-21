@@ -1,3 +1,110 @@
 {{define "form"}}
-form.html
+<div id="form">
+    <div v-if="title" class="form-title"><h2>${title}</h2></div>
+    <div class="form p20">
+        <el-form ref="form">
+            <div class="fieldset" v-for="(f,idx) in fieldsets">
+                <table class="wp100">
+                    <template v-if="f.layout.length">
+                        <colgroup>
+                            <col v-for="(la,idxLa) in f.layout" :width="la"/>
+                        </colgroup>
+                    </template>
+                    <tr v-for="(t,idx2) in f.items">
+                        <template v-for="(d,idx3) in t.items">
+                            <td class="label"><label>${d.label}</label></td>
+                            <td>
+                                <el-form-item v-if="d.type=='text'">
+                                    <el-input size="medium" v-model="d.value" :placeholder="d.placeholder"></el-input>
+                                </el-form-item>
+                                <el-form-item v-if="d.type=='password'">
+                                    <el-input size="medium" type="password" v-model="d.value" :placeholder="d.placeholder"></el-input>
+                                </el-form-item>
+                                <el-form-item v-if="d.type=='select'">
+                                    <el-select v-model="d.value" :placeholder="d.placeholder" size="medium">
+                                        <el-option label="不限" value=""></el-option>
+                                        <el-option v-for="(item,key) in d.options"
+                                                   :key="key"
+                                                   :label="item"
+                                                   :value="key">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item v-if="d.type=='datetime'">
+                                    <el-date-picker
+                                            type="daterange"
+                                            v-model="d.value"
+                                            size="medium"
+                                            unlink-panels
+                                            range-separator="至"
+                                            start-placeholder="开始日期"
+                                            end-placeholder="结束日期"
+                                            value-format="yyyy-MM-dd"
+                                            :picker-options="datePickerOptions">
+                                    </el-date-picker>
+
+                                </el-form-item>
+                                <el-form-item v-if="d.type=='number'">
+                                    <div class="number-range">
+                                        <el-input v-model="d.from" placeholder="开始" size="medium"></el-input>
+                                        <label class="number-range-separator">至</label>
+                                        <el-input v-model="d.to" placeholder="结束" size="medium"></el-input>
+                                    </div>
+                                </el-form-item>
+                            </td>
+
+                        </template>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-btns">
+                <el-button size="medium" @click="cancel()">取消</el-button>
+                <el-button size="medium" type="primary" @click="save()">保存</el-button>
+            </div>
+        </el-form>
+    </div>
+</div>
+<script>
+    const appForm = new Vue({
+        el: '#form',
+        data() {
+            return {
+                title:"",
+                fieldsets:[],
+                loading:true,
+                headerParams:{headers: {'Accept':'*/*','Content-Type': 'application/x-www-form-urlencoded'}},
+            }
+        },
+        methods: {
+            // 异步加载
+            loadForm() {
+                this.loading = true;
+                axios.post('{{.urlForm}}',{},this.headerParams).then((res)=> {
+                    let d = res.data;
+                    if(d.code==1) {
+                        this.title = d.data.title;
+                        this.fieldsets = d.data.fieldsets;
+                    } else {
+                        this.$message(res.msg);
+                    }
+                    this.loading = false;
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                this.loading = false;
+            },
+
+            cancel() {
+
+            },
+
+            save() {
+
+            }
+        },
+        created() {
+            this.loadForm();
+        }
+    })
+</script>
 {{end}}
