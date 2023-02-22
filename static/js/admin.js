@@ -42,6 +42,8 @@ mage.admin = (function() {
         },'json')
     }
     function resizeBoard() {
+        //alert('a');
+        console.log('resizeBoard');
         let h = document.documentElement.clientHeight-$('.app-wrap > .header').height();
         if (h<300) {
             h = 300;
@@ -52,10 +54,11 @@ mage.admin = (function() {
         }
     }
     function init() {
-        resizeBoard();
+
         $(window).resize(function () {
             resizeBoard();
         })
+        resizeBoard();
     }
     return {
         init:init,
@@ -67,7 +70,6 @@ mage.admin = (function() {
 $(function(){
     mage.admin.init();
 })
-
 String.prototype.replaceAll  = function(s1,s2){
     return this.replace(new RegExp(s1,"gm"),s2);
 }

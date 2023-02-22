@@ -2,7 +2,7 @@
 <div id="form">
     <div v-if="title" class="form-title"><h2>${title}</h2></div>
     <div class="form p20">
-        <el-form ref="form">
+        <el-form ref="form" name="eform" id="eform">
             <div class="fieldset" v-for="(f,idx) in fieldsets">
                 <table class="wp100">
                     <template v-if="f.layout.length">
@@ -15,13 +15,13 @@
                             <td class="label"><label>${d.label}</label></td>
                             <td>
                                 <el-form-item v-if="d.type=='text'">
-                                    <el-input size="medium" v-model="d.value" :placeholder="d.placeholder"></el-input>
+                                    <el-input size="medium" :name="d.name" v-model="d.value" :placeholder="d.placeholder"></el-input>
                                 </el-form-item>
                                 <el-form-item v-if="d.type=='password'">
-                                    <el-input size="medium" type="password" v-model="d.value" :placeholder="d.placeholder"></el-input>
+                                    <el-input size="medium" :name="d.name" show-password v-model="d.value" :placeholder="d.placeholder"></el-input>
                                 </el-form-item>
                                 <el-form-item v-if="d.type=='select'">
-                                    <el-select v-model="d.value" :placeholder="d.placeholder" size="medium">
+                                    <el-select :name="d.name" v-model="d.value" :placeholder="d.placeholder" size="medium">
                                         <el-option label="不限" value=""></el-option>
                                         <el-option v-for="(item,key) in d.options"
                                                    :key="key"
@@ -32,6 +32,7 @@
                                 </el-form-item>
                                 <el-form-item v-if="d.type=='datetime'">
                                     <el-date-picker
+                                            :name="d.name"
                                             type="daterange"
                                             v-model="d.value"
                                             size="medium"
@@ -46,9 +47,9 @@
                                 </el-form-item>
                                 <el-form-item v-if="d.type=='number'">
                                     <div class="number-range">
-                                        <el-input v-model="d.from" placeholder="开始" size="medium"></el-input>
+                                        <el-input :name="d.name" v-model="d.from" placeholder="开始" size="medium"></el-input>
                                         <label class="number-range-separator">至</label>
-                                        <el-input v-model="d.to" placeholder="结束" size="medium"></el-input>
+                                        <el-input :name="d.name" v-model="d.to" placeholder="结束" size="medium"></el-input>
                                     </div>
                                 </el-form-item>
                             </td>
@@ -99,6 +100,27 @@
             },
 
             save() {
+                this.loading = true;
+                let flag = this.validate();
+                let data = new FormData($("#eform")[0] );
+                axios.post('{{.urlSave}}',data,this.headerParams).then((res)=> {
+                    let d = res.data;
+                    if(d.code==1) {
+                        this.$alert(d.msg, '温馨提示', {
+                            confirmButtonText: '确定',
+                        });
+
+                    } else {
+                        this.$message.error(d.msg);
+                    }
+                    this.loading = false;
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                this.loading = false;
+            },
+            //校验 根据class来校验
+            validate() {
 
             }
         },

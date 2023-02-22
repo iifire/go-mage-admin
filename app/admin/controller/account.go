@@ -59,5 +59,9 @@ func (a *Account) SavePOST(c *gin.Context) {
 	u.Password = string(hash)
 	u.Mobile = mobile
 	u.Email = email
-	mageApp.AppDb["Write"].Save(u)
+	mageApp.AppDb["write"].Save(u)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 1,
+		"msg":  "账户信息更新成功！",
+	})
 }

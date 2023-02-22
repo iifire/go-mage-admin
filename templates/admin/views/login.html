@@ -13,7 +13,7 @@
                 </el-input>
             </div>
             <div class="mt20">
-                <el-input placeholder="请输入密码" v-model="password">
+                <el-input placeholder="请输入密码" v-model="password" type="password">
                     <template slot="prepend"><div class="w50">密码</div></template>
                 </el-input>
             </div>
@@ -23,8 +23,8 @@
             <div class="mt20">
                 <el-button type="primary" @click="doLogin" class="wp100">登录</el-button>
             </div>
-            <div class="mt40">
-                <p class="c9">温馨提示：请使用谷歌、EDGE、360极速、搜狗、腾讯、UC、遨游、火狐、OPERA浏览器登录</p>
+            <div class="mt25">
+                <p class="c9">基于Gin + Vue + Element UI的通用后台管理系统，让后台开发更加高效、便捷，致力于使后台功能开发趋向组件化、配置化。</p>
             </div>
         </div>
     </div>
@@ -34,8 +34,8 @@
         el: '#login',
         data() {
             return {
-                username:"",
-                password:"",
+                username:"mage",
+                password:"admin123",
                 remember:"",
             }
         },

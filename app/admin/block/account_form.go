@@ -27,6 +27,7 @@ func (f *AccountForm) PrepareForm() {
 		//Items: []TdType
 	}
 	tr.Items = append(tr.Items, TdType{
+		Name:        "mobile",
 		Label:       "手机号",
 		Type:        "text",
 		Placeholder: "请填写手机号",
@@ -37,6 +38,7 @@ func (f *AccountForm) PrepareForm() {
 		//Items: []TdType
 	}
 	tr2.Items = append(tr2.Items, TdType{
+		Name:        "email",
 		Label:       "邮箱地址",
 		Type:        "text",
 		Placeholder: "请填写邮箱地址",
@@ -46,6 +48,7 @@ func (f *AccountForm) PrepareForm() {
 		Class: "",
 	}
 	tr3.Items = append(tr3.Items, TdType{
+		Name:        "password",
 		Label:       "密码",
 		Type:        "password",
 		Placeholder: "请填写密码",
@@ -55,6 +58,7 @@ func (f *AccountForm) PrepareForm() {
 		Class: "",
 	}
 	tr4.Items = append(tr4.Items, TdType{
+		Name:        "password_copy",
 		Label:       "重复密码",
 		Type:        "password",
 		Placeholder: "请再次输入密码",

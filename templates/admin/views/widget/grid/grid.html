@@ -617,6 +617,9 @@ const appGrid = new Vue({
             }).catch(function (err) {
                 console.log(err);
             });
+            setTimeout(()=>{
+                mage.admin.resizeBoard();
+            },500)
             this.loading = false;
         }
     },

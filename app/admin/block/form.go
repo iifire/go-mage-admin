@@ -23,6 +23,7 @@ type TdType struct {
 	Value       string `json:"value"`
 	Values      string `json:"values"`
 	Required    string `json:"required"`
+	Clearable   string `json:"clearable"`
 	Disabled    string `json:"disabled"`
 	Readonly    string `json:"readonly"`
 	AfterHtml   string `json:"afterHtml"`

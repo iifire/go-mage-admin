@@ -18,8 +18,7 @@
                 <!-- 功能/菜单搜索 -->
                 <li>
                     <a @click="toggleSearch" v-show="!wShow"><i class="ift i-search"></i></a>
-
-                    <el-autocomplete ref="wRef"  class="nav-search" :autofocus="true" prefix-icon="el-icon-search" v-show="wShow"
+                    <el-autocomplete ref="wRef" @blur="wBlur" class="nav-search" :autofocus="true" prefix-icon="el-icon-search" v-show="wShow"
                             class="inline-input"
                             v-model="w"
                             :fetch-suggestions="wSearch"
@@ -27,9 +26,15 @@
                             @select="wSelect"
                     ></el-autocomplete>
                 </li>
-
                 <li>
-                    <a><i class="ift i-msg"></i></a>
+                    <el-popover
+                            placement="bottom"
+                            width="240"
+                            trigger="manual"
+                            v-model="msgVisible">
+                        <div class="p25 a-center"><p>暂无未读消息!</p></div>
+                        <a slot="reference" @click="msgVisible = !msgVisible"><i class="ift i-msg"></i></a>
+                    </el-popover>
                 </li>
                 <li>
                     <a @click="toggleFullscreen"><i class="ift i-full"></i></a>
@@ -76,6 +81,7 @@ let vueHeader = new Vue({
             w:"",//菜单搜索关键字
             wList:[],
             wShow:false,
+            msgVisible:false,
             menus:[],
             menuHistory:[],
             menuName:[],
@@ -87,6 +93,11 @@ let vueHeader = new Vue({
         }
     },
     methods: {
+        wBlur() {
+            setTimeout(()=> {
+                this.toggleSearch();
+            },500)
+        },
         toggleSearch() {
             if (!this.w) {
                 this.wShow = !this.wShow;
@@ -115,10 +126,10 @@ let vueHeader = new Vue({
             };
         },
         wSelect(item) {
-            console.log(item);
             this.w = item.value;
             this.goPage(item.url);
         },
+
         toggleFullscreen() {
             if (this.isFullscreen) {
                 if(document.exitFullScreen){

@@ -60,7 +60,7 @@
         </el-col>
     </el-row>
     <script type="text/javascript">
-        $(function(){
+        setTimeout(function(){
             var myChart = echarts.init(document.getElementById('chart1'));
             var option = {
                 color:['#ffc107 ','#28a745'],
@@ -118,10 +118,10 @@
                 ]
             };
             myChart2.setOption(option2);
-        })
+        },500)
 
     </script>
-    <el-calendar v-model="calendar" class="mt20">
+    <el-calendar v-model="calendar" class="mt20"/>
 </div>
 <script>
 const dashboard = new Vue({

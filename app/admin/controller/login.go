@@ -79,7 +79,7 @@ func (login *Login) RegGET(c *gin.Context) {
 		fmt.Println(err)
 	}
 	u.Password = string(hash)
-	mageApp.AppDb["Write"].Create(u)
+	mageApp.AppDb["write"].Create(u)
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "",
@@ -90,6 +90,7 @@ func (login *Login) RegGET(c *gin.Context) {
 func (login *Login) LogoutGET(c *gin.Context) {
 	// 输出页面 调用对象来处理
 	s := sessions.Default(c)
-	s.Set("uid", 0)
+	s.Set("uid", nil)
+	s.Save()
 	c.Redirect(http.StatusFound, "/admin/login/index")
 }
