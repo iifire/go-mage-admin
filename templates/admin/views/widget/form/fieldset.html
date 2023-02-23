@@ -23,12 +23,10 @@
                                 <el-input type="textarea" size="medium" :name="d.name" v-model="d.value" :placeholder="d.placeholder"></el-input>
                             </template>
                             <template v-if="d.type=='select'">
-                                <el-select :name="d.name" v-model="d.value" :placeholder="d.placeholder" size="medium">
-                                    <el-option label="不限" value=""></el-option>
-                                    <el-option v-for="(item,key) in d.options"
-                                               :key="key"
-                                               :label="item"
-                                               :value="key">
+                                <el-select  :name="d.name" v-model="d.value" size="medium" value-key="value">
+                                    <el-option v-for="(item,key) in d.values" :key="key"
+                                       :label="item.label"
+                                       :value="item.value">
                                     </el-option>
                                 </el-select>
                             </template>
@@ -73,10 +71,19 @@
             }
         },
         methods: {
-            //根据class来校验
-            validate() {
-                let flag = false;
-                return flag;
+            getFormData() {
+                var _data = {};
+                for (var i in this.fieldsetCopy) {
+                    let f = this.fieldsetCopy[i];
+                    for (var i2 in f.items) {
+                        let c2 = f.items[i2]
+                        for(var i3 in c2.items) {
+                            let c3 = c2.items[i3]
+                            _data[c3.name] = c3.value
+                        }
+                    }
+                }
+                return _data;
             }
         },
         mounted() {

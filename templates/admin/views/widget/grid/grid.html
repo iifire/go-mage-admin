@@ -269,7 +269,7 @@
     <!-- ajax dialog form -->
     <el-dialog :title="form.title" :visible.sync="formDialogVisible" ref="formDialog">
         <el-form :model="form.data" id="bform" name="bform" ref="bform">
-            <form-fieldset :fieldsets="form.fieldsets"></form-fieldset>
+            <form-fieldset ref="formDialogFieldset" :fieldsets="form.fieldsets"></form-fieldset>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="formDialogVisible = false">取 消</el-button>
@@ -526,7 +526,9 @@ const appGrid = new Vue({
             if (!new FormValidation("bform").validate()){
                 return;
             }
-            let data = new FormData($("#bform")[0] );
+            //let data = new FormData($("#bform")[0] );
+            let data = this.$refs['formDialogFieldset'].getFormData();
+            console.log(data);
             axios.post(this.form.url,data,this.headerParams).then((res)=> {
                 let d = res.data;
                 if(d.code==1) {

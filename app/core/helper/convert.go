@@ -1,6 +1,9 @@
 package helper
 
-import "reflect"
+import (
+	"log"
+	"reflect"
+)
 
 // Convert 类型转换功能
 type Convert struct {
@@ -17,16 +20,20 @@ func StructByReflect(data map[string]interface{}, inStructPtr interface{}) {
 	} else {
 		panic("inStructPtr must be ptr to struct")
 	}
+	log.Println(data)
 	// 遍历结构体
 	for i := 0; i < rType.NumField(); i++ {
 		t := rType.Field(i)
 		f := rVal.Field(i)
 		// 得到tag中的字段名
-		key := t.Tag.Get("key")
+		key := t.Tag.Get("json")
 		if v, ok := data[key]; ok {
 			// 检查是否需要类型转换
 			dataType := reflect.TypeOf(v)
 			structType := f.Type()
+			log.Println("dataType:", dataType)
+			log.Println("structType:", structType)
+
 			if structType == dataType {
 				f.Set(reflect.ValueOf(v))
 			} else {
@@ -34,11 +41,18 @@ func StructByReflect(data map[string]interface{}, inStructPtr interface{}) {
 					// 转换类型
 					f.Set(reflect.ValueOf(v).Convert(structType))
 				} else {
-					panic(t.Name + " type mismatch")
+					switch v.(type) { //多选语句switch
+					case string:
+						tmp := 1
+						if f.Type() == reflect.TypeOf(tmp) {
+							_v := GetInterfaceToInt(v)
+							f.Set(reflect.ValueOf(_v))
+						}
+					}
 				}
 			}
 		} else {
-			panic(t.Name + " not found")
+			log.Println(t.Name, " not found")
 		}
 	}
 }

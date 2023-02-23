@@ -47,11 +47,20 @@ func (f *RoleForm) PrepareForm() {
 	tr3 := TrType{
 		Class: "",
 	}
+	vs := make([]map[string]interface{}, 0)
+	vs = append(vs, map[string]interface{}{
+		"label": "全部权限",
+		"value": "1",
+	})
+	vs = append(vs, map[string]interface{}{
+		"label": "自定义",
+		"value": "0",
+	})
 	tr3.Items = append(tr3.Items, TdType{
-		Name:        "allow_all",
-		Label:       "权限设置",
-		Type:        "select",
-		Placeholder: "",
+		Name:   "allow_all",
+		Label:  "权限设置",
+		Type:   "select",
+		Values: vs,
 	})
 	fd.Items = append(fd.Items, tr3)
 	tr2 := TrType{

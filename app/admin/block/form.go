@@ -17,17 +17,17 @@ type TrType struct {
 
 // TdType 表格列类型
 type TdType struct {
-	Label       string `json:"label"`
-	Name        string `json:"name"`
-	Type        string `json:"type"`
-	Value       string `json:"value"`
-	Values      string `json:"values"`
-	Required    bool   `json:"required"`
-	Clearable   string `json:"clearable"`
-	Disabled    string `json:"disabled"`
-	Readonly    string `json:"readonly"`
-	AfterHtml   string `json:"afterHtml"`
-	Placeholder string `json:"placeholder"`
-	Style       string `json:"style"`
-	Class       string `json:"class"`
+	Label       string                   `json:"label"`
+	Name        string                   `json:"name"`
+	Type        string                   `json:"type"`
+	Value       string                   `json:"value"`
+	Values      []map[string]interface{} `json:"values"`
+	Required    bool                     `json:"required"`
+	Clearable   string                   `json:"clearable"`
+	Disabled    string                   `json:"disabled"`
+	Readonly    string                   `json:"readonly"`
+	AfterHtml   string                   `json:"afterHtml"`
+	Placeholder string                   `json:"placeholder"`
+	Style       string                   `json:"style"`
+	Class       string                   `json:"class"`
 }
