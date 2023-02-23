@@ -139,7 +139,7 @@ func match(path string, route Route) gin.HandlerFunc {
 			session.Set("count", count)
 			session.Save()
 			/******** 临时手动注册用户 start *******/
-			//session.Set("uid", 1)
+			session.Set("uid", 1)
 			/******** 临时手动注册用户 end *******/
 			log.Println("match.path=", path)
 			//判断后台请求 未登录则跳转到登录页面

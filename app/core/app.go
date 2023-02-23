@@ -103,16 +103,17 @@ func (app *App) InitSession() {
 		redisCfg := AppConfig.SessionRedis
 
 		storeRedis, e := redis.NewStoreWithDB(redisCfg.Maxsize, "tcp", redisCfg.Host+":"+strconv.Itoa(redisCfg.Port), redisCfg.Password, strconv.Itoa(redisCfg.Db), []byte(AppConfig.Session.Key))
+
+		if e != nil {
+			log.Panicln(e)
+			panic("Redis链接错误")
+		}
 		storeRedis.Options(sessions.Options{
 			Secure:   true,
 			SameSite: 4,
 			Path:     "/",
 			MaxAge:   AppConfig.Session.Lifetime,
 		})
-		if e != nil {
-			log.Panicln(e)
-			panic("Redis链接错误")
-		}
 		mageApp.AppGin.Use(sessions.Sessions(APPSid, storeRedis))
 	} else {
 		panic("未正确设置Session Storage[Cookie/Redis]")
