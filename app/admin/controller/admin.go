@@ -51,6 +51,7 @@ func (admin *Admin) AddExtraTpl(tpl string) {
 func (admin *Admin) UseGridTpl() {
 	path := "templates/admin/views/widget/grid/*.html"
 	admin.UseTplByPath(path)
+	admin.AddExtraTpl("templates/admin/views/widget/form/fieldset.html")
 	return
 }
 

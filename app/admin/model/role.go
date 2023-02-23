@@ -8,9 +8,10 @@ import (
 
 type Role struct {
 	RoleId     int    `gorm:"primary_key" json:"role_id"`
-	UserId     int    `json:"user_id"`
 	RoleName   string `json:"role_name"`
-	Position   int    `json:"position"`
+	AllowAll   int    `json:"allow_all"`
+	Memo       string `json:"memo"`
+	DateUpdate string `json:"date_update"`
 	DateCreate string `json:"date_create"`
 }
 
@@ -46,4 +47,12 @@ func (r *Role) DelByIds(ids []string) bool {
 		return false
 	}
 	return true
+}
+
+func (r *Role) LoadById(id int) *Role {
+	rule := new(Role)
+	if id > 0 {
+		mage.AppDb["read"].First(&rule, "rule_id = ?", id)
+	}
+	return rule
 }

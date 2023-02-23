@@ -6,6 +6,67 @@
 /************* Cookie START *******/
 (function($,document,undefined){var pluses=/\+/g;function raw(s){return s}function decoded(s){return decodeURIComponent(s.replace(pluses," "))}$.cookie=function(key,value,options){if(value!==undefined&&!/Object/.test(Object.prototype.toString.call(value))){options=$.extend({},$.cookie.defaults,options);if(value===null){options.expires=-1}if(typeof options.expires==="number"){var days=options.expires,t=options.expires=new Date();t.setDate(t.getDate()+days)}value=String(value);return(document.cookie=[encodeURIComponent(key),"=",options.raw?value:encodeURIComponent(value),options.expires?"; expires="+options.expires.toUTCString():"",options.path?"; path="+options.path:"",options.domain?"; domain="+options.domain:"",options.secure?"; secure":""].join(""))}options=value||$.cookie.defaults||{};var decode=options.raw?raw:decoded;var cookies=document.cookie.split("; ");for(var i=0,parts;(parts=cookies[i]&&cookies[i].split("="));i++){if(decode(parts.shift())===key){return decode(parts.join("="))}}return null};$.cookie.defaults={};$.removeCookie=function(key,options){if($.cookie(key,options)!==null){$.cookie(key,null,options);return true}return false}})(jQuery,document);
 /************* Cookie END *******/
+/************* FormValidation START *******/
+function Validator(){
+    this.initialize();
+}
+Validator.prototype = {
+    initialize : function() {
+        this.error = '验证失败!';
+    },
+    test : function(elm) {
+        if(elm.parents(".el-form-item").length<1) {
+            return;
+        }
+        var obj = Validator.methods;
+        elm.siblings('.mg-advice').remove();
+        for(var m in obj){
+            if (elm.parents(".el-form-item").hasClass(obj[m][0])) {
+                if (!obj[m][2](elm.val())) {
+                    var adviceHtml = '<div class="mg-advice" id="advice-' + obj[m][0] + '-' + elm.id +'" style="display:block">▲' + obj[m][1] + '</div>'
+                    elm.after(adviceHtml);
+                    break;
+                }
+            }
+        }
+    }
+}
+function $IsEmpty(v) {
+    return  (v == '' || (v == null) || (v.length == 0) || /^\s+$/.test(v));
+}
+Validator.methods = [
+    ['mg-required', '必填项', function(v) {
+            return !$IsEmpty(v);
+        }
+    ]
+];
+function FormValidation(formId, options) {
+    this.initialize(formId, options);
+}
+FormValidation.prototype = {
+    initialize : function(formId, options){
+        this.form = $('#'+formId);
+        if (!this.form) {
+            console.log("表单不存在："+formId);
+        }
+    },
+    validate : function() {
+        this.form.find('.el-form-item input,.el-form-item textarea,.el-form-item file').each(function(index, e) {
+            var $this = jQuery(this);
+            var v = new Validator();
+            v.test($this);
+        })
+        return this.form.find('.mg-advice').length == 0;
+    },
+    reset : function() {
+        //重置
+    },
+    isVisible : function(elm) {
+        //元素是否可见
+        return true;
+    }
+}
+/************* Validation END *******/
 function setLocation(url){
     window.location.href = url;
 }

@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	_admin "go-mage-admin/app/admin"
 	"go-mage-admin/app/admin/block"
+	"go-mage-admin/app/admin/model"
+	"go-mage-admin/app/core/helper"
 	"go-mage-admin/app/core/route"
 	mageApp "go-mage-admin/app/mage"
 	"net/http"
@@ -39,5 +41,38 @@ func (g *Role) GridREQ(c *gin.Context) {
 		"code": 1,
 		"msg":  "ok",
 		"data": grid,
+	})
+}
+
+// EditGET 新增/编辑
+func (g *Role) EditGET(c *gin.Context) {
+	id := c.DefaultQuery("id", "")
+	r := &model.Role{}
+	if id != "" {
+		r = r.LoadById(helper.GetStringToInt(id))
+	}
+
+	form := block.RoleForm{}
+	form.GetForm(r)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 1,
+		"msg":  "ok",
+		"data": form,
+	})
+}
+
+// SavePOST 更新账户信息
+func (g *Role) SavePOST(c *gin.Context) {
+	r := &model.Role{}
+	id := c.PostForm("id")
+	if id != "" {
+		r = r.LoadById(helper.GetStringToInt(id))
+	}
+	params, _ := helper.GetPostFormParams(c)
+	helper.StructByReflect(params, r)
+	mageApp.AppDb["write"].Save(r)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 1,
+		"msg":  "角色信息更新成功！",
 	})
 }

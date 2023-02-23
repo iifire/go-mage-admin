@@ -47,3 +47,11 @@ func (r *Rule) DelByIds(ids []string) bool {
 	}
 	return true
 }
+
+func (r *Rule) LoadById(id int) *Rule {
+	rule := new(Rule)
+	if id > 0 {
+		mage.AppDb["read"].First(&rule, "rule_id = ?", id)
+	}
+	return rule
+}

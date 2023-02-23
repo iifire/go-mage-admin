@@ -88,6 +88,12 @@ func InSlice(items []string, item string) bool {
 	return false
 }
 
+// GetStringToInt 字符串转整数
+func GetStringToInt(str string) int {
+	id, _ := strconv.Atoi(str)
+	return id
+}
+
 // GetInterfaceToInt Interface转整型
 func GetInterfaceToInt(t1 interface{}) int {
 	var t2 int

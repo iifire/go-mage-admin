@@ -55,10 +55,13 @@ type ColumnType struct {
 type ButtonType struct {
 	Label      string `json:"label"`
 	Url        string `json:"url"`
+	Method     string `json:"method"`
 	Class      string `json:"class"`
 	Sort       int    `json:"sort"`
-	Type       string `json:"type"`   //link|tab[历史菜单] / popup / action / form / view
-	ElType     string `json:"elType"` //primary / success / warning / danger / info / text
+	Type       string `json:"type"`     //link|tab[历史菜单] / popup / action / form / view
+	ElType     string `json:"elType"`   //primary / success / warning / danger / info / text
+	FormType   string `json:"formType"` //drawer[默认] / dialog
+	FormUrl    string `json:"formUrl"`
 	Icon       string `json:"icon"`
 	Confirm    bool   `json:"confirm"`
 	ConfirmTxt string `json:"confirmTxt"`

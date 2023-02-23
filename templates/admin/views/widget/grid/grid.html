@@ -266,7 +266,25 @@
             </tr>
         </table>
     </div>
-    <!-- ajax form -->
+    <!-- ajax dialog form -->
+    <el-dialog :title="form.title" :visible.sync="formDialogVisible" ref="formDialog">
+        <el-form :model="form.data" id="bform" name="bform" ref="bform">
+            <form-fieldset :fieldsets="form.fieldsets"></form-fieldset>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="formDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="btnFormSave()">保存</el-button>
+        </div>
+    </el-dialog>
+    <!-- ajax drawer form -->
+    <el-drawer
+            title="form.title"
+            :visible.sync="formDrawerVisible"
+            direction="right"
+            :before-close="formDrawerClose">
+        <span>我来啦!</span>
+    </el-drawer>
+
 </div>
 <script>
 const appGrid = new Vue({
@@ -325,10 +343,17 @@ const appGrid = new Vue({
 
             form:{
                 title:"",
+                url:"", //表单保存地址
                 visible:"",
+                fieldsets:[],//表单项列表
                 data: {
 
                 }
+            },
+            formDialogVisible:false,
+            formDrawerVisible:false,
+            formDrawerClose() {
+
             }
         }
     },
@@ -441,58 +466,80 @@ const appGrid = new Vue({
             this.loadGrid();
         },
         btnDo(btn,id) {
-            if (btn.type=='action') {
+            if (btn.type=='action' || btn.type=='form') {
+                let flag = false;
                 if (btn.confirm) {
                     this.$confirm((btn.confirmTxt ? btn.confirmTxt : '您确认要操作吗？'), '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
-                            if(res.data.code==1) {
+                        flag = true;
+                    })
+                } else {
+                    flag = true;
+                }
+                this.formDrawerVisible = false;
+                this.formDialogVisible = false;
+                if (flag) {
+                    axios.request({
+                        method:btn.method&&btn.method=="GET"?"GET":"POST",
+                        url:btn.url,
+                        headers:this.headerParams.headers,
+                        params:{
+                            "id":id
+                        },
+                    }).then((res)=> {
+                        if(res.data.code==1) {
+                            let d = res.data.data;
+                            if (btn.type=='action') {
                                 this.$message({
                                     type: 'success',
                                     message: res.data.msg,
                                 });
-                            } else {
-                                this.$message.error(res.data.msg);
+                            } else if (btn.type=='form') {
+                                //弹出表单 右侧(大表单-Drawer[默认])或中间(小表单-Dialog)
+                                this.form.fieldsets = d.fieldsets;
+                                this.form.title = d.title;
+                                this.form.url = btn.formUrl;
+                                if (btn.formType && btn.formType=="dialog") {
+                                    this.formDialogVisible = true
+                                } else {
+
+                                }
                             }
-                            this.loadGrid()
-                        }).catch(function (err) {
-                            console.log(err);
-                        });
-                    }).catch(() => {
-                        //nothing to do
-                    });
-                } else {
-                    axios.post(btn.url, {"id":id},this.headerParams).then((res)=> {
-                        if(res.data.code==1) {
-                            this.$message({
-                                type: 'success',
-                                message: res.data.msg,
-                            });
                         } else {
                             this.$message.error(res.data.msg);
                         }
-                        this.loadGrid()
+                        this.loadGrid();
                     }).catch(function (err) {
                         console.log(err);
                     });
                 }
             } else if (btn.type=='link') {
 
-            } else if (btn.type=='form') {
-                axios.post(btn.url, {"id":id ? id : ""},this.headerParams).then((res)=> {
-                    if(res.data.code==1) {
-
-                    } else {
-                        this.$message.error(res.data.msg);
-                    }
-                    this.loadGrid()
-                }).catch(function (err) {
-                    console.log(err);
-                });
             }
+        },
+        //按钮激活表单保存
+        btnFormSave(){
+            this.loading = true;
+            if (!new FormValidation("bform").validate()){
+                return;
+            }
+            let data = new FormData($("#bform")[0] );
+            axios.post(this.form.url,data,this.headerParams).then((res)=> {
+                let d = res.data;
+                if(d.code==1) {
+                    this.$alert(d.msg, '温馨提示', {
+                        confirmButtonText: '确定',
+                    });
+                } else {
+                    this.$message.error(d.msg);
+                }
+                this.loading = false;
+            }).catch(function (err) {
+                //console.log(err);
+            });
         },
         // 异步加载
         loadGrid() {

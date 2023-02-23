@@ -106,11 +106,14 @@ func (g *RoleGrid) PrepareColumns() {
 // PrepareExtra 渲染更多功能
 func (g *RoleGrid) PrepareExtra() {
 	g.Buttons = append(g.Buttons, ButtonType{
-		Label:  "新增",
-		Url:    "/admin/role/add",
-		Type:   "action",
-		ElType: "primary",
-		Icon:   "plus",
+		Label:    "新增",
+		Method:   "GET",
+		Url:      "/admin/role/edit",
+		Type:     "form",
+		FormType: "dialog",
+		FormUrl:  "/admin/role/save",
+		ElType:   "primary",
+		Icon:     "plus",
 	})
 	g.MassAction = append(g.MassAction, ButtonType{
 		Label:  "批量删除",

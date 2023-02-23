@@ -42,8 +42,6 @@ mage.admin = (function() {
         },'json')
     }
     function resizeBoard() {
-        //alert('a');
-        console.log('resizeBoard');
         let h = document.documentElement.clientHeight-$('.app-wrap > .header').height();
         if (h<300) {
             h = 300;

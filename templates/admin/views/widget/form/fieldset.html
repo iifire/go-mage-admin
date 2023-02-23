@@ -1,0 +1,88 @@
+<!--  渲染表单项 -->
+{{define "fieldset"}}
+<template id="form-fieldset" class="">
+    <div class="fieldset" v-for="(f,idx) in fieldsetCopy">
+        <table class="wp100 form">
+            <template v-if="f.layout.length">
+                <colgroup>
+                    <col v-for="(la,idxLa) in f.layout" :width="la"/>
+                </colgroup>
+            </template>
+            <tr v-for="(t,idx2) in f.items">
+                <template v-for="(d,idx3) in t.items">
+                    <td class="label"><label>${d.label}</label></td>
+                    <td>
+                        <el-form-item :class="[{'mg-required':d.required},d.class]">
+                            <template v-if="d.type=='text'">
+                                <el-input size="medium" :name="d.name" v-model="d.value" :placeholder="d.placeholder"></el-input>
+                            </template>
+                            <template v-if="d.type=='password'">
+                                <el-input size="medium" :name="d.name" show-password v-model="d.value" :placeholder="d.placeholder"></el-input>
+                            </template>
+                            <template v-if="d.type=='textarea'">
+                                <el-input type="textarea" size="medium" :name="d.name" v-model="d.value" :placeholder="d.placeholder"></el-input>
+                            </template>
+                            <template v-if="d.type=='select'">
+                                <el-select :name="d.name" v-model="d.value" :placeholder="d.placeholder" size="medium">
+                                    <el-option label="不限" value=""></el-option>
+                                    <el-option v-for="(item,key) in d.options"
+                                               :key="key"
+                                               :label="item"
+                                               :value="key">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                            <template v-if="d.type=='datetime'">
+                                <el-date-picker
+                                        :name="d.name"
+                                        type="daterange"
+                                        v-model="d.value"
+                                        size="medium"
+                                        unlink-panels
+                                        range-separator="至"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期"
+                                        value-format="yyyy-MM-dd"
+                                        :picker-options="datePickerOptions">
+                                </el-date-picker>
+
+                            </template>
+                            <template v-if="d.type=='number'">
+                                <div class="number-range">
+                                    <el-input :name="d.name" v-model="d.from" placeholder="开始" size="medium"></el-input>
+                                    <label class="number-range-separator">至</label>
+                                    <el-input :name="d.name" v-model="d.to" placeholder="结束" size="medium"></el-input>
+                                </div>
+                            </template>
+                        </el-form-item>
+                    </td>
+                </template>
+            </tr>
+        </table>
+    </div>
+</template>
+<script>
+    Vue.component("form-fieldset",{
+        template: '#form-fieldset',
+        props: {
+            fieldsets: []
+        },
+        data() {
+            return {
+                fieldsetCopy:[]
+            }
+        },
+        methods: {
+            //根据class来校验
+            validate() {
+                let flag = false;
+                return flag;
+            }
+        },
+        mounted() {
+            this.fieldsetCopy = this.fieldsets;
+        }
+    })
+
+</script>
+{{end}}
